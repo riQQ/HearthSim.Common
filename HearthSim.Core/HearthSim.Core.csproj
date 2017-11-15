@@ -45,6 +45,13 @@
     <Compile Include="LogConfig\LogConfigItem.cs" />
     <Compile Include="LogConfig\LogConfigUpdater.cs" />
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
+    <Compile Include="LogReading\Data\Line.cs" />
+    <Compile Include="LogReading\Data\LogWatcherData.cs" />
+    <Compile Include="LogReading\Internal\Analyzer.cs" />
+    <Compile Include="LogReading\Internal\LogWatcher.cs" />
+    <Compile Include="LogReading\Internal\Util.cs" />
+    <Compile Include="LogReading\LogReader.cs" />
+    <Compile Include="LogReading\NewLinesEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Extensions\TaskExtensions.cs" />
     <Compile Include="Util\Logging\Log.cs" />
