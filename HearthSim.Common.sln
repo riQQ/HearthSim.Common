@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.Core", "HearthSim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.Core.Test", "HearthSim.Core.Test\HearthSim.Core.Test.csproj", "{BD8ECB10-E6C9-4BCF-8286-A13F7A45FEA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{52E157C2-4312-4EF3-B7A5-458BD2E8DF50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BD8ECB10-E6C9-4BCF-8286-A13F7A45FEA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD8ECB10-E6C9-4BCF-8286-A13F7A45FEA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD8ECB10-E6C9-4BCF-8286-A13F7A45FEA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E157C2-4312-4EF3-B7A5-458BD2E8DF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E157C2-4312-4EF3-B7A5-458BD2E8DF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E157C2-4312-4EF3-B7A5-458BD2E8DF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E157C2-4312-4EF3-B7A5-458BD2E8DF50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
