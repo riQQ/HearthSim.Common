@@ -1,5 +1,7 @@
 ﻿using System;
 using HearthSim.Core.LogReading;
+using HearthSim.Core.LogParsing;
+using HearthSim.Core.LogParsing.Parsers;
 using HearthSim.Core.Util.Logging;
 
 namespace DemoApp
@@ -13,18 +15,19 @@ namespace DemoApp
 				"E:\\Program Files (x86)\\Hearthstone\\Logs",
 				LogWatcherConfigs.Power,
 				LogWatcherConfigs.LoadingScreen,
-				LogWatcherConfigs.Arena,
-				LogWatcherConfigs.FullScreenFx,
-				LogWatcherConfigs.Rachelle
+				LogWatcherConfigs.FullScreenFx
 			);
-			watcher.NewLines += s =>
-			{
-				//foreach(var line in s.Lines)
-					//Console.WriteLine(line.Text);
-			};
+
+
+			var powerParser = new PowerParser();
+
+			var parser = new LogParserManager();
+			parser.RegisterParser(powerParser);
+
+			watcher.NewLines += eventArgs => parser.Parse(eventArgs.Lines);
+
 			watcher.Start();
 			Console.ReadKey();
 		}
-
 	}
 }
