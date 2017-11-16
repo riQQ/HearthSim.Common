@@ -16,7 +16,7 @@ namespace HearthSim.Core.LogReading
 		private bool _running;
 		private bool _stop;
 
-		public LogReader(IEnumerable<LogWatcherData> logReaderInfos, string logDirectory)
+		public LogReader(string logDirectory, params LogWatcherData[] logReaderInfos)
 		{
 			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x, logDirectory)));
 			LogConfigWatcher.Start();

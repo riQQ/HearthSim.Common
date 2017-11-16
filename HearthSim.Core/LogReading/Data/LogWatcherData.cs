@@ -6,10 +6,10 @@ namespace HearthSim.Core.LogReading.Data
 {
 	public class LogWatcherData
 	{
-		public LogWatcherData(string name, string[] entryPoints, params Func<string, bool>[] filters)
+		public LogWatcherData(string name, string[] entryPoints = null, params Func<string, bool>[] filters)
 		{
 			Name = name;
-			EntryPoints = entryPoints;
+			EntryPoints = entryPoints ?? new string[0];
 			Filters = filters.ToList();
 		}
 
