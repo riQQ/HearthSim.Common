@@ -46,6 +46,12 @@
     <Compile Include="LogConfig\LogConfigItem.cs" />
     <Compile Include="LogConfig\LogConfigUpdater.cs" />
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
+    <Compile Include="LogParsing\Parsers\GameTagParser.cs" />
+    <Compile Include="LogParsing\Parsers\PowerData\BlockData.cs" />
+    <Compile Include="LogParsing\Parsers\PowerData\EntityData.cs" />
+    <Compile Include="LogParsing\Parsers\PowerData\GameEntityData.cs" />
+    <Compile Include="LogParsing\Parsers\PowerData\PlayerEntityData.cs" />
+    <Compile Include="LogParsing\Parsers\PowerData\TagChangeData.cs" />
     <Compile Include="LogReading\Data\Line.cs" />
     <Compile Include="LogReading\Data\LogWatcherData.cs" />
     <Compile Include="LogReading\Internal\Analyzer.cs" />
@@ -57,7 +63,6 @@
     <Compile Include="LogParsing\EventArgs\GameStateLogEventArgs.cs" />
     <Compile Include="LogParsing\Interfaces\ILogParser.cs" />
     <Compile Include="LogParsing\LogParserManager.cs" />
-    <Compile Include="LogParsing\Parsers\PowerAction.cs" />
     <Compile Include="LogParsing\EventArgs\PowerActionEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\PowerParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

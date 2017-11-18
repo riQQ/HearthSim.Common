@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using HearthSim.Core.LogParsing.Interfaces;
-using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
 
 namespace HearthSim.Core.LogParsing
