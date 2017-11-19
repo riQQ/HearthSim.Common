@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using HearthDb.Enums;
+using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing.EventArgs;
 using HearthSim.Core.LogParsing.Interfaces;
 using HearthSim.Core.LogParsing.Parsers.PowerData;
@@ -34,16 +35,19 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public string LogName { get; } = "Power";
 
 		public event Action<GameStateLogEventArgs> GameStateLog;
-		public event Action<GameEntityData> GameEntity;
-		public event Action<PlayerEntityData> PlayerEntity;
-		public event Action<EntityData> FullEntity;
-		public event Action<EntityData> ShowEntity;
-		public event Action<EntityData> ChangeEntity;
+		//public event Action<GameEntityData> GameEntity;
+		//public event Action<PlayerEntityData> PlayerEntity;
+		//public event Action<EntityData> FullEntity;
+		//public event Action<EntityData> ShowEntity;
+		//public event Action<EntityData> ChangeEntity;
 		public event Action CreateGame;
-		public event Action<TagChangeData> TagChange;
-		public event Action<BlockData> BlockStart;
+		//public event Action<TagChangeData> TagChange;
+		//public event Action<BlockData> BlockStart;
+		public event Action StartSpectator;
 		public event Action EndSpectator;
-		public event Action BlockEnd;
+		//public event Action BlockEnd;
+
+		public event Action<IGameStateModifier> GameStateChange;
 
 		public void Parse(Line line)
 		{
@@ -81,7 +85,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var id = int.Parse(match.Groups["id"].Value);
-				GameEntity?.Invoke(new GameEntityData(id));
+				GameStateChange?.Invoke(new FullEntity(new GameEntityData(id)));
 				return;
 			}
 
@@ -90,7 +94,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var entityId = int.Parse(match.Groups["id"].Value);
 				var playerId = int.Parse(match.Groups["playerId"].Value);
-				PlayerEntity?.Invoke(new PlayerEntityData(entityId, playerId));
+				GameStateChange?.Invoke(new FullEntity(new PlayerEntityData(entityId, playerId)));
 				return;
 			}
 
@@ -100,7 +104,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var id = int.Parse(match.Groups["id"].Value);
 				var cardId = match.Groups["cardId"].Value;
 				var zone = GameTagParser.ParseEnum<Zone>(match.Groups["zone"].Value);
-				FullEntity?.Invoke(new EntityData(id, null, cardId, zone));
+				GameStateChange?.Invoke(new FullEntity(new EntityData(id, null, cardId, zone)));
 				return;
 			}
 
@@ -111,7 +115,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				Enum.TryParse(match.Groups["tag"].Value, out GameTag tag);
 				var value = GameTagParser.ParseTag(tag, match.Groups["value"].Value);
 				var entityId = entity.Id == -1 ? null : (int?)entity.Id;
-				TagChange?.Invoke(new TagChangeData(tag, value, false, entityId, entity.Name));
+				GameStateChange?.Invoke(new TagChange(new TagChangeData(tag, value, false, entityId, entity.Name)));
 				return;
 			}
 
@@ -122,8 +126,8 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var entity = ParseEntity(match.Groups["entity"].Value);
 				var type = match.Groups["type"].Value;
 				if(type == "CHANGE_ENTITY")
-					ChangeEntity?.Invoke(new EntityData(entity.Id, entity.Name, cardId, null));
-				ShowEntity?.Invoke(new EntityData(entity.Id, entity.Name, cardId, null));
+					GameStateChange?.Invoke(new ChangeEntity(new EntityData(entity.Id, entity.Name, cardId, null)));
+				GameStateChange?.Invoke(new ShowEntity(new EntityData(entity.Id, entity.Name, cardId, null)));
 				return;
 			}
 
@@ -132,7 +136,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var tag = GameTagParser.ParseEnum<GameTag>(match.Groups["tag"].Value);
 				var value = GameTagParser.ParseTag(tag, match.Groups["value"].Value);
-				TagChange?.Invoke(new TagChangeData(tag, value, true, null, null));
+				GameStateChange?.Invoke(new TagChange(new TagChangeData(tag, value, true, null, null)));
 				return;
 			}
 
@@ -142,18 +146,18 @@ namespace HearthSim.Core.LogParsing.Parsers
 				return;
 			}
 
-			match = _blockStartRegex.Match(line.Text);
-			if(match.Success)
-			{
-				var type = match.Groups["type"].Value;
-				var id = int.Parse(match.Groups["id"].Value);
-				var cardId = match.Groups["cardId"].Value.Trim();
-				BlockStart?.Invoke(new BlockData(type, id, cardId));
-				return;
-			}
+			//match = _blockStartRegex.Match(line.Text);
+			//if(match.Success)
+			//{
+			//	var type = match.Groups["type"].Value;
+			//	var id = int.Parse(match.Groups["id"].Value);
+			//	var cardId = match.Groups["cardId"].Value.Trim();
+			//	BlockStart?.Invoke(new BlockData(type, id, cardId));
+			//	return;
+			//}
 
-			if(line.Text.Contains("BLOCK_END"))
-				BlockEnd?.Invoke();
+			//if(line.Text.Contains("BLOCK_END"))
+			//	BlockEnd?.Invoke();
 		}
 	}
 }

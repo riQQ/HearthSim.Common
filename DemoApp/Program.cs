@@ -1,4 +1,6 @@
 ﻿using System;
+using HearthSim.Core.Hearthstone;
+using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
@@ -8,6 +10,7 @@ namespace DemoApp
 {
 	internal class Program
 	{
+		private static Game _game;
 		private static void Main(string[] args)
 		{
 			Log.Initialize("D:/", "test");
@@ -21,6 +24,9 @@ namespace DemoApp
 
 			var powerParser = new PowerParser();
 
+			powerParser.CreateGame += PowerParser_CreateGame;
+			powerParser.GameStateChange += PowerParser_GameStateChange;
+
 			var parser = new LogParserManager();
 			parser.RegisterParser(powerParser);
 
@@ -28,6 +34,22 @@ namespace DemoApp
 
 			watcher.Start();
 			Console.ReadKey();
+		}
+
+		private static void PowerParser_GameStateChange(IGameStateModifier mod)
+		{
+			_game?.State.Apply(mod);
+		}
+
+		private static void PowerParser_CreateGame()
+		{
+			_game = new Game();
+			_game.State.OnModified += State_OnModified;
+		}
+
+		private static void State_OnModified(IGameStateModifier mod, GameState state)
+		{
+			Log.Debug(mod.ToString());
 		}
 	}
 }

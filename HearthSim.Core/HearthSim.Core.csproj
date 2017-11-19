@@ -41,6 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hearthstone\Entities\Entity.cs" />
+    <Compile Include="Hearthstone\Entities\EntityFactory.cs" />
+    <Compile Include="Hearthstone\Entities\GameEntity.cs" />
+    <Compile Include="Hearthstone\Entities\PlayerEntity.cs" />
+    <Compile Include="Hearthstone\Game.cs" />
+    <Compile Include="Hearthstone\GameState.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\ChangeEntity.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\EntityModifier.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\FullEntity.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\IGameStateModifier.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\ShowEntity.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\TagChange.cs" />
     <Compile Include="LogConfig\LogConfig.cs" />
     <Compile Include="LogConfig\LogConfigConstants.cs" />
     <Compile Include="LogConfig\LogConfigItem.cs" />
@@ -63,7 +75,6 @@
     <Compile Include="LogParsing\EventArgs\GameStateLogEventArgs.cs" />
     <Compile Include="LogParsing\Interfaces\ILogParser.cs" />
     <Compile Include="LogParsing\LogParserManager.cs" />
-    <Compile Include="LogParsing\EventArgs\PowerActionEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\PowerParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Extensions\TaskExtensions.cs" />
@@ -77,6 +88,11 @@
       <Project>{7ED14243-E02B-4B94-AF00-A67A62C282F0}</Project>
       <Name>HearthDb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HearthMirror\HearthMirror\HearthMirror.csproj">
+      <Project>{1694a2f8-645a-4263-a6ab-fc26323fd675}</Project>
+      <Name>HearthMirror</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

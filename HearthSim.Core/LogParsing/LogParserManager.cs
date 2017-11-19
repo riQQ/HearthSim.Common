@@ -15,7 +15,9 @@ namespace HearthSim.Core.LogParsing
 
 		private List<ILogParser> GetParsers(string logName)
 		{
-			return _parsers[logName] ?? (_parsers[logName] = new List<ILogParser>());
+			if(_parsers.TryGetValue(logName, out var parsers))
+				return parsers;
+			return _parsers[logName] = new List<ILogParser>();
 		}
 
 		public void RegisterParser(ILogParser parser)
@@ -32,7 +34,7 @@ namespace HearthSim.Core.LogParsing
 		{
 			foreach(var line in lines)
 			{
-				foreach(var parser in _parsers[line.LogName])
+				foreach(var parser in GetParsers(line.LogName))
 					parser.Parse(line);
 			}
 		}
