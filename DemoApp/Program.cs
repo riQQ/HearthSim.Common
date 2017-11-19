@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
+using HearthSim.Core.Util;
 using HearthSim.Core.Util.Logging;
 
 namespace DemoApp
@@ -15,8 +17,11 @@ namespace DemoApp
 		private static void Main(string[] args)
 		{
 			Log.Initialize("D:/", "test");
+
+			var path = HearthstoneProc.GetExecutablePath().Result;
+
 			var watcher = new LogReader(
-				"E:\\Program Files (x86)\\Hearthstone\\Logs",
+				Path.Combine(path, "Logs"),
 				LogWatcherConfigs.Power,
 				LogWatcherConfigs.LoadingScreen,
 				LogWatcherConfigs.FullScreenFx
