@@ -84,6 +84,8 @@
     <Compile Include="Util\Logging\LogType.cs" />
     <Compile Include="Util\Logging\LogWriter.cs" />
     <Compile Include="Util\Logging\LogWriterCreationException.cs" />
+    <Compile Include="Util\Watchers\ProcessWatcher.cs" />
+    <Compile Include="Util\Watchers\Watcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HearthDb\HearthDb\HearthDb.csproj">

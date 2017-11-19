@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using HearthSim.Core.LogConfig;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.LogReading.Internal;
+using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Logging;
+using HearthSim.Core.Util.Watchers;
 
 namespace HearthSim.Core.LogReading
 {
@@ -15,9 +17,13 @@ namespace HearthSim.Core.LogReading
 		private readonly List<LogWatcher> _watchers = new List<LogWatcher>();
 		private bool _running;
 		private bool _stop;
+		private readonly ProcessWatcher _procWatcher;
 
 		public LogReader(string logDirectory, params LogWatcherData[] logReaderInfos)
 		{
+			_procWatcher = new ProcessWatcher();
+			_procWatcher.OnStart += proc => StartReaders();
+			_procWatcher.OnExit += proc => StopReaders().Forget();
 			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x, logDirectory)));
 			LogConfigWatcher.Start();
 			LogConfigUpdater.LogConfigUpdated += LogConfigUpdated;
@@ -28,7 +34,15 @@ namespace HearthSim.Core.LogReading
 		public event Action LogConfigUpdated;
 		public event Action LogConfigUpdateFailed;
 
-		public async void Start()
+		public void Start()
+		{
+			if(_running)
+				return;
+			Log.Debug("Starting proccess watcher");
+			_procWatcher.Run();
+		}
+
+		private async void StartReaders()
 		{
 			if(_running)
 				return;
@@ -71,6 +85,13 @@ namespace HearthSim.Core.LogReading
 		}
 
 		public async Task Stop()
+		{
+			if(!_running)
+				return;
+			await Task.WhenAll(_procWatcher.Stop(), StopReaders());
+		}
+
+		private async Task StopReaders()
 		{
 			if(!_running)
 				return;
