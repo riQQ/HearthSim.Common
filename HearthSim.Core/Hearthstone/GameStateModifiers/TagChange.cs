@@ -1,6 +1,5 @@
 ﻿using HearthDb.Enums;
 using HearthSim.Core.LogParsing.Parsers.PowerData;
-using HearthSim.Core.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
@@ -24,10 +23,11 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 
 		public void Apply(GameState gameState)
 		{
-			if(!CreationTag && !EntityId.HasValue)
+			if(CreationTag)
+				EntityId = gameState.CurrentEntity;
+			if(!EntityId.HasValue)
 				return;
-			var entityId = CreationTag ? gameState.CurrentEntity : EntityId.Value;
-			var entity = gameState.Entities[entityId];
+			var entity = gameState.Entities[EntityId.Value];
 			PreviousValue = entity.GetTag(Tag);
 			entity.Tags[Tag] = Value;
 		}

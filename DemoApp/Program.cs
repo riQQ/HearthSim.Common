@@ -1,4 +1,5 @@
 ﻿using System;
+using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogReading;
@@ -44,7 +45,10 @@ namespace DemoApp
 		private static void PowerParser_CreateGame()
 		{
 			_game = new Game();
-			_game.State.OnModified += State_OnModified;
+			//_game.State.OnModified += State_OnModified;
+			_game.State.OnModified += GameEvents.OnCardDrawn(e => Log.Debug($"DRAW Id={e.Id} CardId={e.CardId} Controller={e.GetTag(GameTag.CONTROLLER)}"));
+			_game.State.OnModified += GameEvents.OnCardPlayed(e => Log.Debug($"PLAY Id={e.Id} CardId={e.CardId} Controller={e.GetTag(GameTag.CONTROLLER)}"));
+			_game.State.OnModified += GameEvents.OnGameEnd(() => Log.Debug("GAME END"));
 		}
 
 		private static void State_OnModified(IGameStateModifier mod, GameState state)

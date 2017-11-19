@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HearthDb\HearthDb\HearthDb.csproj">
+      <Project>{7ED14243-E02B-4B94-AF00-A67A62C282F0}</Project>
+      <Name>HearthDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HearthSim.Core\HearthSim.Core.csproj">
       <Project>{37F057D2-3E20-4571-9DB3-883541DD4E24}</Project>
       <Name>HearthSim.Core</Name>
