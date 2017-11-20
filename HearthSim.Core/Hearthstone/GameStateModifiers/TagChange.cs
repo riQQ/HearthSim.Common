@@ -1,5 +1,7 @@
-﻿using HearthDb.Enums;
+﻿using HearthDb.CardDefs;
+using HearthDb.Enums;
 using HearthSim.Core.LogParsing.Parsers.PowerData;
+using Entity = HearthSim.Core.Hearthstone.Entities.Entity;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
@@ -29,7 +31,16 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 				return;
 			var entity = gameState.Entities[EntityId.Value];
 			PreviousValue = entity.GetTag(Tag);
+			AugmentEntityInfo(entity);
 			entity.Tags[Tag] = Value;
+		}
+
+		private void AugmentEntityInfo(Entity entity)
+		{
+			if(Tag == GameTag.ZONE && PreviousValue == 0)
+				entity.Info.OriginalZone = (Zone)Value;
+			if(Tag == GameTag.CONTROLLER && PreviousValue == 0)
+				entity.Info.OriginalController = Value;
 		}
 
 		public bool CanApply => CreationTag || EntityId.HasValue;
