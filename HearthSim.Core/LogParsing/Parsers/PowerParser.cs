@@ -42,10 +42,10 @@ namespace HearthSim.Core.LogParsing.Parsers
 		//public event Action<EntityData> ChangeEntity;
 		public event Action CreateGame;
 		//public event Action<TagChangeData> TagChange;
-		//public event Action<BlockData> BlockStart;
+		public event Action<BlockData> BlockStart;
 		public event Action StartSpectator;
 		public event Action EndSpectator;
-		//public event Action BlockEnd;
+		public event Action BlockEnd;
 
 		public event Action<IGameStateModifier> GameStateChange;
 
@@ -146,18 +146,21 @@ namespace HearthSim.Core.LogParsing.Parsers
 				return;
 			}
 
-			//match = _blockStartRegex.Match(line.Text);
-			//if(match.Success)
-			//{
-			//	var type = match.Groups["type"].Value;
-			//	var id = int.Parse(match.Groups["id"].Value);
-			//	var cardId = match.Groups["cardId"].Value.Trim();
-			//	BlockStart?.Invoke(new BlockData(type, id, cardId));
-			//	return;
-			//}
+			match = _blockStartRegex.Match(line.Text);
+			if(match.Success)
+			{
+				var type = match.Groups["type"].Value;
+				var id = int.Parse(match.Groups["id"].Value);
+				var cardId = match.Groups["cardId"].Value.Trim();
+				BlockStart?.Invoke(new BlockData(type, id, cardId));
+				return;
+			}
 
-			//if(line.Text.Contains("BLOCK_END"))
-			//	BlockEnd?.Invoke();
+			if(line.Text.Contains("BLOCK_END"))
+			{
+				BlockEnd?.Invoke();
+				return;
+			}
 		}
 	}
 }

@@ -5,12 +5,16 @@ using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.Logging;
-using Entity = HearthSim.Core.Hearthstone.Entities.Entity;
 
 namespace HearthSim.Core.Hearthstone
 {
 	public class GameState
 	{
+		private readonly List<IGameStateModifier> _modifiers;
+		private readonly List<IGameStateModifier> _outstandingModifications;
+
+		private MatchInfo _matchInfo;
+
 		public GameState()
 		{
 			Entities = new Dictionary<int, Entity>();
@@ -19,10 +23,6 @@ namespace HearthSim.Core.Hearthstone
 			_outstandingModifications = new List<IGameStateModifier>();
 		}
 
-		private readonly List<IGameStateModifier> _modifiers;
-		private readonly List<IGameStateModifier> _outstandingModifications;
-
-		private MatchInfo _matchInfo;
 		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
 
 		public Dictionary<int, Entity> Entities { get; }
