@@ -54,6 +54,7 @@
     <Compile Include="Hearthstone\GameStateModifiers\IGameStateModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\ShowEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\TagChange.cs" />
+    <Compile Include="Hearthstone\Player.cs" />
     <Compile Include="LogConfig\LogConfig.cs" />
     <Compile Include="LogConfig\LogConfigConstants.cs" />
     <Compile Include="LogConfig\LogConfigItem.cs" />

@@ -21,15 +21,22 @@ namespace HearthSim.Core.Hearthstone
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
 			_outstandingModifications = new List<IGameStateModifier>();
+			LocalPlayer = new Player(this, true);
+			OpposingPlayer = new Player(this, false);
 		}
 
 		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
 
 		public Dictionary<int, Entity> Entities { get; }
-
 		public GameEntity GameEntity { get; set; }
-
 		public Dictionary<int, PlayerEntity> PlayerEntities { get; }
+
+		public PlayerEntity LocalPlayerEntity => PlayerEntities.TryGetValue(MatchInfo?.LocalPlayer.Id ?? -1, out var player) ? player : null;
+		public PlayerEntity OpposingPlayerEntity => PlayerEntities.TryGetValue(MatchInfo?.OpposingPlayer.Id ?? -1, out var player) ? player : null;
+
+		public Player LocalPlayer { get; }
+		public Player OpposingPlayer { get; }
+
 		public int CurrentEntity { get; internal set; }
 
 		public event Action<IGameStateModifier, GameState> OnModified;
