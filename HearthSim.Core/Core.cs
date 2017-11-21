@@ -25,6 +25,9 @@ namespace HearthSim.Core
 			DecksParser = new DecksParser();
 			LogParserManager.RegisterParser(DecksParser);
 
+			LoadingScreenParser = new LoadingScreenParser();
+			LogParserManager.RegisterParser(LoadingScreenParser);
+
 			LogReader = new LogReader(
 				Path.Combine(hearthstoneDirectory, "Logs"),
 				new []
@@ -41,6 +44,7 @@ namespace HearthSim.Core
 		public Game Game { get; }
 		public PowerParser PowerParser { get; }
 		public DecksParser DecksParser { get; }
+		public LoadingScreenParser LoadingScreenParser { get; }
 		public LogParserManager LogParserManager { get; }
 		internal LogReader LogReader { get; }
 

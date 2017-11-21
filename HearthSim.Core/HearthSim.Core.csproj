@@ -63,6 +63,7 @@
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
     <Compile Include="LogParsing\Parsers\DecksParser.cs" />
     <Compile Include="LogParsing\Parsers\GameTagParser.cs" />
+    <Compile Include="LogParsing\Parsers\LoadingScreenParser.cs" />
     <Compile Include="LogParsing\Parsers\PowerData\BlockData.cs" />
     <Compile Include="LogParsing\Parsers\PowerData\EntityData.cs" />
     <Compile Include="LogParsing\Parsers\PowerData\GameEntityData.cs" />
