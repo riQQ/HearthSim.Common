@@ -39,9 +39,7 @@ namespace HearthSim.Core.Hearthstone
 
 		public int CurrentEntity { get; internal set; }
 
-		public event Action<IGameStateModifier, GameState> OnModified;
-
-		public void Apply(IGameStateModifier modifier)
+		internal void Apply(IGameStateModifier modifier)
 		{
 			if(modifier is TagChange tagChange && !tagChange.CanApply)
 			{
@@ -56,7 +54,6 @@ namespace HearthSim.Core.Hearthstone
 			}
 			modifier.Apply(this);
 			_modifiers.Add(modifier);
-			OnModified?.Invoke(modifier, this);
 		}
 
 		private bool TryResolveEntityName(string name, out int entityId)

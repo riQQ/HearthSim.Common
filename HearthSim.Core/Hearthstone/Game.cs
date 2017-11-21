@@ -2,11 +2,6 @@
 {
 	public class Game
 	{
-		public Game()
-		{
-			State = new GameState();
-		}
-
-		public GameState State { get; }
+		public GameState CurrentGame { get; internal set; }
 	}
 }
