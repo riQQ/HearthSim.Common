@@ -5,7 +5,7 @@ using HearthSim.Core.LogReading.Data;
 
 namespace HearthSim.Core.LogReading
 {
-	public class NewLinesEventArgs : EventArgs
+	internal class NewLinesEventArgs : EventArgs
 	{
 		public NewLinesEventArgs(IEnumerable<Line> lines)
 		{

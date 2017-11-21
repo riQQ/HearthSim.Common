@@ -95,6 +95,7 @@ namespace DemoApp
 			_core = new Core(path);
 			_core.GameStateChanged += UpdateMulligan;
 			_core.GameStateChanged += UpdatePlayerCard;
+			_core.Start();
 		}
 	}
 }

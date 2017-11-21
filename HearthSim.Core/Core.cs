@@ -38,8 +38,11 @@ namespace HearthSim.Core
 				}.Concat(additionalLogReaders).ToArray()
 			);
 			LogReader.NewLines += eventArgs => LogParserManager.Parse(eventArgs.Lines);
-			LogReader.Start();
+			LogReader.LogConfigUpdated += HearthstoneRestartRequired;
+			LogReader.LogConfigUpdateFailed += LogConfigError;
 		}
+
+		public void Start() => LogReader.Start();
 
 		public Game Game { get; }
 		public PowerParser PowerParser { get; }
@@ -49,6 +52,8 @@ namespace HearthSim.Core
 		internal LogReader LogReader { get; }
 
 		public event Action<IGameStateModifier, GameState> GameStateChanged;
+		public event Action HearthstoneRestartRequired;
+		public event Action<Exception> LogConfigError;
 
 		private void PowerParser_CreateGame()
 		{

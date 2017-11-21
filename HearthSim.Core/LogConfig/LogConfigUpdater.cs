@@ -14,7 +14,7 @@ namespace HearthSim.Core.LogConfig
 		private static bool _running;
 		private static List<string> _requiredLogs;
 		public static event Action LogConfigUpdated;
-		public static event Action LogConfigUpdateFailed;
+		public static event Action<Exception> LogConfigUpdateFailed;
 
 		public static async Task Run(IEnumerable<string> requiredLogs = null)
 		{
@@ -39,7 +39,7 @@ namespace HearthSim.Core.LogConfig
 			catch(Exception e)
 			{
 				Log.Error(e);
-				LogConfigUpdateFailed?.Invoke();
+				LogConfigUpdateFailed?.Invoke(e);
 			}
 			finally
 			{

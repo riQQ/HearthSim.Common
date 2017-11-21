@@ -11,7 +11,7 @@ using HearthSim.Core.Util.Watchers;
 
 namespace HearthSim.Core.LogReading
 {
-	public class LogReader
+	internal class LogReader
 	{
 		internal const int UpdateDelay = 100;
 		private readonly List<LogWatcher> _watchers = new List<LogWatcher>();
@@ -32,7 +32,7 @@ namespace HearthSim.Core.LogReading
 
 		public event Action<NewLinesEventArgs> NewLines;
 		public event Action LogConfigUpdated;
-		public event Action LogConfigUpdateFailed;
+		public event Action<Exception> LogConfigUpdateFailed;
 
 		public void Start()
 		{

@@ -6,7 +6,7 @@ using HearthSim.Core.LogReading.Data;
 
 namespace HearthSim.Core.LogReading.Internal
 {
-	public class Analyzer
+	internal class Analyzer
 	{
 		private const int ChunkSize = 4096;
 

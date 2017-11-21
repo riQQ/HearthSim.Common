@@ -11,7 +11,7 @@ using HearthSim.Core.Util.Logging;
 
 namespace HearthSim.Core.LogReading.Internal
 {
-	public class LogWatcher
+	internal class LogWatcher
 	{
 		public string FilePath { get; }
 		private ConcurrentQueue<Line> _lines = new ConcurrentQueue<Line>();
