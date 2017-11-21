@@ -92,17 +92,17 @@ namespace HearthSim.Core.LogReading.Internal
 							string line;
 							while(!sr.EndOfStream && (line = sr.ReadLine()) != null)
 							{
-								if(line.StartsWith("D "))
+								var next = sr.Peek();
+								if(!sr.EndOfStream && !(next == 'D' || next == 'I' || next == 'W'))
+									break;
+								var logLine = new Line(Info.Name, line);
+								if(logLine.IsValid)
 								{
-									var next = sr.Peek();
-									if(!sr.EndOfStream && !(next == 'D' || next == 'W'))
-										break;
-									var logLine = new Line(Info.Name, line);
 									if(logLine.Time >= _startingPoint && (!Info.HasFilters || Info.Filters.Any(x => x(logLine.Text))))
 										_lines.Enqueue(logLine);
 								}
 								else
-									Log.Debug($"{Info.Name}.log line ignored: {line}");
+									Log.Debug($"Invalid {Info.Name}.log line ignored: {line}");
 								_offset += Encoding.UTF8.GetByteCount(line + Environment.NewLine);
 							}
 						}

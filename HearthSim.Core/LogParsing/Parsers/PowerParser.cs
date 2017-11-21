@@ -35,13 +35,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public string LogName { get; } = "Power";
 
 		public event Action<GameStateLogEventArgs> GameStateLog;
-		//public event Action<GameEntityData> GameEntity;
-		//public event Action<PlayerEntityData> PlayerEntity;
-		//public event Action<EntityData> FullEntity;
-		//public event Action<EntityData> ShowEntity;
-		//public event Action<EntityData> ChangeEntity;
 		public event Action CreateGame;
-		//public event Action<TagChangeData> TagChange;
 		public event Action<BlockData> BlockStart;
 		public event Action StartSpectator;
 		public event Action EndSpectator;

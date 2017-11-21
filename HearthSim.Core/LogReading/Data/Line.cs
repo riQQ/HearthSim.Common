@@ -5,7 +5,7 @@ namespace HearthSim.Core.LogReading.Data
 {
 	public class Line
 	{
-		private static readonly Regex LineRegex = new Regex(@"^(D|W) (?<ts>([\d:.]+)) (?<text>(.*))$");
+		private static readonly Regex LineRegex = new Regex(@"^(D|I|W) (?<ts>([\d:.]+)) (?<text>(.*))$");
 
 		public Line(string logName, string line)
 		{
@@ -24,11 +24,13 @@ namespace HearthSim.Core.LogReading.Data
 						Time = Time.AddDays(-1);
 				}
 			}
+			IsValid = match.Success;
 		}
 
 		public string LogName { get; }
 		public string RawLine { get; }
 		public string Text { get; }
 		public DateTime Time { get; }
+		public bool IsValid { get; }
 	}
 }

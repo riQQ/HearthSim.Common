@@ -81,7 +81,12 @@ namespace HearthSim.Core.LogReading
 			LogWatcher GetLogWatcher(string name) => _watchers.SingleOrDefault(x => x.Info.Name == name);
 			var power = Analyzer.FindEntryPoint(GetLogWatcher("Power"));
 			var loadingScreen = Analyzer.FindEntryPoint(GetLogWatcher("LoadingScreen"));
-			return loadingScreen > power ? loadingScreen : power;
+			var decks = Analyzer.FindEntryPoint(GetLogWatcher("Decks"));
+			if(decks > DateTime.MinValue)
+				return decks;
+			if(loadingScreen > DateTime.MinValue)
+				return loadingScreen;
+			return power;
 		}
 
 		public async Task Stop()

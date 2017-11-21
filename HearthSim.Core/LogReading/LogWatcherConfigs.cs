@@ -17,6 +17,6 @@ namespace HearthSim.Core.LogReading
 
 		public static LogWatcherData Arena => new LogWatcherData("Arena");
 
-		internal static LogWatcherData FullScreenFx => new LogWatcherData("FullScreenFX");
+		internal static LogWatcherData Decks => new LogWatcherData("Decks", new []{"Game With Deck:"});
 	}
 }

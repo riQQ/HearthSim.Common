@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
@@ -11,23 +12,26 @@ namespace HearthSim.Core
 {
 	public class Core
 	{
-		public Core(string logDirectory, params LogWatcherData[] additionalLogReaders)
+		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
 			Game = new Game();
+			LogParserManager = new LogParserManager();
+
 			PowerParser = new PowerParser();
 			PowerParser.CreateGame += PowerParser_CreateGame;
 			PowerParser.GameStateChange += PowerParser_GameStateChange;
-
-			LogParserManager = new LogParserManager();
 			LogParserManager.RegisterParser(PowerParser);
 
+			DecksParser = new DecksParser();
+			LogParserManager.RegisterParser(DecksParser);
+
 			LogReader = new LogReader(
-				logDirectory,
+				Path.Combine(hearthstoneDirectory, "Logs"),
 				new []
 				{
 					LogWatcherConfigs.Power,
 					LogWatcherConfigs.LoadingScreen,
-					LogWatcherConfigs.FullScreenFx,
+					LogWatcherConfigs.Decks,
 				}.Concat(additionalLogReaders).ToArray()
 			);
 			LogReader.NewLines += eventArgs => LogParserManager.Parse(eventArgs.Lines);
@@ -36,6 +40,7 @@ namespace HearthSim.Core
 
 		public Game Game { get; }
 		public PowerParser PowerParser { get; }
+		public DecksParser DecksParser { get; }
 		public LogParserManager LogParserManager { get; }
 		internal LogReader LogReader { get; }
 
