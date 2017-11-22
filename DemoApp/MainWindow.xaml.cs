@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,6 +11,7 @@ using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util;
+using HearthSim.Core.Util.Exceptions;
 using HearthSim.Core.Util.Logging;
 
 namespace DemoApp
@@ -91,7 +93,16 @@ namespace DemoApp
 		private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
 		{
 			Log.Initialize("D:/", "test");
-			var path = await HearthstoneProc.GetExecutablePath();
+			string path;
+			try
+			{
+				path = await HearthstoneProc.GetExecutablePath();
+			}
+			catch(HearthstoneNotFoundException ex)
+			{
+				Log.Error(ex);
+				return;
+			}
 			_core = new Core(path);
 			_core.GameStateChanged += UpdateMulligan;
 			_core.GameStateChanged += UpdatePlayerCard;
