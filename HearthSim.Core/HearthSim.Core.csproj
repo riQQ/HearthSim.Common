@@ -44,7 +44,6 @@
     <Compile Include="Core.cs" />
     <Compile Include="Hearthstone\Entities\Entity.cs" />
     <Compile Include="Hearthstone\Entities\Entity.TagHelpers.cs" />
-    <Compile Include="Hearthstone\Entities\EntityFactory.cs" />
     <Compile Include="Hearthstone\Entities\GameEntity.cs" />
     <Compile Include="Hearthstone\GameEvents.cs" />
     <Compile Include="Hearthstone\Entities\PlayerEntity.cs" />

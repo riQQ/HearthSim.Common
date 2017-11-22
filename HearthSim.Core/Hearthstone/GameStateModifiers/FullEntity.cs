@@ -19,19 +19,21 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 		{
 			if(_data is GameEntityData g)
 			{
-				var entity = EntityFactory.GameEntity(g);
+				var entity = new GameEntity(g.Id);
 				gameState.GameEntity = entity;
 				gameState.Entities[_data.Id] = gameState.GameEntity;
 			}
 			else if(_data is PlayerEntityData p)
 			{
-				var entity = EntityFactory.PlayerEntity(p);
+				var entity = new PlayerEntity(p.Id, p.PlayerId);
 				gameState.PlayerEntities[entity.PlayerId] = entity;
 				gameState.Entities[_data.Id] = entity;
 			}
 			else
 			{
-				var entity = EntityFactory.Entity(_data);
+				var entity = new Entity(_data.Id, _data.CardId);
+				if(_data.Zone.HasValue)
+					entity.Tags[GameTag.ZONE] = (int)_data.Zone.Value;
 				entity.Info.JoustReveal = _joustReveal;
 				gameState.Entities[_data.Id] = entity;
 			}
