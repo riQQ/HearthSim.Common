@@ -64,15 +64,15 @@ namespace HearthSim.Core
 
 		private void PowerParser_CreateGame()
 		{
+			if(Game.CurrentGame != null)
+				Game.CurrentGame.Modified -= GameStateChanged;
 			Game.CurrentGame = new GameState();
+			Game.CurrentGame.Modified += GameStateChanged;
 		}
 
 		private void PowerParser_GameStateChange(IGameStateModifier mod)
 		{
-			if(Game.CurrentGame == null)
-				return;
-			Game.CurrentGame.Apply(mod);
-			GameStateChanged?.Invoke(mod, Game.CurrentGame);
+			Game.CurrentGame?.Apply(mod);
 		}
 
 		private void PowerParser_BlockStart(BlockData block)

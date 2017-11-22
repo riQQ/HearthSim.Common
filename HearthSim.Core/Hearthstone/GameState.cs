@@ -11,8 +11,8 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class GameState
 	{
+		private readonly Queue<IGameStateModifier> _creationTags;
 		private readonly List<IGameStateModifier> _modifiers;
-		private readonly List<IGameStateModifier> _outstandingModifications;
 
 		private MatchInfo _matchInfo;
 
@@ -21,7 +21,7 @@ namespace HearthSim.Core.Hearthstone
 			Entities = new Dictionary<int, Entity>();
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
-			_outstandingModifications = new List<IGameStateModifier>();
+			_creationTags = new Queue<IGameStateModifier>();
 			LocalPlayer = new Player(this, true);
 			OpposingPlayer = new Player(this, false);
 		}
@@ -32,31 +32,52 @@ namespace HearthSim.Core.Hearthstone
 		public GameEntity GameEntity { get; set; }
 		public Dictionary<int, PlayerEntity> PlayerEntities { get; }
 
-		public PlayerEntity LocalPlayerEntity => PlayerEntities.TryGetValue(MatchInfo?.LocalPlayer.Id ?? -1, out var player) ? player : null;
-		public PlayerEntity OpposingPlayerEntity => PlayerEntities.TryGetValue(MatchInfo?.OpposingPlayer.Id ?? -1, out var player) ? player : null;
+		public PlayerEntity LocalPlayerEntity => TryGetPlayerEntity(MatchInfo?.LocalPlayer);
+		public PlayerEntity OpposingPlayerEntity => TryGetPlayerEntity(MatchInfo?.OpposingPlayer);
 
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
 
 		public int CurrentEntity { get; internal set; }
 
-		public Entity LastCardPlayed => Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
+		public Entity LastCardPlayed 
+			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
+
+		internal event Action<IGameStateModifier, GameState> Modified;
+
+		private PlayerEntity TryGetPlayerEntity(MatchInfo.Player player)
+			=> player != null && PlayerEntities.TryGetValue(player.Id, out var playerEntity) ? playerEntity : null;
 
 		internal void Apply(IGameStateModifier modifier)
 		{
-			if(modifier is TagChange tagChange && !tagChange.CanApply)
+			var tagChange = modifier as TagChange;
+			if(tagChange != null && !tagChange.CanApply)
 			{
 				if(TryResolveEntityName(tagChange.EntityName, out var entityId))
 					tagChange.ResolveEntityId(entityId);
 				else
 				{
 					Log.Debug($"Could not apply tag={tagChange.Tag}, value={tagChange.Tag} on {tagChange.EntityName}");
-					_outstandingModifications.Add(modifier);
 					return;
 				}
 			}
+
+			var isCreationTag = tagChange?.CreationTag == true;
+
+			// Wait for all creation tags to be applied before invoking Modified
+			if(isCreationTag)
+				_creationTags.Enqueue(tagChange);
+			else
+			{
+				while(_creationTags.Count > 0)
+					Modified?.Invoke(_creationTags.Dequeue(), this);
+			}
+
 			modifier.Apply(this);
 			_modifiers.Add(modifier);
+
+			if(!isCreationTag)
+				Modified?.Invoke(modifier, this);
 		}
 
 		private bool TryResolveEntityName(string name, out int entityId)
