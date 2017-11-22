@@ -4,7 +4,7 @@ using HearthDb.Enums;
 
 namespace HearthSim.Core.Hearthstone.Entities
 {
-	public class Entity
+	public partial class Entity
 	{
 		private Card _card;
 
@@ -17,64 +17,16 @@ namespace HearthSim.Core.Hearthstone.Entities
 		}
 
 		public int Id { get; }
-
 		public string CardId { get; set; }
-
 		public Dictionary<GameTag, int> Tags { get; }
-
-		public bool HasCardId => !string.IsNullOrEmpty(CardId);
-
-		public bool IsSecret => HasTag(GameTag.SECRET);
-
-		public bool IsSpell => GetTag(GameTag.CARDTYPE) == (int)CardType.SPELL;
-
-		public bool IsHeroPower => GetTag(GameTag.CARDTYPE) == (int)CardType.HERO_POWER;
-
-		public int Attack => GetTag(GameTag.ATK);
-
-		public int Health => GetTag(GameTag.HEALTH) - GetTag(GameTag.DAMAGE);
-
-		public int Cost => HasTag(GameTag.COST) ? GetTag(GameTag.COST) : Card?.Cost ?? 0;
-
-		public bool IsMinion => GetTag(GameTag.CARDTYPE) == (int)CardType.MINION;
-
-		public bool IsPlayableCard => IsMinion || IsSpell || IsWeapon || IsPlayableHero;
-
-		public bool IsWeapon => GetTag(GameTag.CARDTYPE) == (int)CardType.WEAPON;
-
-		public bool IsInHand => IsInZone(Zone.HAND);
-
-		public bool IsInPlay => IsInZone(Zone.PLAY);
-
-		public bool IsInDeck => IsInZone(Zone.DECK);
-
-		public bool IsInGraveyard => IsInZone(Zone.GRAVEYARD);
-
-		public bool IsInSetAside => IsInZone(Zone.SETASIDE);
-
-		public bool IsInSecret => IsInZone(Zone.SECRET);
-
-		public bool IsQuest => HasTag(GameTag.QUEST);
-
-		public bool IsHero => GetTag(GameTag.CARDTYPE) == (int)CardType.HERO;
-
-		public bool IsPlayableHero => IsHero && Card != null && Card.Set != CardSet.CORE && Card.Set != CardSet.HERO_SKINS && Card.Collectible;
-
-		public bool IsActiveDeathrattle => HasTag(GameTag.DEATHRATTLE) && GetTag(GameTag.DEATHRATTLE) == 1;
+		public EntityInfo Info { get; }
 
 		public Card Card => _card ?? (_card = HasCardId && Cards.All.TryGetValue(CardId, out var card) ? card : null);
 
-		public EntityInfo Info { get; }
-
-		public bool IsCreated => HasTag(GameTag.CREATOR) || HasTag(GameTag.DISPLAYED_CREATOR) || Info.JoustReveal;
+		public bool HasCardId => !string.IsNullOrEmpty(CardId);
 
 		public int GetTag(GameTag tag) => Tags.TryGetValue(tag, out var value) ? value : 0;
-
 		public bool HasTag(GameTag tag) => GetTag(tag) > 0;
-
-		public bool IsInZone(Zone zone) => GetTag(GameTag.ZONE) == (int)zone;
-
-		public bool IsControlledBy(int controllerId) => GetTag(GameTag.CONTROLLER) == controllerId;
 
 		public override string ToString()
 		{
@@ -85,6 +37,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 	public class EntityInfo
 	{
 		private readonly Entity _entity;
+
 		public EntityInfo(Entity entity)
 		{
 			_entity = entity;
