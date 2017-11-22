@@ -1,6 +1,6 @@
 ﻿using HearthDb.Enums;
 
-namespace HearthSim.Core.LogParsing.Parsers.PowerData
+namespace HearthSim.Core.LogParsing.Parsers.Power
 {
 	public class EntityData
 	{

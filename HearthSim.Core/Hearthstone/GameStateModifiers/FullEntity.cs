@@ -1,5 +1,5 @@
 ﻿using HearthSim.Core.Hearthstone.Entities;
-using HearthSim.Core.LogParsing.Parsers.PowerData;
+using HearthSim.Core.LogParsing.Parsers.Power;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {

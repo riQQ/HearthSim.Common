@@ -5,6 +5,7 @@ using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
+using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
 
@@ -12,14 +13,18 @@ namespace HearthSim.Core
 {
 	public class Core
 	{
+		private readonly BlockHelper _blockHelper;
+
 		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
 			Game = new Game();
+			_blockHelper = new BlockHelper(Game);
 			LogParserManager = new LogParserManager();
 
 			PowerParser = new PowerParser();
 			PowerParser.CreateGame += PowerParser_CreateGame;
 			PowerParser.GameStateChange += PowerParser_GameStateChange;
+			PowerParser.BlockStart += PowerParser_BlockStart;
 			LogParserManager.RegisterParser(PowerParser);
 
 			DecksParser = new DecksParser();
@@ -66,6 +71,12 @@ namespace HearthSim.Core
 				return;
 			Game.CurrentGame.Apply(mod);
 			GameStateChanged?.Invoke(mod, Game.CurrentGame);
+		}
+
+		private void PowerParser_BlockStart(BlockData block)
+		{
+			foreach(var cardId in _blockHelper.GetCreatedCards(block))
+				block.PredictedCards.Add(cardId);
 		}
 	}
 }

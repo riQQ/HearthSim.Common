@@ -1,4 +1,4 @@
-﻿namespace HearthSim.Core.LogParsing.Parsers.PowerData
+﻿namespace HearthSim.Core.LogParsing.Parsers.Power
 {
 	public class PlayerEntityData : EntityData
 	{

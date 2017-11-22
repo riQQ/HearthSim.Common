@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HearthDb.Enums;
 using HearthMirror;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
@@ -38,6 +39,8 @@ namespace HearthSim.Core.Hearthstone
 		public Player OpposingPlayer { get; }
 
 		public int CurrentEntity { get; internal set; }
+
+		public Entity LastCardPlayed => Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
 
 		internal void Apply(IGameStateModifier modifier)
 		{

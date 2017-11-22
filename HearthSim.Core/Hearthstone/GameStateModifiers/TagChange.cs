@@ -1,6 +1,6 @@
 ﻿using HearthDb.CardDefs;
 using HearthDb.Enums;
-using HearthSim.Core.LogParsing.Parsers.PowerData;
+using HearthSim.Core.LogParsing.Parsers.Power;
 using Entity = HearthSim.Core.Hearthstone.Entities.Entity;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers

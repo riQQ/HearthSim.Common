@@ -4,35 +4,33 @@ using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing.EventArgs;
 using HearthSim.Core.LogParsing.Interfaces;
-using HearthSim.Core.LogParsing.Parsers.PowerData;
+using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading.Data;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {
 	public class PowerParser : ILogParser
 	{
-		private readonly Regex _blockStartRegex =
-			new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)).*id=(?<id>\d*).*(cardId=(?<Id>(\w*))).*Target=(?<target>(.+)).*SubOption=(?<subOption>(.+))");
-
-		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
+		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)).*id=(?<id>\d*).*(cardId=(?<cardId>(\w*))).*Target=(?<target>(.+)).*SubOption=(?<subOption>(.+))");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
-
-		private readonly Regex _entityRegex =
-			new Regex(
-				@"(?=id=(?<id>(\d+)))(?=name=(?<name>(\w+)))?(?=zone=(?<zone>(\w+)))?(?=zonePos=(?<zonePos>(\d+)))?(?=cardId=(?<cardId>(\w+)))?(?=player=(?<player>(\d+)))?(?=type=(?<type>(\w+)))?");
-
+		private readonly Regex _entityRegex = new Regex(@"(?=id=(?<id>(\d+)))(?=name=(?<name>(\w+)))?(?=zone=(?<zone>(\w+)))?(?=zonePos=(?<zonePos>(\d+)))?(?=cardId=(?<cardId>(\w+)))?(?=player=(?<player>(\d+)))?(?=type=(?<type>(\w+)))?");
+		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
 		private readonly Regex _gameEntityRegex = new Regex(@"GameEntity\ EntityID=(?<id>(\d+))");
+		private readonly Regex _playerEntityRegex = new Regex(@"Player\ EntityID=(?<id>(\d+))\ PlayerID=(?<playerId>(\d+))\ GameAccountId=(?<gameAccountId>(.+))");
+		private readonly Regex _tagChangeRegex = new Regex(@"TAG_CHANGE\ Entity=(?<entity>(.+))\ tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
+		private readonly Regex _updatingEntityRegex = new Regex(@"(?<type>(SHOW_ENTITY|CHANGE_ENTITY))\ -\ Updating\ Entity=(?<entity>(.+))\ CardID=(?<cardId>(\w*))");
 
-		private readonly Regex _playerEntityRegex =
-			new Regex(@"Player\ EntityID=(?<id>(\d+))\ PlayerID=(?<playerId>(\d+))\ GameAccountId=(?<gameAccountId>(.+))");
-
-		private readonly Regex _tagChangeRegex =
-			new Regex(@"TAG_CHANGE\ Entity=(?<entity>(.+))\ tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
-
-		private readonly Regex _updatingEntityRegex =
-			new Regex(@"(?<type>(SHOW_ENTITY|CHANGE_ENTITY))\ -\ Updating\ Entity=(?<entity>(.+))\ CardID=(?<cardId>(\w*))");
+		private Block _currentBlock;
 
 		public string LogName { get; } = "Power";
+
+		public void Parse(Line line)
+		{
+			if(line.Text.StartsWith("GameState."))
+				GameStateLog?.Invoke(new GameStateLogEventArgs(line));
+			else
+				HandlePowerTaskList(line);
+		}
 
 		public event Action<GameStateLogEventArgs> GameStateLog;
 		public event Action CreateGame;
@@ -42,14 +40,6 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public event Action BlockEnd;
 
 		public event Action<IGameStateModifier> GameStateChange;
-
-		public void Parse(Line line)
-		{
-			if(line.Text.StartsWith("GameState."))
-				GameStateLog?.Invoke(new GameStateLogEventArgs(line));
-			else
-				HandlePowerTaskList(line);
-		}
 
 		private EntityData ParseEntity(string entity)
 		{
@@ -98,6 +88,8 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var id = int.Parse(match.Groups["id"].Value);
 				var cardId = match.Groups["cardId"].Value;
 				var zone = GameTagParser.ParseEnum<Zone>(match.Groups["zone"].Value);
+				if(zone != Zone.SETASIDE)
+					cardId = _currentBlock?.Data.NextPredictedCard() ?? cardId;
 				GameStateChange?.Invoke(new FullEntity(new EntityData(id, null, cardId, zone)));
 				return;
 			}
@@ -146,15 +138,40 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var type = match.Groups["type"].Value;
 				var id = int.Parse(match.Groups["id"].Value);
 				var cardId = match.Groups["cardId"].Value.Trim();
-				BlockStart?.Invoke(new BlockData(type, id, cardId));
+				var target = match.Groups["target"].Value.Trim();
+				var entityMatch = _entityRegex.Match(target);
+				EntityData targetData = null;
+				if(entityMatch.Success)
+				{
+					var entityId = int.Parse(entityMatch.Groups["id"].Value.Trim());
+					var entityCardId = entityMatch.Groups["cardId"].Value.Trim();
+					targetData = new EntityData(entityId, "", entityCardId, null);
+				}
+				var blockData = new BlockData(type, id, cardId, targetData);
+				_currentBlock = _currentBlock?.CreateChild(blockData) ?? new Block(null, blockData);
+				BlockStart?.Invoke(blockData);
 				return;
 			}
 
 			if(line.Text.Contains("BLOCK_END"))
 			{
+				_currentBlock = _currentBlock?.Parent;
 				BlockEnd?.Invoke();
-				return;
 			}
+		}
+
+		private class Block
+		{
+			public Block(Block parent, BlockData data)
+			{
+				Parent = parent;
+				Data = data;
+			}
+
+			public Block Parent { get; }
+			public BlockData Data { get; }
+
+			public Block CreateChild(BlockData data) => new Block(this, data);
 		}
 	}
 }
