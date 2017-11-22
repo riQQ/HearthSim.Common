@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.LogParsing.Interfaces;
+using HearthSim.Core.LogParsing.Parsers.LoadingScreen;
 using HearthSim.Core.LogReading.Data;
 
 namespace HearthSim.Core.LogParsing.Parsers
@@ -27,38 +29,5 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public event Action<ModeChangedEventArgs> ModeChanged;
 
 		private Mode GetMode(string modeString) => Enum.TryParse(modeString, out Mode mode) ? mode : Mode.INVALID;
-
-		public class ModeChangedEventArgs
-		{
-			public ModeChangedEventArgs(Mode currentMode, Mode previousMode)
-			{
-				CurrentMode = currentMode;
-				PreviousMode = previousMode;
-			}
-
-			public Mode PreviousMode { get; }
-
-			public Mode CurrentMode { get; }
-		}
-
-		public enum Mode
-		{
-			INVALID,
-			STARTUP,
-			LOGIN,
-			HUB,
-			GAMEPLAY,
-			COLLECTIONMANAGER,
-			PACKOPENING,
-			TOURNAMENT,
-			FRIENDLY,
-			FATAL_ERROR,
-			DRAFT,
-			CREDITS,
-			RESET,
-			ADVENTURE,
-			TAVERN_BRAWL,
-			FIRESIDE_GATHERING
-		}
 	}
 }

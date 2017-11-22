@@ -5,6 +5,7 @@ using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
+using HearthSim.Core.LogParsing.Parsers.LoadingScreen;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
@@ -31,6 +32,7 @@ namespace HearthSim.Core
 			LogParserManager.RegisterParser(DecksParser);
 
 			LoadingScreenParser = new LoadingScreenParser();
+			LoadingScreenParser.ModeChanged += LoadingScreenParser_ModeChanged;
 			LogParserManager.RegisterParser(LoadingScreenParser);
 
 			LogReader = new LogReader(
@@ -77,6 +79,12 @@ namespace HearthSim.Core
 		{
 			foreach(var cardId in _blockHelper.GetCreatedCards(block))
 				block.PredictedCards.Add(cardId);
+		}
+
+		private void LoadingScreenParser_ModeChanged(ModeChangedEventArgs args)
+		{
+			Game.CurrentMode = args.CurrentMode;
+			Game.PreviousMode = args.PreviousMode;
 		}
 	}
 }

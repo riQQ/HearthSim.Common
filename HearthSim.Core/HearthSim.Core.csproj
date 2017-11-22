@@ -61,6 +61,8 @@
     <Compile Include="LogConfig\LogConfigItem.cs" />
     <Compile Include="LogConfig\LogConfigUpdater.cs" />
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
+    <Compile Include="Hearthstone\Enums\Mode.cs" />
+    <Compile Include="LogParsing\Parsers\LoadingScreen\ModeChangedEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\Power\BlockHelper.cs" />
     <Compile Include="LogParsing\Parsers\DecksParser.cs" />
     <Compile Include="LogParsing\Parsers\Power\GameTagParser.cs" />
