@@ -15,7 +15,9 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 
 		public override void Apply2(GameState gameState)
 		{
-			gameState.Entities[_entityId].CardId = _cardId;
+			var entity = gameState.Entities[_entityId];
+			entity.CardId = _cardId;
+			entity.Info.Hidden = false;
 		}
 
 		public override string ToString()

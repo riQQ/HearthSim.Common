@@ -102,7 +102,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool Stolen => OriginalController > 0 && OriginalController != _entity.GetTag(GameTag.CONTROLLER);
 		//public bool HasOutstandingTagChanges { get; set; }
 		public int OriginalController { get; set; }
-		//public bool Hidden { get; set; }
+		public bool Hidden { get; set; }
 		//public int CostReduction { get; set; }
 		public Zone? OriginalZone { get; set; }
 		//public string OriginalCardId { get; private set; }

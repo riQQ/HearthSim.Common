@@ -13,6 +13,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 	{
 		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)).*id=(?<id>\d*).*(cardId=(?<cardId>(\w*))).*Target=(?<target>(.+)).*SubOption=(?<subOption>(.+))");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
+		private readonly Regex _hideEntityRegex = new Regex(@"HIDE_ENTITY - .* (id=(?<id>\d+))");
 		private readonly Regex _entityRegex = new Regex(@"(?=id=(?<id>(\d+)))(?=name=(?<name>(\w+)))?(?=zone=(?<zone>(\w+)))?(?=zonePos=(?<zonePos>(\d+)))?(?=cardId=(?<cardId>(\w+)))?(?=player=(?<player>(\d+)))?(?=type=(?<type>(\w+)))?");
 		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
 		private readonly Regex _gameEntityRegex = new Regex(@"GameEntity\ EntityID=(?<id>(\d+))");
@@ -124,6 +125,13 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var value = GameTagParser.ParseTag(tag, match.Groups["value"].Value);
 				GameStateChange?.Invoke(new TagChange(new TagChangeData(tag, value, true, null, null)));
 				return;
+			}
+
+			match = _hideEntityRegex.Match(line.Text);
+			if(match.Success)
+			{
+				var id = int.Parse(match.Groups["id"].Value);
+				GameStateChange?.Invoke(new HideEntity(new EntityData(id, "", null, null)));
 			}
 
 			if(line.Text.Contains("End Spectator"))

@@ -52,6 +52,7 @@
     <Compile Include="Hearthstone\GameStateModifiers\ChangeEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\EntityModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\FullEntity.cs" />
+    <Compile Include="Hearthstone\GameStateModifiers\HideEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\IGameStateModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\ShowEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\TagChange.cs" />
