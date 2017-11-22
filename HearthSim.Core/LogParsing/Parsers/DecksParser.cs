@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HearthDb.Deckstrings;
 using HearthSim.Core.LogParsing.Interfaces;
@@ -11,6 +12,14 @@ namespace HearthSim.Core.LogParsing.Parsers
 	{
 		private readonly List<Deck> _current;
 		private readonly List<string> _currentDeck;
+
+		private readonly string[] _findingGame =
+		{
+			"Finding Game With Deck:",
+			"Finding Friendly Game With Deck:",
+			"Starting Arena Game With Deck:"
+		};
+
 		private State _state;
 
 		public DecksParser()
@@ -24,16 +33,21 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		public void Parse(Line line)
 		{
+			const string findingGameWithHero = "Finding Game With Hero: ";
 			if(line.Text == "Deck Contents Received:")
 			{
 				_state = State.ReceivingDecks;
 				InvokeFoundDecksAsync();
 			}
-			else if(line.Text == "Finding Game With Deck:" || line.Text == "Starting Arena Game With Deck:")
+			else if(line.Text == "Finished Editing Deck:")
+				UpdateState(State.FinishedEditingDeck);
+			else if(_findingGame.Contains(line.Text))
+				UpdateState(State.FindingGameWithDeck);
+			else if(line.Text == findingGameWithHero)
 			{
-				if(_state == State.ReceivingDecks)
-					InvokeFoundDecks();
-				_state = State.FindingGame;
+				UpdateState(State.FindingGameWithHero);
+				if(int.TryParse(line.Text.Substring(findingGameWithHero.Length), out var dbfId))
+					FindingGameWithHero?.Invoke(dbfId);
 			}
 			else
 			{
@@ -41,13 +55,22 @@ namespace HearthSim.Core.LogParsing.Parsers
 				if(_currentDeck.Count == 3)
 				{
 					var deck = DeckSerializer.Deserialize(string.Join("\n", _currentDeck));
-					if(_state == State.FindingGame)
-						FindingGame?.Invoke(deck);
+					if(_state == State.FindingGameWithDeck)
+						FindingGameWithDeck?.Invoke(deck);
+					else if(_state == State.FinishedEditingDeck)
+						EditedDeck?.Invoke(deck);
 					else
 						_current.Add(deck);
 					_currentDeck.Clear();
 				}
 			}
+		}
+
+		private void UpdateState(State state)
+		{
+			if(_state == State.ReceivingDecks)
+				InvokeFoundDecks();
+			_state = state;
 		}
 
 		private async void InvokeFoundDecksAsync()
@@ -64,14 +87,18 @@ namespace HearthSim.Core.LogParsing.Parsers
 			_current.Clear();
 		}
 
+		public event Action<Deck> EditedDeck;
 		public event Action<List<Deck>> FoundDecks;
-		public event Action<Deck> FindingGame;
+		public event Action<Deck> FindingGameWithDeck;
+		public event Action<int> FindingGameWithHero;
 
 		private enum State
 		{
 			None,
 			ReceivingDecks,
-			FindingGame
+			FindingGameWithDeck,
+			FindingGameWithHero,
+			FinishedEditingDeck
 		}
 	}
 }
