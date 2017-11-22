@@ -7,8 +7,8 @@ using DemoApp.Annotations;
 using HearthDb.Enums;
 using HearthSim.Core;
 using HearthSim.Core.Hearthstone;
+using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
-using HearthSim.Core.LogReading;
 using HearthSim.Core.Util;
 using HearthSim.Core.Util.Logging;
 
@@ -30,18 +30,18 @@ namespace DemoApp
 			? _mulliganEntites.Select(x =>
 					new {Entity = Game.Entities[x.Key], Mulliganed = x.Value}
 				).Where(x => x.Entity.IsControlledBy(Game.MatchInfo.LocalPlayer.Id) && !x.Entity.IsCreated)
-				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Card?.Name)
+				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Id + ": " +  x.Entity.Card?.Name)
 			: null;
 
-		public IEnumerable<string> LocalPlayerCards => Game?.LocalPlayer.RevealedCards.Select(x => x.Card?.Name);
+		public IEnumerable<Entity> LocalPlayerCards => Game?.LocalPlayer.RevealedCards;
 
-		public IEnumerable<string> LocalPlayerHand => Game?.LocalPlayer.Hand.Select(x => x.Card?.Name);
+		public IEnumerable<Entity> LocalPlayerHand => Game?.LocalPlayer.Hand;
 
-		public IEnumerable<string> LocalPlayerSecrets => Game?.LocalPlayer.Secret.Select(x => x.Card?.Name);
+		public IEnumerable<Entity> LocalPlayerSecrets => Game?.LocalPlayer.Secret;
 
-		public IEnumerable<string> LocalPlayerGraveyard => Game?.LocalPlayer.Secret.Select(x => x.Card?.Name);
+		public IEnumerable<Entity> LocalPlayerGraveyard => Game?.LocalPlayer.Secret;
 
-		public IEnumerable<string> LocalPlayerQuest => Game?.LocalPlayer.Quest.Select(x => x.Card?.Name);
+		public IEnumerable<Entity> LocalPlayerQuest => Game?.LocalPlayer.Quest;
 
 		public string QuestProgress
 		{

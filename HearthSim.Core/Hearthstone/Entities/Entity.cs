@@ -17,7 +17,9 @@ namespace HearthSim.Core.Hearthstone.Entities
 		}
 
 		public int Id { get; }
+
 		public string CardId { get; set; }
+
 		public Dictionary<GameTag, int> Tags { get; }
 
 		public bool HasCardId => !string.IsNullOrEmpty(CardId);
@@ -59,31 +61,24 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool IsPlayableHero => IsHero && Card != null && Card.Set != CardSet.CORE && Card.Set != CardSet.HERO_SKINS && Card.Collectible;
 
 		public bool IsActiveDeathrattle => HasTag(GameTag.DEATHRATTLE) && GetTag(GameTag.DEATHRATTLE) == 1;
+
 		public Card Card => _card ?? (_card = HasCardId && Cards.All.TryGetValue(CardId, out var card) ? card : null);
 
 		public EntityInfo Info { get; }
 
-		public bool IsCreated => HasTag(GameTag.CREATOR) || HasTag(GameTag.DISPLAYED_CREATOR);
+		public bool IsCreated => HasTag(GameTag.CREATOR) || HasTag(GameTag.DISPLAYED_CREATOR) || Info.JoustReveal;
 
-		public int GetTag(GameTag tag)
-		{
-			Tags.TryGetValue(tag, out var value);
-			return value;
-		}
+		public int GetTag(GameTag tag) => Tags.TryGetValue(tag, out var value) ? value : 0;
 
-		public bool HasTag(GameTag tag)
-		{
-			return GetTag(tag) > 0;
-		}
+		public bool HasTag(GameTag tag) => GetTag(tag) > 0;
 
-		public bool IsInZone(Zone zone)
-		{
-			return GetTag(GameTag.ZONE) == (int)zone;
-		}
+		public bool IsInZone(Zone zone) => GetTag(GameTag.ZONE) == (int)zone;
 
-		public bool IsControlledBy(int controllerId)
+		public bool IsControlledBy(int controllerId) => GetTag(GameTag.CONTROLLER) == controllerId;
+
+		public override string ToString()
 		{
-			return GetTag(GameTag.CONTROLLER) == controllerId;
+			return $"[{Id}{(IsCreated ? "*" : "")}] {Card?.Name} ({CardId})";
 		}
 	}
 
@@ -109,5 +104,6 @@ namespace HearthSim.Core.Hearthstone.Entities
 		//public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);
 		public bool CreatedInDeck => OriginalZone == Zone.DECK;
 		public bool CreatedInHand => OriginalZone == Zone.HAND;
+		public bool JoustReveal { get; set; }
 	}
 }

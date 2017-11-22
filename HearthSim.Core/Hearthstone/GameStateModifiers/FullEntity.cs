@@ -1,4 +1,5 @@
-﻿using HearthSim.Core.Hearthstone.Entities;
+﻿using HearthDb.Enums;
+using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.LogParsing.Parsers.Power;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
@@ -6,10 +7,12 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 	public class FullEntity : EntityModifier
 	{
 		private readonly EntityData _data;
+		private readonly bool _joustReveal;
 
-		public FullEntity(EntityData data) : base(data)
+		public FullEntity(EntityData data, BlockData parentBlock) : base(data)
 		{
 			_data = data;
+			_joustReveal = parentBlock?.Type == BlockType.JOUST;
 		}
 
 		public override void Apply2(GameState gameState)
@@ -27,7 +30,11 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 				gameState.Entities[_data.Id] = entity;
 			}
 			else
-				gameState.Entities[_data.Id] = EntityFactory.Entity(_data);
+			{
+				var entity = EntityFactory.Entity(_data);
+				entity.Info.JoustReveal = _joustReveal;
+				gameState.Entities[_data.Id] = entity;
+			}
 		}
 
 		public override string ToString()

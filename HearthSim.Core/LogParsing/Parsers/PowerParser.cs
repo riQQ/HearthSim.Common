@@ -70,7 +70,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var id = int.Parse(match.Groups["id"].Value);
-				GameStateChange?.Invoke(new FullEntity(new GameEntityData(id)));
+				GameStateChange?.Invoke(new FullEntity(new GameEntityData(id), null));
 				return;
 			}
 
@@ -79,7 +79,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var entityId = int.Parse(match.Groups["id"].Value);
 				var playerId = int.Parse(match.Groups["playerId"].Value);
-				GameStateChange?.Invoke(new FullEntity(new PlayerEntityData(entityId, playerId)));
+				GameStateChange?.Invoke(new FullEntity(new PlayerEntityData(entityId, playerId), null));
 				return;
 			}
 
@@ -91,7 +91,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var zone = GameTagParser.ParseEnum<Zone>(match.Groups["zone"].Value);
 				if(zone != Zone.SETASIDE)
 					cardId = _currentBlock?.Data.NextPredictedCard() ?? cardId;
-				GameStateChange?.Invoke(new FullEntity(new EntityData(id, null, cardId, zone)));
+				GameStateChange?.Invoke(new FullEntity(new EntityData(id, null, cardId, zone), _currentBlock?.Data));
 				return;
 			}
 
