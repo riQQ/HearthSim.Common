@@ -35,6 +35,12 @@ namespace HearthSim.Core
 			LoadingScreenParser.ModeChanged += LoadingScreenParser_ModeChanged;
 			LogParserManager.RegisterParser(LoadingScreenParser);
 
+			ArenaParser = new ArenaParser();
+			LogParserManager.RegisterParser(ArenaParser);
+
+			RachelleParser = new RachelleParser();
+			LogParserManager.RegisterParser(RachelleParser);
+
 			LogReader = new LogReader(
 				Path.Combine(hearthstoneDirectory, "Logs"),
 				new []
@@ -42,6 +48,8 @@ namespace HearthSim.Core
 					LogWatcherConfigs.Power,
 					LogWatcherConfigs.LoadingScreen,
 					LogWatcherConfigs.Decks,
+					LogWatcherConfigs.Arena,
+					LogWatcherConfigs.Rachelle
 				}.Concat(additionalLogReaders).ToArray()
 			);
 			LogReader.NewLines += eventArgs => LogParserManager.Parse(eventArgs.Lines);
@@ -55,6 +63,8 @@ namespace HearthSim.Core
 		public PowerParser PowerParser { get; }
 		public DecksParser DecksParser { get; }
 		public LoadingScreenParser LoadingScreenParser { get; }
+		public ArenaParser ArenaParser { get; }
+		public RachelleParser RachelleParser { get; }
 		public LogParserManager LogParserManager { get; }
 		internal LogReader LogReader { get; }
 

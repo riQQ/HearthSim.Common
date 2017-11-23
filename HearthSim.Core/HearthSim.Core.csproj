@@ -63,6 +63,7 @@
     <Compile Include="LogConfig\LogConfigUpdater.cs" />
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
     <Compile Include="Hearthstone\Enums\Mode.cs" />
+    <Compile Include="LogParsing\Parsers\ArenaParser.cs" />
     <Compile Include="LogParsing\Parsers\LoadingScreen\ModeChangedEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\Power\BlockHelper.cs" />
     <Compile Include="LogParsing\Parsers\DecksParser.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="LogParsing\Parsers\Power\GameEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\PlayerEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\TagChangeData.cs" />
+    <Compile Include="LogParsing\Parsers\RachelleParser.cs" />
     <Compile Include="LogReading\Data\Line.cs" />
     <Compile Include="LogReading\Data\LogWatcherData.cs" />
     <Compile Include="LogReading\Internal\Analyzer.cs" />
