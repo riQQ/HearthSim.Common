@@ -1,6 +1,6 @@
 ﻿using HearthSim.Core.Hearthstone.Enums;
 
-namespace HearthSim.Core.LogParsing.Parsers.LoadingScreen
+namespace HearthSim.Core.Util.EventArgs
 {
 	public class ModeChangedEventArgs
 	{

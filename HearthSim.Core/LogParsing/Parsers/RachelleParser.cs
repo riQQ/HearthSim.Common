@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using HearthSim.Core.LogParsing.Interfaces;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {
@@ -18,18 +19,18 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var wins = int.Parse(match.Groups["wins"].Value);
-				GoldProgressWins?.Invoke(wins);
+				GoldProgressWins?.Invoke(new GoldProgessWinsEventArgs(wins));
 			}
 
 			match = _deckDeletedRegex.Match(line.Text);
 			if(match.Success)
 			{
 				var deckId = long.Parse(match.Groups["deckId"].Value);
-				DeckDeleted?.Invoke(deckId);
+				DeckDeleted?.Invoke(new DeckDeletedEventArgs(deckId));
 			}
 		}
 
-		public event Action<int> GoldProgressWins;
-		public event Action<long> DeckDeleted;
+		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
+		public event Action<DeckDeletedEventArgs> DeckDeleted;
 	}
 }

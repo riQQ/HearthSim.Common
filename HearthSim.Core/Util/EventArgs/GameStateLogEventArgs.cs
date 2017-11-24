@@ -1,6 +1,6 @@
 ﻿using HearthSim.Core.LogReading.Data;
 
-namespace HearthSim.Core.LogParsing.EventArgs
+namespace HearthSim.Core.Util.EventArgs
 {
 	public class GameStateLogEventArgs : System.EventArgs
 	{

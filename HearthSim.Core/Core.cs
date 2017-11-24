@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using HearthSim.Core.Hearthstone;
-using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
-using HearthSim.Core.LogParsing.Parsers.LoadingScreen;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
@@ -15,35 +12,44 @@ namespace HearthSim.Core
 	public class Core
 	{
 		private readonly BlockHelper _blockHelper;
+		private readonly LogReader _logReader;
 
 		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
 			Game = new Game();
 			_blockHelper = new BlockHelper(Game);
-			LogParserManager = new LogParserManager();
+			var logParserManager = new LogParserManager();
 
-			PowerParser = new PowerParser();
-			PowerParser.CreateGame += PowerParser_CreateGame;
-			PowerParser.GameStateChange += PowerParser_GameStateChange;
-			PowerParser.BlockStart += PowerParser_BlockStart;
-			LogParserManager.RegisterParser(PowerParser);
+			var powerParser = new PowerParser();
+			powerParser.CreateGame += Game.OnCreateGame;
+			powerParser.GameStateChange += mod => Game?.CurrentGame.Apply(mod);
+			powerParser.BlockStart += PowerParser_BlockStart;
+			powerParser.StartSpectator += Game.OnSpectatorStart;
+			powerParser.EndSpectator += Game.OnSpectatorEnd;
+			logParserManager.RegisterParser(powerParser);
 
-			DecksParser = new DecksParser();
-			LogParserManager.RegisterParser(DecksParser);
+			var decksParser = new DecksParser();
+			decksParser.EditedDeck += Game.OnDeckEdited;
+			decksParser.FindingGame += Game.OnQueuedForGame;
+			decksParser.FoundDecks += Game.OnConstructedDecksFound;
+			logParserManager.RegisterParser(decksParser);
 
-			LoadingScreenParser = new LoadingScreenParser();
-			LoadingScreenParser.ModeChanged += LoadingScreenParser_ModeChanged;
-			LogParserManager.RegisterParser(LoadingScreenParser);
+			var loadingScreenParser = new LoadingScreenParser();
+			loadingScreenParser.ModeChanged += Game.OnModeChanged;
+			logParserManager.RegisterParser(loadingScreenParser);
 
-			ArenaParser = new ArenaParser();
-			LogParserManager.RegisterParser(ArenaParser);
+			var arenaParser = new ArenaParser();
+			arenaParser.ArenaRunComplete += Game.OnArenaRunComplete;
+			logParserManager.RegisterParser(arenaParser);
 
-			RachelleParser = new RachelleParser();
-			LogParserManager.RegisterParser(RachelleParser);
+			var rachelleParser = new RachelleParser();
+			rachelleParser.DeckDeleted += Game.OnDeckDeleted;
+			rachelleParser.GoldProgressWins += Game.OnGoldProgressWins;
+			logParserManager.RegisterParser(rachelleParser);
 
-			LogReader = new LogReader(
+			_logReader = new LogReader(
 				Path.Combine(hearthstoneDirectory, "Logs"),
-				new []
+				new[]
 				{
 					LogWatcherConfigs.Power,
 					LogWatcherConfigs.LoadingScreen,
@@ -52,49 +58,19 @@ namespace HearthSim.Core
 					LogWatcherConfigs.Rachelle
 				}.Concat(additionalLogReaders).ToArray()
 			);
-			LogReader.NewLines += eventArgs => LogParserManager.Parse(eventArgs.Lines);
-			LogReader.LogConfigUpdated += HearthstoneRestartRequired;
-			LogReader.LogConfigUpdateFailed += LogConfigError;
+			_logReader.NewLines += eventArgs => logParserManager.Parse(eventArgs.Lines);
+			_logReader.LogConfigUpdated += Game.OnHearthstoneRestartRequired;
+			_logReader.LogConfigUpdateFailed += Game.OnLogConfigError;
 		}
-
-		public void Start() => LogReader.Start();
 
 		public Game Game { get; }
-		public PowerParser PowerParser { get; }
-		public DecksParser DecksParser { get; }
-		public LoadingScreenParser LoadingScreenParser { get; }
-		public ArenaParser ArenaParser { get; }
-		public RachelleParser RachelleParser { get; }
-		public LogParserManager LogParserManager { get; }
-		internal LogReader LogReader { get; }
 
-		public event Action<IGameStateModifier, GameState> GameStateChanged;
-		public event Action HearthstoneRestartRequired;
-		public event Action<Exception> LogConfigError;
-
-		private void PowerParser_CreateGame()
-		{
-			if(Game.CurrentGame != null)
-				Game.CurrentGame.Modified -= GameStateChanged;
-			Game.CurrentGame = new GameState();
-			Game.CurrentGame.Modified += GameStateChanged;
-		}
-
-		private void PowerParser_GameStateChange(IGameStateModifier mod)
-		{
-			Game.CurrentGame?.Apply(mod);
-		}
+		public void Start() => _logReader.Start();
 
 		private void PowerParser_BlockStart(BlockData block)
 		{
 			foreach(var cardId in _blockHelper.GetCreatedCards(block))
 				block.PredictedCards.Add(cardId);
-		}
-
-		private void LoadingScreenParser_ModeChanged(ModeChangedEventArgs args)
-		{
-			Game.CurrentMode = args.CurrentMode;
-			Game.PreviousMode = args.PreviousMode;
 		}
 	}
 }

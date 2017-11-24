@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HearthSim.Core.Hearthstone;
 using HearthSim.Core.LogConfig;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.LogReading.Internal;
+using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Logging;
 using HearthSim.Core.Util.Watchers;
@@ -32,7 +34,7 @@ namespace HearthSim.Core.LogReading
 
 		public event Action<NewLinesEventArgs> NewLines;
 		public event Action LogConfigUpdated;
-		public event Action<Exception> LogConfigUpdateFailed;
+		public event Action<LogConfigErrorEventArgs> LogConfigUpdateFailed;
 
 		public void Start()
 		{

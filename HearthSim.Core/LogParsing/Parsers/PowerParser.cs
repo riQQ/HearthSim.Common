@@ -2,10 +2,10 @@
 using System.Text.RegularExpressions;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
-using HearthSim.Core.LogParsing.EventArgs;
 using HearthSim.Core.LogParsing.Interfaces;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {
@@ -33,12 +33,12 @@ namespace HearthSim.Core.LogParsing.Parsers
 				HandlePowerTaskList(line);
 		}
 
-		public event Action<GameStateLogEventArgs> GameStateLog;
-		public event Action CreateGame;
-		public event Action<BlockData> BlockStart;
-		public event Action StartSpectator;
-		public event Action EndSpectator;
-		public event Action BlockEnd;
+		internal event Action<GameStateLogEventArgs> GameStateLog;
+		internal event Action CreateGame;
+		internal event Action<BlockData> BlockStart;
+		internal event Action StartSpectator;
+		internal event Action EndSpectator;
+		internal event Action BlockEnd;
 
 		public event Action<IGameStateModifier> GameStateChange;
 

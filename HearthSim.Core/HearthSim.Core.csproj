@@ -46,9 +46,11 @@
     <Compile Include="Hearthstone\Entities\Entity.TagHelpers.cs" />
     <Compile Include="Hearthstone\Entities\GameEntity.cs" />
     <Compile Include="Hearthstone\GameEvents.cs" />
+    <Compile Include="Hearthstone\GameStateChangeHelper.cs" />
     <Compile Include="Hearthstone\Entities\PlayerEntity.cs" />
     <Compile Include="Hearthstone\Game.cs" />
     <Compile Include="Hearthstone\GameState.cs" />
+    <Compile Include="Util\EventArgs\GameStateChangedEventArgs.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\ChangeEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\EntityModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\FullEntity.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="Hearthstone\GameStateModifiers\IGameStateModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\ShowEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\TagChange.cs" />
+    <Compile Include="Util\EventArgs\LogConfigErrorEventArgs.cs" />
     <Compile Include="Hearthstone\Player.cs" />
     <Compile Include="LogConfig\LogConfig.cs" />
     <Compile Include="LogConfig\LogConfigConstants.cs" />
@@ -64,7 +67,12 @@
     <Compile Include="LogConfig\LogConfigWatcher.cs" />
     <Compile Include="Hearthstone\Enums\Mode.cs" />
     <Compile Include="LogParsing\Parsers\ArenaParser.cs" />
-    <Compile Include="LogParsing\Parsers\LoadingScreen\ModeChangedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\ArenaRunCompleteEventArgs.cs" />
+    <Compile Include="Util\EventArgs\ConstructedDeckFoundEventArgs.cs" />
+    <Compile Include="Util\EventArgs\DeckDeletedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\DeckEditedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\GoldProgessWinsEventArgs.cs" />
+    <Compile Include="Util\EventArgs\ModeChangedEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\Power\BlockHelper.cs" />
     <Compile Include="LogParsing\Parsers\DecksParser.cs" />
     <Compile Include="LogParsing\Parsers\Power\GameTagParser.cs" />
@@ -74,6 +82,7 @@
     <Compile Include="LogParsing\Parsers\Power\GameEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\PlayerEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\TagChangeData.cs" />
+    <Compile Include="Util\EventArgs\QueuedForGameEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\RachelleParser.cs" />
     <Compile Include="LogReading\Data\Line.cs" />
     <Compile Include="LogReading\Data\LogWatcherData.cs" />
@@ -82,8 +91,8 @@
     <Compile Include="LogReading\Internal\Util.cs" />
     <Compile Include="LogReading\LogReader.cs" />
     <Compile Include="LogReading\LogWatcherConfigs.cs" />
-    <Compile Include="LogReading\NewLinesEventArgs.cs" />
-    <Compile Include="LogParsing\EventArgs\GameStateLogEventArgs.cs" />
+    <Compile Include="Util\EventArgs\NewLinesEventArgs.cs" />
+    <Compile Include="Util\EventArgs\GameStateLogEventArgs.cs" />
     <Compile Include="LogParsing\Interfaces\ILogParser.cs" />
     <Compile Include="LogParsing\LogParserManager.cs" />
     <Compile Include="LogParsing\Parsers\PowerParser.cs" />

@@ -2,8 +2,8 @@
 using System.Text.RegularExpressions;
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.LogParsing.Interfaces;
-using HearthSim.Core.LogParsing.Parsers.LoadingScreen;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {

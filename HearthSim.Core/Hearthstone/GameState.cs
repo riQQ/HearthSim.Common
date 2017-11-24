@@ -5,6 +5,7 @@ using HearthMirror;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
+using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
@@ -38,12 +39,13 @@ namespace HearthSim.Core.Hearthstone
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
 
+		//TODO move this into the parser
 		public int CurrentEntity { get; internal set; }
 
 		public Entity LastCardPlayed 
 			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
 
-		internal event Action<IGameStateModifier, GameState> Modified;
+		internal event Action<GameStateChangedEventArgs> Modified;
 
 		private PlayerEntity TryGetPlayerEntity(MatchInfo.Player player)
 			=> player != null && PlayerEntities.TryGetValue(player.Id, out var playerEntity) ? playerEntity : null;
@@ -70,14 +72,14 @@ namespace HearthSim.Core.Hearthstone
 			else
 			{
 				while(_creationTags.Count > 0)
-					Modified?.Invoke(_creationTags.Dequeue(), this);
+					Modified?.Invoke(new GameStateChangedEventArgs(_creationTags.Dequeue(), this));
 			}
 
 			modifier.Apply(this);
 			_modifiers.Add(modifier);
 
 			if(!isCreationTag)
-				Modified?.Invoke(modifier, this);
+				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));
 		}
 
 		private bool TryResolveEntityName(string name, out int entityId)

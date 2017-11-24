@@ -11,6 +11,7 @@ using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util;
+using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Exceptions;
 using HearthSim.Core.Util.Logging;
 
@@ -56,10 +57,10 @@ namespace DemoApp
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void UpdateMulligan(IGameStateModifier modifier, GameState state)
+		private void UpdateMulligan(GameStateChangedEventArgs args)
 		{
-			var mulliganState = state.LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE);
-			if(mulliganState.HasValue && mulliganState != (int)Mulligan.DONE && modifier is TagChange t)
+			var mulliganState = args.State.LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE);
+			if(mulliganState.HasValue && mulliganState != (int)Mulligan.DONE && args.Modifier is TagChange t)
 			{
 				if(t.Tag == GameTag.ZONE)
 				{
@@ -74,7 +75,7 @@ namespace DemoApp
 			}
 		}
 
-		private void UpdatePlayerCard(IGameStateModifier mod, GameState state)
+		private void UpdatePlayerCard(GameStateChangedEventArgs gameStateChangedEventArgs)
 		{
 			OnPropertyChanged(nameof(LocalPlayerCards));
 			OnPropertyChanged(nameof(LocalPlayerHand));
@@ -104,8 +105,8 @@ namespace DemoApp
 				return;
 			}
 			_core = new Core(path);
-			_core.GameStateChanged += UpdateMulligan;
-			_core.GameStateChanged += UpdatePlayerCard;
+			_core.Game.GameStateChanged += UpdateMulligan;
+			_core.Game.GameStateChanged += UpdatePlayerCard;
 			_core.Start();
 		}
 	}

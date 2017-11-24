@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HearthDb.Deckstrings;
 using HearthSim.Core.LogParsing.Interfaces;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {
@@ -47,7 +48,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				UpdateState(State.FindingGameWithHero);
 				if(int.TryParse(line.Text.Substring(findingGameWithHero.Length), out var dbfId))
-					FindingGameWithHero?.Invoke(dbfId);
+					FindingGame?.Invoke(new QueuedForGameEventArgs(dbfId));
 			}
 			else
 			{
@@ -56,9 +57,9 @@ namespace HearthSim.Core.LogParsing.Parsers
 				{
 					var deck = DeckSerializer.Deserialize(string.Join("\n", _currentDeck));
 					if(_state == State.FindingGameWithDeck)
-						FindingGameWithDeck?.Invoke(deck);
+						FindingGame?.Invoke(new QueuedForGameEventArgs(deck));
 					else if(_state == State.FinishedEditingDeck)
-						EditedDeck?.Invoke(deck);
+						EditedDeck?.Invoke(new DeckEditedEventArgs(deck));
 					else
 						_current.Add(deck);
 					_currentDeck.Clear();
@@ -83,14 +84,13 @@ namespace HearthSim.Core.LogParsing.Parsers
 		{
 			if(_state != State.ReceivingDecks || _current.Count <= 0)
 				return;
-			FoundDecks?.Invoke(_current);
+			FoundDecks?.Invoke(new ConstructedDeckFoundEventArgs(_current));
 			_current.Clear();
 		}
 
-		public event Action<Deck> EditedDeck;
-		public event Action<List<Deck>> FoundDecks;
-		public event Action<Deck> FindingGameWithDeck;
-		public event Action<int> FindingGameWithHero;
+		public event Action<DeckEditedEventArgs> EditedDeck;
+		public event Action<ConstructedDeckFoundEventArgs> FoundDecks;
+		public event Action<QueuedForGameEventArgs> FindingGame;
 
 		private enum State
 		{

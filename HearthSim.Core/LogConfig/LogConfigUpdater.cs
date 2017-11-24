@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HearthSim.Core.Hearthstone;
+using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Logging;
 using static HearthSim.Core.LogConfig.LogConfigConstants;
 
@@ -14,7 +16,7 @@ namespace HearthSim.Core.LogConfig
 		private static bool _running;
 		private static List<string> _requiredLogs;
 		public static event Action LogConfigUpdated;
-		public static event Action<Exception> LogConfigUpdateFailed;
+		public static event Action<LogConfigErrorEventArgs> LogConfigUpdateFailed;
 
 		public static async Task Run(IEnumerable<string> requiredLogs = null)
 		{
@@ -39,7 +41,7 @@ namespace HearthSim.Core.LogConfig
 			catch(Exception e)
 			{
 				Log.Error(e);
-				LogConfigUpdateFailed?.Invoke(e);
+				LogConfigUpdateFailed?.Invoke(new LogConfigErrorEventArgs(e));
 			}
 			finally
 			{

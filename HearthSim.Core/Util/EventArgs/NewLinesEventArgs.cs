@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HearthSim.Core.LogReading.Data;
 
-namespace HearthSim.Core.LogReading
+namespace HearthSim.Core.Util.EventArgs
 {
-	internal class NewLinesEventArgs : EventArgs
+	internal class NewLinesEventArgs : System.EventArgs
 	{
 		public NewLinesEventArgs(IEnumerable<Line> lines)
 		{
