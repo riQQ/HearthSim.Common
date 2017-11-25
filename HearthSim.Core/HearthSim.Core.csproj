@@ -42,6 +42,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core.cs" />
+    <Compile Include="Hearthstone\Card.cs" />
+    <Compile Include="Hearthstone\Collection.cs" />
+    <Compile Include="Hearthstone\CollectionCard.cs" />
+    <Compile Include="Hearthstone\Deck.cs" />
+    <Compile Include="Util\EventArgs\CollectionCardChangedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\CollectionCardsLoadedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\CollectionDeckChangedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\CollectionDecksLoadedEventArgs.cs" />
     <Compile Include="Hearthstone\Entities\Entity.cs" />
     <Compile Include="Hearthstone\Entities\Entity.TagHelpers.cs" />
     <Compile Include="Hearthstone\Entities\GameEntity.cs" />

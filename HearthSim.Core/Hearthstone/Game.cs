@@ -7,9 +7,15 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class Game : GameEvents
 	{
+		internal Game()
+		{
+			Collection = new Collection();
+		}
+
 		public GameState CurrentGame { get; private set; }
 		public Mode CurrentMode { get; private set; }
 		public Mode PreviousMode { get; private set; }
+		public Collection Collection { get; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{

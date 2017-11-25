@@ -7,7 +7,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		// Stats
 		public int Attack => GetTag(GameTag.ATK);
 		public int Health => GetTag(GameTag.HEALTH) - GetTag(GameTag.DAMAGE);
-		public int Cost => HasTag(GameTag.COST) ? GetTag(GameTag.COST) : Card?.Cost ?? 0;
+		public int Cost => HasTag(GameTag.COST) ? GetTag(GameTag.COST) : Card?.Data?.Cost ?? 0;
 		public bool IsActiveDeathrattle => GetTag(GameTag.DEATHRATTLE) == 1;
 
 		// Zone
@@ -27,7 +27,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool IsSecret => HasTag(GameTag.SECRET);
 		public bool IsSpell => GetTag(GameTag.CARDTYPE) == (int)CardType.SPELL;
 		public bool IsHeroPower => GetTag(GameTag.CARDTYPE) == (int)CardType.HERO_POWER;
-		public bool IsPlayableHero => IsHero && Card != null && Card.Set != CardSet.CORE && Card.Set != CardSet.HERO_SKINS && Card.Collectible;
+		public bool IsPlayableHero => IsHero && Card?.Data != null && Card.Data.Set != CardSet.CORE && Card.Data.Set != CardSet.HERO_SKINS && Card.Data.Collectible;
 		public bool IsPlayableCard => IsMinion || IsSpell || IsWeapon || IsPlayableHero;
 
 		// Other

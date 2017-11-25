@@ -21,7 +21,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public Dictionary<GameTag, int> Tags { get; }
 		public EntityInfo Info { get; }
 
-		public Card Card => _card ?? (_card = HasCardId && Cards.All.TryGetValue(CardId, out var card) ? card : null);
+		public Card Card => _card ?? (_card = HasCardId && Cards.All.TryGetValue(CardId, out var card) ? new Card(card) : null);
 
 		public bool HasCardId => !string.IsNullOrEmpty(CardId);
 
@@ -30,7 +30,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 
 		public override string ToString()
 		{
-			return $"[{Id}{(IsCreated ? "*" : "")}] {Card?.Name} ({CardId})";
+			return $"[{Id}{(IsCreated ? "*" : "")}] {Card?.Data?.Name} ({CardId})";
 		}
 	}
 

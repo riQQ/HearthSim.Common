@@ -33,7 +33,7 @@ namespace DemoApp
 			? _mulliganEntites.Select(x =>
 					new {Entity = Game.Entities[x.Key], Mulliganed = x.Value}
 				).Where(x => x.Entity.IsControlledBy(Game.MatchInfo.LocalPlayer.Id) && !x.Entity.IsCreated)
-				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Id + ": " +  x.Entity.Card?.Name)
+				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Id + ": " +  x.Entity.Card?.Data?.Name)
 			: null;
 
 		public IEnumerable<Entity> LocalPlayerCards => Game?.LocalPlayer.RevealedCards;

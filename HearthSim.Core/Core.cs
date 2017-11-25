@@ -1,11 +1,13 @@
 ﻿using System.IO;
 using System.Linq;
 using HearthSim.Core.Hearthstone;
+using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core
 {
@@ -29,13 +31,14 @@ namespace HearthSim.Core
 			logParserManager.RegisterParser(powerParser);
 
 			var decksParser = new DecksParser();
-			decksParser.EditedDeck += Game.OnDeckEdited;
 			decksParser.FindingGame += Game.OnQueuedForGame;
-			decksParser.FoundDecks += Game.OnConstructedDecksFound;
+			decksParser.EditedDeck += Game.Collection.OnDeckEdited;
+			decksParser.FoundDecks += Game.Collection.OnDecksLoaded;
 			logParserManager.RegisterParser(decksParser);
 
 			var loadingScreenParser = new LoadingScreenParser();
 			loadingScreenParser.ModeChanged += Game.OnModeChanged;
+			loadingScreenParser.ModeChanged += LoadingScreenParser_OnModeChanged;
 			logParserManager.RegisterParser(loadingScreenParser);
 
 			var arenaParser = new ArenaParser();
@@ -43,7 +46,7 @@ namespace HearthSim.Core
 			logParserManager.RegisterParser(arenaParser);
 
 			var rachelleParser = new RachelleParser();
-			rachelleParser.DeckDeleted += Game.OnDeckDeleted;
+			rachelleParser.DeckDeleted += Game.Collection.OnDeckDeleted;
 			rachelleParser.GoldProgressWins += Game.OnGoldProgressWins;
 			logParserManager.RegisterParser(rachelleParser);
 
@@ -71,6 +74,22 @@ namespace HearthSim.Core
 		{
 			foreach(var cardId in _blockHelper.GetCreatedCards(block))
 				block.PredictedCards.Add(cardId);
+		}
+
+		private void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)
+		{
+			if(args.PreviousMode == Mode.COLLECTIONMANAGER || args.PreviousMode == Mode.PACKOPENING || args.PreviousMode == Mode.LOGIN)
+			{
+				var cards = HearthMirror.Reflection.GetCollection()
+					?.GroupBy(x => x.Id)
+					.Select(g => new CollectionCard(
+						g.Key,
+						g.FirstOrDefault(x => !x.Premium)?.Count ?? 0,
+						g.FirstOrDefault(x => x.Premium)?.Count ?? 0
+					)).ToList();
+				if(cards?.Count > 0)
+					Game.Collection.UpdateCards(cards);
+			}
 		}
 	}
 }

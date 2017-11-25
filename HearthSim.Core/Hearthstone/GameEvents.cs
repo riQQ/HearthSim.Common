@@ -10,8 +10,8 @@ namespace HearthSim.Core.Hearthstone
 		}
 
 		// Process
-		public event Action HearthstoneStarted;
-		public event Action HearthstoneExited;
+		public event Action HearthstoneStarted; // TODO - move processwatcher up from log reader
+		public event Action HearthstoneExited; // TODO - move processwatcherup from log reader
 		public event Action HearthstoneRestartRequired;
 		public event Action<LogConfigErrorEventArgs> LogConfigError;
 
@@ -20,20 +20,17 @@ namespace HearthSim.Core.Hearthstone
 		public event Action GameCreated;
 		public event Action GameEnded;
 		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
-		public event Action PackOpened;
-		public event Action SpectatingStarted;
+		public event Action PackOpened; // TODO - start pack watcher when in PACK_OPENING scene
+		public event Action SpectatingStarted; // TODO - find log line in powerlog?
 		public event Action SpectatingEnded;
 
 		// Decks
-		public event Action<DeckEditedEventArgs> DeckEdited;
-		public event Action<DeckDeletedEventArgs> DeckDeleted;
-		public event Action<QueuedForGameEventArgs> QueuedForGame; // deck or hero id
-		public event Action<ConstructedDeckFoundEventArgs> ConstructedDecksFound;
+		public event Action<QueuedForGameEventArgs> QueuedForGame;
 
 		// Arena
-		public event Action ArenaDraftComplete;
-		public event Action ArenaDraftChoices;
-		public event Action ArenaDraftPick;
+		public event Action ArenaDraftComplete; // TODO - start arena watcher when in FORGE scene
+		public event Action ArenaDraftChoices; // TODO - start arena watcher when in FORGE scene
+		public event Action ArenaDraftPick; // TODO - start arena watcher when in FORGE scene
 		public event Action<ArenaRunCompleteEventArgs> ArenaRunComplete;
 
 		// Game
@@ -48,10 +45,7 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnArenaRunComplete(ArenaRunCompleteEventArgs args) => ArenaRunComplete?.Invoke(args);
 		internal virtual void OnSpectatorStart() => SpectatingStarted?.Invoke();
 		internal virtual void OnSpectatorEnd() => SpectatingEnded?.Invoke();
-		internal virtual void OnDeckEdited(DeckEditedEventArgs args) => DeckEdited?.Invoke(args);
 		internal virtual void OnQueuedForGame(QueuedForGameEventArgs args) => QueuedForGame?.Invoke(args);
-		internal virtual void OnConstructedDecksFound(ConstructedDeckFoundEventArgs args) => ConstructedDecksFound?.Invoke(args);
-		internal virtual void OnDeckDeleted(DeckDeletedEventArgs args) => DeckDeleted?.Invoke(args);
 		internal virtual void OnGoldProgressWins(GoldProgessWinsEventArgs args) => GoldProgressWins?.Invoke(args);
 	}
 }
