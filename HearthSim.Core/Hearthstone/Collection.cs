@@ -95,5 +95,11 @@ namespace HearthSim.Core.Hearthstone
 					CardsRemoved?.Invoke(new CollectionCardChangedEventArgs(removedCards));
 			}
 		}
+
+		public void Unload()
+		{
+			_collectionCards.Clear();
+			_decks.Clear();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using HearthMirror;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.LogParsing;
@@ -80,7 +81,7 @@ namespace HearthSim.Core
 		{
 			if(args.PreviousMode == Mode.COLLECTIONMANAGER || args.PreviousMode == Mode.PACKOPENING || args.PreviousMode == Mode.LOGIN)
 			{
-				var cards = HearthMirror.Reflection.GetCollection()
+				var cards = Reflection.GetCollection()
 					?.GroupBy(x => x.Id)
 					.Select(g => new CollectionCard(
 						g.Key,
@@ -90,6 +91,14 @@ namespace HearthSim.Core
 				if(cards?.Count > 0)
 					Game.Collection.UpdateCards(cards);
 			}
+			if(args.PreviousMode >= Mode.LOGIN && !Game.Account.IsLoaded)
+			{
+				var battleTag = Reflection.GetBattleTag();
+				var account = Reflection.GetAccountId();
+				Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
+			}
+			if(args.PreviousMode == Mode.LOGIN)
+				Game.OnHearthstoneLoaded();
 		}
 	}
 }

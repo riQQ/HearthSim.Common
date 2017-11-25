@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core.cs" />
+    <Compile Include="Hearthstone\Account.cs" />
     <Compile Include="Hearthstone\Card.cs" />
     <Compile Include="Hearthstone\Collection.cs" />
     <Compile Include="Hearthstone\CollectionCard.cs" />

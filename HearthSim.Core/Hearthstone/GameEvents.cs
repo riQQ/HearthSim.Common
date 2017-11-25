@@ -12,6 +12,7 @@ namespace HearthSim.Core.Hearthstone
 		// Process
 		public event Action HearthstoneStarted; // TODO - move processwatcher up from log reader
 		public event Action HearthstoneExited; // TODO - move processwatcherup from log reader
+		public event Action HearthstoneLoaded;
 		public event Action HearthstoneRestartRequired;
 		public event Action<LogConfigErrorEventArgs> LogConfigError;
 
@@ -47,5 +48,8 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnSpectatorEnd() => SpectatingEnded?.Invoke();
 		internal virtual void OnQueuedForGame(QueuedForGameEventArgs args) => QueuedForGame?.Invoke(args);
 		internal virtual void OnGoldProgressWins(GoldProgessWinsEventArgs args) => GoldProgressWins?.Invoke(args);
+		internal virtual void OnHearthstoneStarted() => HearthstoneStarted?.Invoke();
+		internal virtual void OnHearthstoneLoaded() => HearthstoneLoaded?.Invoke();
+		internal virtual void OnHearthstoneExited() => HearthstoneExited?.Invoke();
 	}
 }
