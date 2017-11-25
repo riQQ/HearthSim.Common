@@ -10,8 +10,8 @@ namespace HearthSim.Core.Hearthstone
 		}
 
 		// Process
-		public event Action HearthstoneStarted; // TODO - move processwatcher up from log reader
-		public event Action HearthstoneExited; // TODO - move processwatcherup from log reader
+		public event Action HearthstoneStarted;
+		public event Action HearthstoneExited;
 		public event Action HearthstoneLoaded;
 		public event Action HearthstoneRestartRequired;
 		public event Action<LogConfigErrorEventArgs> LogConfigError;

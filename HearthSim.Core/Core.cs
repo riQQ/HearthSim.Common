@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using HearthMirror;
 using HearthSim.Core.Hearthstone;
@@ -9,6 +10,8 @@ using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.Util.EventArgs;
+using HearthSim.Core.Util.Extensions;
+using HearthSim.Core.Util.Watchers;
 
 namespace HearthSim.Core
 {
@@ -16,6 +19,7 @@ namespace HearthSim.Core
 	{
 		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
+		private readonly ProcessWatcher _procWatcher;
 
 		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
@@ -65,11 +69,27 @@ namespace HearthSim.Core
 			_logReader.NewLines += eventArgs => logParserManager.Parse(eventArgs.Lines);
 			_logReader.LogConfigUpdated += Game.OnHearthstoneRestartRequired;
 			_logReader.LogConfigUpdateFailed += Game.OnLogConfigError;
+
+			_procWatcher = new ProcessWatcher();
+			_procWatcher.OnStart += ProcessWatcher_OnStart;
+			_procWatcher.OnExit += ProcessWatcher_OnExit;
+		}
+
+		private void ProcessWatcher_OnStart(Process process)
+		{
+			Game.OnHearthstoneStarted();
+			_logReader.Start();
+		}
+
+		private void ProcessWatcher_OnExit(Process process)
+		{
+			_logReader.Stop().Forget();
+			Game.OnHearthstoneExited();
 		}
 
 		public Game Game { get; }
 
-		public void Start() => _logReader.Start();
+		public void Start() => _procWatcher.Run();
 
 		private void PowerParser_BlockStart(BlockData block)
 		{
