@@ -13,6 +13,7 @@ using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Watchers;
 using HearthSim.Core.Util.Watchers.ArenaWatcher;
+using HearthSim.Core.Util.Watchers.PackWatcher;
 
 namespace HearthSim.Core
 {
@@ -22,6 +23,7 @@ namespace HearthSim.Core
 		private readonly LogReader _logReader;
 		private readonly ProcessWatcher _procWatcher;
 		private readonly ArenaWatcher _arenaWatcher;
+		private readonly PackWatcher _packWatcher;
 
 		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
@@ -81,6 +83,9 @@ namespace HearthSim.Core
 			_arenaWatcher.CardPicked += Game.OnArenaDraftPick;
 			_arenaWatcher.ChoicesChanged += Game.OnArenaDraftChoices;
 			_arenaWatcher.DeckComplete += Game.OnArenaDraftComplete;
+			
+			_packWatcher = new PackWatcher(new HearthMirrorPackProvider());
+			_packWatcher.PackOpened += Game.OnPackOpened;
 		}
 
 		private void ArenaParser_OnArenaRunComplete()
@@ -139,6 +144,11 @@ namespace HearthSim.Core
 				_arenaWatcher.Run();
 			else
 				_arenaWatcher.Stop();
+
+			if(args.CurrentMode == Mode.PACKOPENING)
+				_packWatcher.Run();
+			else
+				_packWatcher.Stop();
 		}
 	}
 }

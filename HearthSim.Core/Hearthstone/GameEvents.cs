@@ -21,7 +21,7 @@ namespace HearthSim.Core.Hearthstone
 		public event Action GameCreated;
 		public event Action GameEnded;
 		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
-		public event Action PackOpened; // TODO - start pack watcher when in PACK_OPENING scene
+		public event Action<PackOpenedEventArgs> PackOpened;
 		public event Action SpectatingStarted; // TODO - find log line in powerlog?
 		public event Action SpectatingEnded;
 
@@ -54,5 +54,6 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnHearthstoneStarted() => HearthstoneStarted?.Invoke();
 		internal virtual void OnHearthstoneLoaded() => HearthstoneLoaded?.Invoke();
 		internal virtual void OnHearthstoneExited() => HearthstoneExited?.Invoke();
+		internal virtual void OnPackOpened(PackOpenedEventArgs args) => PackOpened?.Invoke(args);
 	}
 }
