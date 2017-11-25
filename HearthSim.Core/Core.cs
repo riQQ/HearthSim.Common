@@ -12,6 +12,7 @@ using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Watchers;
+using HearthSim.Core.Util.Watchers.ArenaWatcher;
 
 namespace HearthSim.Core
 {
@@ -20,6 +21,7 @@ namespace HearthSim.Core
 		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
 		private readonly ProcessWatcher _procWatcher;
+		private readonly ArenaWatcher _arenaWatcher;
 
 		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
 		{
@@ -47,7 +49,7 @@ namespace HearthSim.Core
 			logParserManager.RegisterParser(loadingScreenParser);
 
 			var arenaParser = new ArenaParser();
-			arenaParser.ArenaRunComplete += Game.OnArenaRunComplete;
+			arenaParser.ArenaRunComplete += ArenaParser_OnArenaRunComplete;
 			logParserManager.RegisterParser(arenaParser);
 
 			var rachelleParser = new RachelleParser();
@@ -73,6 +75,17 @@ namespace HearthSim.Core
 			_procWatcher = new ProcessWatcher();
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
 			_procWatcher.OnExit += ProcessWatcher_OnExit;
+
+			_arenaWatcher = new ArenaWatcher(new HearthMirrorArenaProvider());
+			_arenaWatcher.RunComplete += Game.OnArenaRunComplete;
+			_arenaWatcher.CardPicked += Game.OnArenaDraftPick;
+			_arenaWatcher.ChoicesChanged += Game.OnArenaDraftChoices;
+			_arenaWatcher.DeckComplete += Game.OnArenaDraftComplete;
+		}
+
+		private void ArenaParser_OnArenaRunComplete()
+		{
+			_arenaWatcher.Update();
 		}
 
 		private void ProcessWatcher_OnStart(Process process)
@@ -111,14 +124,21 @@ namespace HearthSim.Core
 				if(cards?.Count > 0)
 					Game.Collection.UpdateCards(cards);
 			}
+
 			if(args.PreviousMode >= Mode.LOGIN && !Game.Account.IsLoaded)
 			{
 				var battleTag = Reflection.GetBattleTag();
 				var account = Reflection.GetAccountId();
 				Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
 			}
+
 			if(args.PreviousMode == Mode.LOGIN)
 				Game.OnHearthstoneLoaded();
+
+			if(args.CurrentMode == Mode.DRAFT)
+				_arenaWatcher.Run();
+			else
+				_arenaWatcher.Stop();
 		}
 	}
 }

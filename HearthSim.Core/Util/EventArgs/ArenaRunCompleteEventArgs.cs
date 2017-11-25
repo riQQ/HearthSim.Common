@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using HearthMirror.Objects;
+﻿using HearthMirror.Objects;
 
 namespace HearthSim.Core.Util.EventArgs
 {
 	public class ArenaRunCompleteEventArgs : System.EventArgs
 	{
-		public List<RewardData> Rewards { get; }
+		public ArenaInfo Info { get; }
 
-		public ArenaRunCompleteEventArgs(List<RewardData> rewards)
+		public ArenaRunCompleteEventArgs(ArenaInfo info)
 		{
-			Rewards = rewards;
+			Info = info;
 		}
 	}
 }

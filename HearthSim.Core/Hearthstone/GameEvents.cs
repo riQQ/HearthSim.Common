@@ -29,9 +29,9 @@ namespace HearthSim.Core.Hearthstone
 		public event Action<QueuedForGameEventArgs> QueuedForGame;
 
 		// Arena
-		public event Action ArenaDraftComplete; // TODO - start arena watcher when in FORGE scene
-		public event Action ArenaDraftChoices; // TODO - start arena watcher when in FORGE scene
-		public event Action ArenaDraftPick; // TODO - start arena watcher when in FORGE scene
+		public event Action<ArenaDeckComlpeteEventArgs> ArenaDraftComplete;
+		public event Action<ArenaChoicesChangedEventArgs> ArenaDraftChoices;
+		public event Action<ArenaCardPickedEventArgs> ArenaDraftPick;
 		public event Action<ArenaRunCompleteEventArgs> ArenaRunComplete;
 
 		// Game
@@ -44,6 +44,9 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnLogConfigError(LogConfigErrorEventArgs args) => LogConfigError?.Invoke(args);
 		internal virtual void OnGameEnded() => GameEnded?.Invoke();
 		internal virtual void OnArenaRunComplete(ArenaRunCompleteEventArgs args) => ArenaRunComplete?.Invoke(args);
+		internal virtual void OnArenaDraftComplete(ArenaDeckComlpeteEventArgs args) => ArenaDraftComplete?.Invoke(args);
+		internal virtual void OnArenaDraftChoices(ArenaChoicesChangedEventArgs args) => ArenaDraftChoices?.Invoke(args);
+		internal virtual void OnArenaDraftPick(ArenaCardPickedEventArgs args) => ArenaDraftPick?.Invoke(args);
 		internal virtual void OnSpectatorStart() => SpectatingStarted?.Invoke();
 		internal virtual void OnSpectatorEnd() => SpectatingEnded?.Invoke();
 		internal virtual void OnQueuedForGame(QueuedForGameEventArgs args) => QueuedForGame?.Invoke(args);
