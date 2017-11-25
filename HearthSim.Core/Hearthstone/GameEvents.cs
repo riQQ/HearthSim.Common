@@ -22,8 +22,6 @@ namespace HearthSim.Core.Hearthstone
 		public event Action GameEnded;
 		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
 		public event Action<PackOpenedEventArgs> PackOpened;
-		public event Action SpectatingStarted; // TODO - find log line in powerlog?
-		public event Action SpectatingEnded;
 
 		// Decks
 		public event Action<QueuedForGameEventArgs> QueuedForGame;
@@ -47,8 +45,6 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnArenaDraftComplete(ArenaDeckComlpeteEventArgs args) => ArenaDraftComplete?.Invoke(args);
 		internal virtual void OnArenaDraftChoices(ArenaChoicesChangedEventArgs args) => ArenaDraftChoices?.Invoke(args);
 		internal virtual void OnArenaDraftPick(ArenaCardPickedEventArgs args) => ArenaDraftPick?.Invoke(args);
-		internal virtual void OnSpectatorStart() => SpectatingStarted?.Invoke();
-		internal virtual void OnSpectatorEnd() => SpectatingEnded?.Invoke();
 		internal virtual void OnQueuedForGame(QueuedForGameEventArgs args) => QueuedForGame?.Invoke(args);
 		internal virtual void OnGoldProgressWins(GoldProgessWinsEventArgs args) => GoldProgressWins?.Invoke(args);
 		internal virtual void OnHearthstoneStarted() => HearthstoneStarted?.Invoke();

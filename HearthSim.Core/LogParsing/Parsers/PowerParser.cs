@@ -36,8 +36,6 @@ namespace HearthSim.Core.LogParsing.Parsers
 		internal event Action<GameStateLogEventArgs> GameStateLog;
 		internal event Action CreateGame;
 		internal event Action<BlockData> BlockStart;
-		internal event Action StartSpectator;
-		internal event Action EndSpectator;
 		internal event Action BlockEnd;
 
 		public event Action<IGameStateModifier> GameStateChange;
@@ -132,12 +130,6 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var id = int.Parse(match.Groups["id"].Value);
 				GameStateChange?.Invoke(new HideEntity(new EntityData(id, "", null, null)));
-			}
-
-			if(line.Text.Contains("End Spectator"))
-			{
-				EndSpectator?.Invoke();
-				return;
 			}
 
 			match = _blockStartRegex.Match(line.Text);
