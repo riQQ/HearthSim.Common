@@ -64,6 +64,9 @@ namespace HearthSim.Core.Hearthstone
 		private PlayerEntity TryGetPlayerEntity(MatchInfo.Player player)
 			=> player != null && PlayerEntities.TryGetValue(player.Id, out var playerEntity) ? playerEntity : null;
 
+		public bool IsMulliganDone => LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE) == (int)Mulligan.DONE
+									&& OpposingPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE) == (int)Mulligan.DONE;
+
 		internal void Apply(IGameStateModifier modifier)
 		{
 			var tagChange = modifier as TagChange;

@@ -27,6 +27,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 
 		public int GetTag(GameTag tag) => Tags.TryGetValue(tag, out var value) ? value : 0;
 		public bool HasTag(GameTag tag) => GetTag(tag) > 0;
+		public void SetTag(GameTag tag, int value) => Tags[tag] = value;
 
 		public override string ToString()
 		{
