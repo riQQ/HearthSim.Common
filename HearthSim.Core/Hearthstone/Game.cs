@@ -11,6 +11,8 @@ namespace HearthSim.Core.Hearthstone
 		{
 			Collection = new Collection();
 			Account = new Account();
+			Arena = new Arena();
+			TavernBrawl = new TavernBrawl();
 		}
 
 		public GameState CurrentGame { get; private set; }
@@ -19,6 +21,8 @@ namespace HearthSim.Core.Hearthstone
 		public Collection Collection { get; }
 		public Account Account { get; }
 		public bool IsRunning { get; private set; }
+		public Arena Arena { get; }
+		public TavernBrawl TavernBrawl { get; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
@@ -47,6 +51,8 @@ namespace HearthSim.Core.Hearthstone
 		{
 			Collection.Unload();
 			Account.Unload();
+			Arena.Unload();
+			TavernBrawl.Unload();
 			IsRunning = false;
 			CurrentMode = Mode.INVALID;
 			base.OnHearthstoneExited();

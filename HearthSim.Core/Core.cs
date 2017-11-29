@@ -77,11 +77,11 @@ namespace HearthSim.Core
 			_procWatcher.OnExit += ProcessWatcher_OnExit;
 
 			_arenaWatcher = new ArenaWatcher(new HearthMirrorArenaProvider());
-			_arenaWatcher.RunComplete += Game.OnArenaRunComplete;
-			_arenaWatcher.CardPicked += Game.OnArenaDraftPick;
-			_arenaWatcher.ChoicesChanged += Game.OnArenaDraftChoices;
-			_arenaWatcher.DeckComplete += Game.OnArenaDraftComplete;
-			
+			_arenaWatcher.RunComplete += Game.Arena.OnArenaRunComplete;
+			_arenaWatcher.CardPicked += Game.Arena.OnArenaDraftPick;
+			_arenaWatcher.ChoicesChanged += Game.Arena.OnArenaDraftChoices;
+			_arenaWatcher.DeckComplete += Game.Arena.OnArenaDraftComplete;
+
 			_packWatcher = new PackWatcher(new HearthMirrorPackProvider());
 			_packWatcher.PackOpened += Game.OnPackOpened;
 		}
@@ -132,7 +132,8 @@ namespace HearthSim.Core
 			{
 				var battleTag = Reflection.GetBattleTag();
 				var account = Reflection.GetAccountId();
-				Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
+				if(battleTag != null && account != null)
+					Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
 			}
 
 			if(args.PreviousMode == Mode.LOGIN)
@@ -147,6 +148,13 @@ namespace HearthSim.Core
 				_packWatcher.Run();
 			else
 				_packWatcher.Stop();
+
+			if(args.CurrentMode == Mode.TAVERN_BRAWL)
+			{
+				var brawlInfo = Reflection.GetBrawlInfo();
+				if(brawlInfo != null)
+					Game.TavernBrawl.Update(brawlInfo);
+			}
 		}
 	}
 }

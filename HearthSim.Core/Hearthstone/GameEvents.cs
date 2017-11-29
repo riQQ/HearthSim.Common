@@ -26,12 +26,6 @@ namespace HearthSim.Core.Hearthstone
 		// Decks
 		public event Action<QueuedForGameEventArgs> QueuedForGame;
 
-		// Arena
-		public event Action<ArenaDeckComlpeteEventArgs> ArenaDraftComplete;
-		public event Action<ArenaChoicesChangedEventArgs> ArenaDraftChoices;
-		public event Action<ArenaCardPickedEventArgs> ArenaDraftPick;
-		public event Action<ArenaRunCompleteEventArgs> ArenaRunComplete;
-
 		// Game
 		public event Action<GameStateChangedEventArgs> GameStateChanged;
 
@@ -41,10 +35,6 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnHearthstoneRestartRequired() => HearthstoneRestartRequired?.Invoke();
 		internal virtual void OnLogConfigError(LogConfigErrorEventArgs args) => LogConfigError?.Invoke(args);
 		internal virtual void OnGameEnded() => GameEnded?.Invoke();
-		internal virtual void OnArenaRunComplete(ArenaRunCompleteEventArgs args) => ArenaRunComplete?.Invoke(args);
-		internal virtual void OnArenaDraftComplete(ArenaDeckComlpeteEventArgs args) => ArenaDraftComplete?.Invoke(args);
-		internal virtual void OnArenaDraftChoices(ArenaChoicesChangedEventArgs args) => ArenaDraftChoices?.Invoke(args);
-		internal virtual void OnArenaDraftPick(ArenaCardPickedEventArgs args) => ArenaDraftPick?.Invoke(args);
 		internal virtual void OnQueuedForGame(QueuedForGameEventArgs args) => QueuedForGame?.Invoke(args);
 		internal virtual void OnGoldProgressWins(GoldProgessWinsEventArgs args) => GoldProgressWins?.Invoke(args);
 		internal virtual void OnHearthstoneStarted() => HearthstoneStarted?.Invoke();

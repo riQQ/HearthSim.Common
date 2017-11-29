@@ -43,10 +43,12 @@
   <ItemGroup>
     <Compile Include="Core.cs" />
     <Compile Include="Hearthstone\Account.cs" />
+    <Compile Include="Hearthstone\Arena.cs" />
     <Compile Include="Hearthstone\Card.cs" />
     <Compile Include="Hearthstone\Collection.cs" />
     <Compile Include="Hearthstone\CollectionCard.cs" />
     <Compile Include="Hearthstone\Deck.cs" />
+    <Compile Include="Hearthstone\TavernBrawl.cs" />
     <Compile Include="Util\EventArgs\ArenaCardPickedEventArgs.cs" />
     <Compile Include="Util\EventArgs\ArenaChoicesChangedEventArgs.cs" />
     <Compile Include="Util\EventArgs\CollectionCardChangedEventArgs.cs" />
