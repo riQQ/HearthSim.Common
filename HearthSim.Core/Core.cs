@@ -171,7 +171,10 @@ namespace HearthSim.Core
 				var battleTag = Reflection.GetBattleTag();
 				var account = Reflection.GetAccountId();
 				if(battleTag != null && account != null)
+				{
 					Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
+					Game.Region = (BnetRegion)((account.Hi >> 32) & 0xFF);
+				}
 			}
 
 			if(args.CurrentMode == Mode.DRAFT)

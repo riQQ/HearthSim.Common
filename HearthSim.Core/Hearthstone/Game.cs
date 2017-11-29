@@ -25,6 +25,7 @@ namespace HearthSim.Core.Hearthstone
 		public TavernBrawl TavernBrawl { get; }
 		public int? Build { get; internal set; }
 		public Deck SelectedDeck { get; private set; }
+		public BnetRegion Region { get; set; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
