@@ -28,7 +28,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public void Parse(Line line)
 		{
 			if(line.Text.StartsWith("GameState."))
-				GameStateLog?.Invoke(new GameStateLogEventArgs(line));
+				HandleGameState(line);
 			else
 				HandlePowerTaskList(line);
 		}
@@ -39,6 +39,13 @@ namespace HearthSim.Core.LogParsing.Parsers
 		internal event Action BlockEnd;
 
 		public event Action<IGameStateModifier> GameStateChange;
+
+		public void HandleGameState(Line line)
+		{
+			if(line.Text.Contains("CREATE_GAME"))
+				CreateGame?.Invoke();
+			GameStateLog?.Invoke(new GameStateLogEventArgs(line));
+		}
 
 		private EntityData ParseEntity(string entity)
 		{
@@ -58,12 +65,6 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		private void HandlePowerTaskList(Line line)
 		{
-			if(line.Text.Contains("CREATE_GAME"))
-			{
-				CreateGame?.Invoke();
-				return;
-			}
-
 			var match = _gameEntityRegex.Match(line.Text);
 			if(match.Success)
 			{

@@ -6,9 +6,9 @@ namespace HearthSim.Core.Util.EventArgs
 	{
 		public GameStateLogEventArgs(Line line)
 		{
-			Lines = line;
+			Line = line;
 		}
 
-		public Line Lines { get; }
+		public Line Line { get; }
 	}
 }
