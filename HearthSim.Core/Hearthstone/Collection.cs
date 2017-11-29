@@ -96,7 +96,7 @@ namespace HearthSim.Core.Hearthstone
 			}
 		}
 
-		public void Unload()
+		internal void Unload()
 		{
 			_collectionCards.Clear();
 			_decks.Clear();

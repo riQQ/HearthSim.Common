@@ -1,4 +1,5 @@
-﻿using HearthDb;
+﻿using System;
+using HearthDb;
 using HearthDb.Enums;
 using System.Linq;
 
@@ -52,5 +53,7 @@ namespace HearthSim.Core.Hearthstone
 		public int Count { get; set; }
 		public HearthDb.Card Data => _card ?? (_card = Cards.All.TryGetValue(Id, out var card) ? card : null);
 		public bool IsWild => WildSets.Contains(Data?.Set ?? CardSet.INVALID);
+
+		public Card Clone() => _card != null ? new Card(_card, Count) : new Card(Id, Count);
 	}
 }

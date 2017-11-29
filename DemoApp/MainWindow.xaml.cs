@@ -38,19 +38,19 @@ namespace DemoApp
 
 		public IEnumerable<Entity> LocalPlayerCards => Game?.LocalPlayer.RevealedCards;
 
-		public IEnumerable<Entity> LocalPlayerHand => Game?.LocalPlayer.Hand;
+		public IEnumerable<Entity> LocalPlayerHand => Game?.LocalPlayer.InHand;
 
-		public IEnumerable<Entity> LocalPlayerSecrets => Game?.LocalPlayer.Secret;
+		public IEnumerable<Entity> LocalPlayerSecrets => Game?.LocalPlayer.InSecret;
 
-		public IEnumerable<Entity> LocalPlayerGraveyard => Game?.LocalPlayer.Secret;
+		public IEnumerable<Entity> LocalPlayerGraveyard => Game?.LocalPlayer.InSecret;
 
-		public IEnumerable<Entity> LocalPlayerQuest => Game?.LocalPlayer.Quest;
+		public IEnumerable<Entity> LocalPlayerQuest => Game?.LocalPlayer.InQuest;
 
 		public string QuestProgress
 		{
 			get
 			{
-				var quest = Game?.LocalPlayer.Quest.FirstOrDefault();
+				var quest = Game?.LocalPlayer.InQuest.FirstOrDefault();
 				return quest != null ? $"{quest.GetTag(GameTag.QUEST_PROGRESS)}/{quest.GetTag(GameTag.QUEST_PROGRESS_TOTAL)}" : "";
 			}
 		}

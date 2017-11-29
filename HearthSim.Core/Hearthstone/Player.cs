@@ -23,16 +23,32 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) || x.Info.OriginalController == PlayerId) && !x.IsCreated && !x.Info.Stolen && x.IsPlayableCard && x.HasCardId);
 
-		public IEnumerable<Entity> Hand => Entities.Where(x => x.IsInHand);
+		public IEnumerable<Entity> InHand => Entities.Where(x => x.IsInHand);
 
-		public IEnumerable<Entity> Deck => Entities.Where(x => x.IsInDeck);
+		public IEnumerable<Entity> InDeck => Entities.Where(x => x.IsInDeck);
 
-		public IEnumerable<Entity> Board => Entities.Where(x => x.IsInPlay);
+		public IEnumerable<Entity> InPlay => Entities.Where(x => x.IsInPlay);
 
-		public IEnumerable<Entity> Graveyard => Entities.Where(x => x.IsInGraveyard);
+		public IEnumerable<Entity> InGraveyard => Entities.Where(x => x.IsInGraveyard);
 
-		public IEnumerable<Entity> Secret => Entities.Where(x => x.IsInSecret && x.IsSecret);
+		public IEnumerable<Entity> InSecret => Entities.Where(x => x.IsInSecret && x.IsSecret);
 
-		public IEnumerable<Entity> Quest => Entities.Where(x => x.IsInSecret && x.IsQuest);
+		public IEnumerable<Entity> InQuest => Entities.Where(x => x.IsInSecret && x.IsQuest);
+
+		public Deck Deck { get; set; }
+
+		public IReadOnlyCollection<Card> GetRemainingCards()
+		{
+			if(Deck == null)
+				return new List<Card>();
+			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
+			foreach(var entity in RevealedCards)
+			{
+				var card = cards.FirstOrDefault(c => c.Id == entity.CardId);
+				if(card != null)
+					card.Count--;
+			}
+			return cards;
+		}
 	}
 }

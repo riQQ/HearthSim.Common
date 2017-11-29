@@ -24,6 +24,7 @@ namespace HearthSim.Core.Hearthstone
 		public Arena Arena { get; }
 		public TavernBrawl TavernBrawl { get; }
 		public int? Build { get; internal set; }
+		public Deck SelectedDeck { get; private set; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
@@ -38,6 +39,7 @@ namespace HearthSim.Core.Hearthstone
 				CurrentGame.Modified -= OnGameStateChanged;
 			CurrentGame = new GameState();
 			CurrentGame.Modified += OnGameStateChanged;
+			CurrentGame.LocalPlayer.Deck = SelectedDeck;
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
@@ -65,6 +67,12 @@ namespace HearthSim.Core.Hearthstone
 		{
 			IsRunning = true;
 			base.OnHearthstoneLoaded();
+		}
+
+		internal override void OnQueuedForGame(QueuedForGameEventArgs args)
+		{
+			SelectedDeck = new Deck(args.Deck);
+			base.OnQueuedForGame(args);
 		}
 	}
 }
