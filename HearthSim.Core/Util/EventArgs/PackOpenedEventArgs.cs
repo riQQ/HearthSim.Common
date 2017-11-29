@@ -1,17 +1,14 @@
-using System.Collections.Generic;
-using HearthMirror.Objects;
+using HearthSim.Core.Hearthstone;
 
 namespace HearthSim.Core.Util.EventArgs
 {
 	public class PackOpenedEventArgs : System.EventArgs
 	{
-		public PackOpenedEventArgs(List<Card> cards, int packId)
+		public PackOpenedEventArgs(Pack pack)
 		{
-			Cards = cards;
-			PackId = packId;
+			Pack = pack;
 		}
 
-		public List<Card> Cards { get; }
-		public int PackId { get; set; }
+		public Pack Pack { get; }
 	}
 }

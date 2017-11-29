@@ -1,14 +1,18 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using HearthDb.Enums;
 using HearthMirror;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Enums;
+using HearthSim.Core.HSReplay;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
+using HearthSim.Core.Util;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Watchers;
@@ -19,14 +23,16 @@ namespace HearthSim.Core
 {
 	public class Core
 	{
+		private readonly HSReplayNetConfig _hsreplayNetConfig;
 		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
 		private readonly ProcessWatcher _procWatcher;
 		private readonly ArenaWatcher _arenaWatcher;
 		private readonly PackWatcher _packWatcher;
 
-		public Core(string hearthstoneDirectory, params LogWatcherData[] additionalLogReaders)
+		public Core(string hearthstoneDirectory, HSReplayNetConfig hsreplayNetConfig, params LogWatcherData[] additionalLogReaders)
 		{
+			_hsreplayNetConfig = hsreplayNetConfig;
 			Game = new Game();
 			_blockHelper = new BlockHelper(Game);
 			var logParserManager = new LogParserManager();
@@ -85,6 +91,37 @@ namespace HearthSim.Core
 
 			_packWatcher = new PackWatcher(new HearthMirrorPackProvider());
 			_packWatcher.PackOpened += Game.OnPackOpened;
+
+			HSReplayNet = new HSReplayNet(hsreplayNetConfig);
+
+			Game.PackOpened += Game_OnPackOpened;
+			Game.GameCreated += Game_GameCreated;
+			Game.GameEnded += Game_OnGameEnd;
+		}
+
+		public Game Game { get; }
+		public HSReplayNet HSReplayNet { get; }
+
+		private void Game_OnPackOpened(PackOpenedEventArgs args)
+		{
+			if(_hsreplayNetConfig.UploadPacks)
+				HSReplayNet.PackUploader.UploadPack(Game.Account, args.Pack);
+		}
+
+		private void Game_OnGameEnd(GameEndEventArgs args)
+		{
+			HSReplayNet.Twitch.Stop();
+			var matchInfo = args.GameState.MatchInfo;
+			var gameType = Converters.GetBnetGameType((GameType)matchInfo.GameType, (FormatType)matchInfo.FormatType);
+			if(!_hsreplayNetConfig.UploadGameTypes.Contains(gameType))
+				return;
+			var data = UploadMetaDataGenerator.Generate(args.Build, args.GameState, args.Wins, args.Losses);
+			HSReplayNet.LogUploader.Upload(args.GameState.PowerLog.ToArray(), data).Forget();
+		}
+
+		private void Game_GameCreated(GameCreatedEventArgs args)
+		{
+			HSReplayNet.Twitch.WatchBoardState(args.Game);
 		}
 
 		private void ArenaParser_OnArenaRunComplete()
@@ -104,8 +141,6 @@ namespace HearthSim.Core
 			_logReader.Stop().Forget();
 			Game.OnHearthstoneExited();
 		}
-
-		public Game Game { get; }
 
 		public void Start() => _procWatcher.Run();
 

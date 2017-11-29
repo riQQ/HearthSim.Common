@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,9 +9,11 @@ using HearthSim.Core;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
+using HearthSim.Core.HSReplay;
 using HearthSim.Core.Util;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Exceptions;
+using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Logging;
 
 namespace DemoApp
@@ -104,7 +105,16 @@ namespace DemoApp
 				Log.Error(ex);
 				return;
 			}
-			_core = new Core(path);
+			var config = new HSReplayNetConfig(
+				"C:\\Users\\Alex\\AppData\\Roaming\\HSC_TEST",
+				"089b2bc6-3c26-4aab-adbe-bcfd5bb48671",
+				"jIpNwuUWLFI6S3oeQkO3xlW6UCnfogw1IpAbFXqq",
+				"OSC_TEST",
+				new[] {BnetGameType.BGT_VS_AI},
+				true,
+				28403515
+			);
+			_core = new Core(path, config);
 			_core.Game.GameStateChanged += UpdateMulligan;
 			_core.Game.GameStateChanged += UpdatePlayerCard;
 			_core.Start();

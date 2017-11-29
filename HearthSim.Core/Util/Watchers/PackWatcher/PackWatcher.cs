@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HearthMirror.Objects;
+using HearthDb.Enums;
+using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Util.EventArgs;
+using Card = HearthMirror.Objects.Card;
 
 namespace HearthSim.Core.Util.Watchers.PackWatcher
 {
@@ -50,7 +52,11 @@ namespace HearthSim.Core.Util.Watchers.PackWatcher
 					_previousPack.Clear();
 					_previousPack.AddRange(cards);
 					if(_invokeEvent)
-						PackOpened?.Invoke(new PackOpenedEventArgs(cards, _packProvider.GetPackId()));
+					{
+						var pack = new Pack((Booster)_packProvider.GetPackId(),
+							cards.Select(x => new CollectionCard(x.Id, x.Premium ? 0 : x.Count, x.Premium ? x.Count : 0)));
+						PackOpened?.Invoke(new PackOpenedEventArgs(pack));
+					}
 				}
 				else
 					_invokeEvent = true;

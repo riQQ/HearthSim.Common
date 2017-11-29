@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using HearthDb.Enums;
 using HearthMirror;
 using HearthMirror.Objects;
@@ -17,6 +18,7 @@ namespace HearthSim.Core.Hearthstone
 
 		private MatchInfo _matchInfo;
 		private readonly List<string> _powerLog;
+		private GameServerInfo _serverInfo;
 
 		public GameState()
 		{
@@ -27,10 +29,17 @@ namespace HearthSim.Core.Hearthstone
 			LocalPlayer = new Player(this, true);
 			OpposingPlayer = new Player(this, false);
 			_powerLog = new List<string>();
+			CreatedAt = DateTime.Now;
+			Task.Run(async () =>
+			{
+				while(MatchInfo == null || ServerInfo == null)
+					await Task.Delay(500);
+			});
 		}
 
 		public IReadOnlyCollection<string> PowerLog => _powerLog.AsReadOnly();
 		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
+		public GameServerInfo ServerInfo => _serverInfo ?? (_serverInfo = Reflection.GetServerInfo());
 
 		public Dictionary<int, Entity> Entities { get; }
 		public GameEntity GameEntity { get; set; }
@@ -47,6 +56,8 @@ namespace HearthSim.Core.Hearthstone
 
 		public Entity LastCardPlayed 
 			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
+
+		public DateTime CreatedAt { get; }
 
 		internal event Action<GameStateChangedEventArgs> Modified;
 

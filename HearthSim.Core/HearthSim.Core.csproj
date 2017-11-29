@@ -30,9 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,8 +53,28 @@
     <Compile Include="Hearthstone\Collection.cs" />
     <Compile Include="Hearthstone\CollectionCard.cs" />
     <Compile Include="Hearthstone\Deck.cs" />
+    <Compile Include="HSReplay\HSReplayNetConfig.cs" />
     <Compile Include="Util\EventArgs\GameCreatedEventArgs.cs" />
     <Compile Include="Hearthstone\TavernBrawl.cs" />
+    <Compile Include="HSReplay\Data\DecksData.cs" />
+    <Compile Include="HSReplay\Data\DeckWinrateData.cs" />
+    <Compile Include="HSReplay\Data\HsReplayData.cs" />
+    <Compile Include="HSReplay\Data\OAuthData.cs" />
+    <Compile Include="HSReplay\Twitch\BoardStateWatcher.cs" />
+    <Compile Include="HSReplay\Twitch\Data\BoardState.cs" />
+    <Compile Include="HSReplay\Twitch\Data\DataType.cs" />
+    <Compile Include="HSReplay\Twitch\Data\Payload.cs" />
+    <Compile Include="HSReplay\Twitch\TwitchApi.cs" />
+    <Compile Include="HSReplay\Twitch\TwitchDataManager.cs" />
+    <Compile Include="Util\EventArgs\UploadCompleteEventArgs.cs" />
+    <Compile Include="Util\EventArgs\GameEndEventArgs.cs" />
+    <Compile Include="HSReplay\Data\Account.cs" />
+    <Compile Include="HSReplay\ApiWrapper.cs" />
+    <Compile Include="HSReplay\HSReplayNet.cs" />
+    <Compile Include="HSReplay\OAuthWrapper.cs" />
+    <Compile Include="HSReplay\LogUploader.cs" />
+    <Compile Include="HSReplay\PackUploader.cs" />
+    <Compile Include="HSReplay\UploadMetaDataGenerator.cs" />
     <Compile Include="Util\EventArgs\ArenaCardPickedEventArgs.cs" />
     <Compile Include="Util\EventArgs\ArenaChoicesChangedEventArgs.cs" />
     <Compile Include="Util\EventArgs\CollectionCardChangedEventArgs.cs" />
@@ -97,6 +122,7 @@
     <Compile Include="LogParsing\Parsers\Power\GameEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\PlayerEntityData.cs" />
     <Compile Include="LogParsing\Parsers\Power\TagChangeData.cs" />
+    <Compile Include="Hearthstone\Pack.cs" />
     <Compile Include="Util\EventArgs\PackOpenedEventArgs.cs" />
     <Compile Include="Util\EventArgs\QueuedForGameEventArgs.cs" />
     <Compile Include="LogParsing\Parsers\RachelleParser.cs" />
@@ -116,6 +142,7 @@
     <Compile Include="Util\Extensions\TaskExtensions.cs" />
     <Compile Include="Util\Exceptions\HearthstoneNotFoundException.cs" />
     <Compile Include="Util\HearthstoneProc.cs" />
+    <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Logging\Log.cs" />
     <Compile Include="Util\Logging\LogType.cs" />
     <Compile Include="Util\Logging\LogWriter.cs" />
@@ -138,6 +165,13 @@
       <Project>{1694a2f8-645a-4263-a6ab-fc26323fd675}</Project>
       <Name>HearthMirror</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HSReplay-API-Client\HSReplay\HSReplay.csproj">
+      <Project>{a6264074-8a96-417c-9673-5ee7e9820b1f}</Project>
+      <Name>HSReplay</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
