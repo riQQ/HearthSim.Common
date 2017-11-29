@@ -18,8 +18,8 @@ namespace HearthSim.Core.Hearthstone
 
 		// Menu
 		public event Action<ModeChangedEventArgs> ModeChanged;
-		public event Action GameCreated;
 		public event Action GameEnded;
+		public event Action<GameCreatedEventArgs> GameCreated;
 		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
 		public event Action<PackOpenedEventArgs> PackOpened;
 
@@ -31,7 +31,7 @@ namespace HearthSim.Core.Hearthstone
 
 		internal virtual void OnModeChanged(ModeChangedEventArgs args) => ModeChanged?.Invoke(args);
 		internal virtual void OnGameStateChanged(GameStateChangedEventArgs args) => GameStateChanged?.Invoke(args);
-		internal virtual void OnCreateGame() => GameCreated?.Invoke();
+		internal virtual void OnCreateGame(GameCreatedEventArgs args) => GameCreated?.Invoke(args);
 		internal virtual void OnHearthstoneRestartRequired() => HearthstoneRestartRequired?.Invoke();
 		internal virtual void OnLogConfigError(LogConfigErrorEventArgs args) => LogConfigError?.Invoke(args);
 		internal virtual void OnGameEnded() => GameEnded?.Invoke();

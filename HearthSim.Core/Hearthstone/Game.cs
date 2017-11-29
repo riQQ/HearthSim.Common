@@ -32,13 +32,13 @@ namespace HearthSim.Core.Hearthstone
 			base.OnModeChanged(args);
 		}
 
-		internal override void OnCreateGame()
+		internal override void OnCreateGame(GameCreatedEventArgs args)
 		{
 			if(CurrentGame != null)
 				CurrentGame.Modified -= OnGameStateChanged;
 			CurrentGame = new GameState();
 			CurrentGame.Modified += OnGameStateChanged;
-			base.OnCreateGame();
+			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
 		internal override void OnGameStateChanged(GameStateChangedEventArgs args)
