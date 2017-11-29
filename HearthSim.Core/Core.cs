@@ -167,14 +167,12 @@ namespace HearthSim.Core
 
 			if(args.PreviousMode >= Mode.LOGIN && !Game.Account.IsLoaded)
 			{
+				Game.OnHearthstoneLoaded();
 				var battleTag = Reflection.GetBattleTag();
 				var account = Reflection.GetAccountId();
 				if(battleTag != null && account != null)
 					Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
 			}
-
-			if(args.PreviousMode == Mode.LOGIN)
-				Game.OnHearthstoneLoaded();
 
 			if(args.CurrentMode == Mode.DRAFT)
 				_arenaWatcher.Run();
