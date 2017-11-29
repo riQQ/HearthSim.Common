@@ -32,9 +32,10 @@ namespace HearthSim.Core
 			var logParserManager = new LogParserManager();
 
 			var powerParser = new PowerParser();
-			powerParser.GameStateChange += mod => Game?.CurrentGame.Apply(mod);
 			powerParser.CreateGame += () => Game.OnCreateGame(null);
+			powerParser.GameStateChange += mod => Game.CurrentGame?.Apply(mod);
 			powerParser.BlockStart += PowerParser_BlockStart;
+			powerParser.GameStateLog += args => Game.CurrentGame?.AppendLog(args);
 			logParserManager.RegisterParser(powerParser);
 
 			var decksParser = new DecksParser();

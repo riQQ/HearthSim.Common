@@ -16,6 +16,7 @@ namespace HearthSim.Core.Hearthstone
 		private readonly List<IGameStateModifier> _modifiers;
 
 		private MatchInfo _matchInfo;
+		private readonly List<string> _powerLog;
 
 		public GameState()
 		{
@@ -25,8 +26,10 @@ namespace HearthSim.Core.Hearthstone
 			_creationTags = new Queue<IGameStateModifier>();
 			LocalPlayer = new Player(this, true);
 			OpposingPlayer = new Player(this, false);
+			_powerLog = new List<string>();
 		}
 
+		public IReadOnlyCollection<string> PowerLog => _powerLog.AsReadOnly();
 		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
 
 		public Dictionary<int, Entity> Entities { get; }
@@ -104,5 +107,7 @@ namespace HearthSim.Core.Hearthstone
 			}
 			return false;
 		}
+
+		public void AppendLog(GameStateLogEventArgs args) => _powerLog.Add(args.Line.RawLine);
 	}
 }
