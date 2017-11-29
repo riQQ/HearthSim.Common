@@ -23,6 +23,7 @@ namespace HearthSim.Core.Hearthstone
 		public bool IsRunning { get; private set; }
 		public Arena Arena { get; }
 		public TavernBrawl TavernBrawl { get; }
+		public int? Build { get; internal set; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
@@ -55,6 +56,8 @@ namespace HearthSim.Core.Hearthstone
 			TavernBrawl.Unload();
 			IsRunning = false;
 			CurrentMode = Mode.INVALID;
+			CurrentGame = null;
+			Build = null;
 			base.OnHearthstoneExited();
 		}
 

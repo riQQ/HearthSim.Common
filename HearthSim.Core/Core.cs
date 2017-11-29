@@ -94,6 +94,7 @@ namespace HearthSim.Core
 		private void ProcessWatcher_OnStart(Process process)
 		{
 			Game.OnHearthstoneStarted();
+			Task.Run(async () => Game.Build = await HearthstoneProc.GetHearthstoneBuild());
 			_logReader.Start();
 		}
 

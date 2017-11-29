@@ -53,6 +53,21 @@ namespace HearthSim.Core.Util
 			throw new HearthstoneNotFoundException("Could not get Hearthstone installation path", exception);
 		}
 
+		public static async Task<int?> GetHearthstoneBuild()
+		{
+			try
+			{
+				var path = await GetExecutablePath();
+				var exe = Path.Combine(path, "Hearthstone.exe");
+				return FileVersionInfo.GetVersionInfo(exe).FilePrivatePart;
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return null;
+			}
+		}
+
 		public static Process GetProcess()
 		{
 			try
