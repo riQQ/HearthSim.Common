@@ -102,6 +102,8 @@ namespace HearthSim.Core
 		public Game Game { get; }
 		public HSReplayNet HSReplayNet { get; }
 
+		public async Task UpdateLogConfig() => await _logReader.UpdateLogConfig();
+
 		private void Game_OnPackOpened(PackOpenedEventArgs args)
 		{
 			if(_hsreplayNetConfig.UploadPacks)

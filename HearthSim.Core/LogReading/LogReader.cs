@@ -17,7 +17,7 @@ namespace HearthSim.Core.LogReading
 		private bool _running;
 		private bool _stop;
 
-		public LogReader(string logDirectory, params LogWatcherData[] logReaderInfos)
+		internal LogReader(string logDirectory, params LogWatcherData[] logReaderInfos)
 		{
 			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x, logDirectory)));
 			LogConfigWatcher.Start();
@@ -29,11 +29,13 @@ namespace HearthSim.Core.LogReading
 		public event Action LogConfigUpdated;
 		public event Action<LogConfigErrorEventArgs> LogConfigUpdateFailed;
 
+		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(_watchers.Select(x => x.Info.Name));
+
 		public async void Start()
 		{
 			if(_running)
 				return;
-			await LogConfigUpdater.Run(_watchers.Select(x => x.Info.Name));
+			await UpdateLogConfig();
 			var startingPoint = GetStartingPoint();
 			Log.Debug($"Starting log readers at {startingPoint}");
 			foreach(var logReader in _watchers)
