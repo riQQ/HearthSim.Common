@@ -8,7 +8,7 @@ using HearthSim.Core.Util.Logging;
 
 namespace HearthSim.Core.HSReplay.Twitch
 {
-	internal class TwitchDataManager
+	public class TwitchDataManager
 	{
 		private readonly OAuthWrapper _oauth;
 		private readonly HSReplayNetConfig _config;
@@ -17,7 +17,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 
 		public event Action<bool> OnStreamingChecked;
 
-		public TwitchDataManager(OAuthWrapper oauth, HSReplayNetConfig config)
+		internal TwitchDataManager(OAuthWrapper oauth, HSReplayNetConfig config)
 		{
 			_oauth = oauth;
 			_config = config;
@@ -30,7 +30,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 			return boardStateWatcher;
 		}
 
-		public async void WatchBoardState(GameState game)
+		internal async void WatchBoardState(GameState game)
 		{
 			if(_running)
 				return;

@@ -18,7 +18,7 @@ namespace HearthSim.Core.HSReplay
 	{
 		private readonly ApiWrapper _api;
 
-		public LogUploader(ApiWrapper api)
+		internal LogUploader(ApiWrapper api)
 		{
 			_api = api;
 		}

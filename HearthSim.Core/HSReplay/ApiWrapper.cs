@@ -16,7 +16,7 @@ namespace HearthSim.Core.HSReplay
 		private readonly HsReplayClient _client;
 		private bool _requestedNewToken;
 
-		public ApiWrapper(HSReplayNetConfig config, Account account)
+		internal ApiWrapper(HSReplayNetConfig config, Account account)
 		{
 			_account = account;
 			_client = new HsReplayClient(config.ApiKey, config.UserAgent);
