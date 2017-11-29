@@ -7,8 +7,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HearthSim.Core.Util.EventArgs;
+using HearthSim.Core.Util.Exceptions;
 using HearthSim.Core.Util.Logging;
 using HSReplay;
+using HSReplay.LogValidation;
 
 #endregion
 
@@ -26,9 +28,17 @@ namespace HearthSim.Core.HSReplay
 		private readonly List<UploaderItem> _inProgress = new List<UploaderItem>();
 
 		public event Action<UploadCompleteEventArgs> UploadComplete;
+		public event Action<UploadErrorEventArgs> UploadError;
 
 		public async Task<UploadStatus> Upload(string[] logLines, UploadMetaData data)
 		{
+			var result = LogValidator.Validate(logLines);
+			if(!result.IsValid)
+			{
+				UploadError?.Invoke(new UploadErrorEventArgs(result.Reason));
+				return new UploadStatus(new InvalidLogException(result.Reason));
+			}
+
 			var log = string.Join(Environment.NewLine, logLines);
 			var item = new UploaderItem(log.GetHashCode());
 			if(_inProgress.Contains(item))

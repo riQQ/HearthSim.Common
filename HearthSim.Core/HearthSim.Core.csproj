@@ -55,6 +55,8 @@
     <Compile Include="Hearthstone\CollectionCard.cs" />
     <Compile Include="Hearthstone\Deck.cs" />
     <Compile Include="HSReplay\HSReplayNetConfig.cs" />
+    <Compile Include="Util\EventArgs\UploadErrorEventArgs.cs" />
+    <Compile Include="Util\Exceptions\InvalidLogException.cs" />
     <Compile Include="Util\EventArgs\GameCreatedEventArgs.cs" />
     <Compile Include="Hearthstone\TavernBrawl.cs" />
     <Compile Include="HSReplay\Data\DecksData.cs" />
@@ -174,6 +176,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
