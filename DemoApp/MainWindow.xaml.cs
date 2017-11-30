@@ -13,8 +13,8 @@ using HearthSim.Core.HSReplay;
 using HearthSim.Core.Util;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Exceptions;
-using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Logging;
+using HearthSim.UI.Themes;
 
 namespace DemoApp
 {
@@ -26,6 +26,10 @@ namespace DemoApp
 		public MainWindow()
 		{
 			InitializeComponent();
+			ThemeManager.Load(new ThemeConfig
+			{
+				Theme="Dark"
+			});
 		}
 
 		private GameState Game => _core?.Game.CurrentGame;
@@ -37,7 +41,7 @@ namespace DemoApp
 				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Id + ": " +  x.Entity.Card?.Data?.Name)
 			: null;
 
-		public IEnumerable<Entity> LocalPlayerCards => Game?.LocalPlayer.RevealedCards;
+		public IEnumerable<Card> LocalPlayerCards => Game?.LocalPlayer.GetRemainingCards();
 
 		public IEnumerable<Entity> LocalPlayerHand => Game?.LocalPlayer.InHand;
 
@@ -78,6 +82,7 @@ namespace DemoApp
 
 		private void UpdatePlayerCard(GameStateChangedEventArgs gameStateChangedEventArgs)
 		{
+			PlayerCards1.Update(LocalPlayerCards);
 			OnPropertyChanged(nameof(LocalPlayerCards));
 			OnPropertyChanged(nameof(LocalPlayerHand));
 			OnPropertyChanged(nameof(LocalPlayerSecrets));

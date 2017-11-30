@@ -107,6 +107,10 @@
       <Project>{37F057D2-3E20-4571-9DB3-883541DD4E24}</Project>
       <Name>HearthSim.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HearthSim.UI\HearthSim.UI.csproj">
+      <Project>{9EE45B90-3F4A-4484-BB29-CAACD5C08145}</Project>
+      <Name>HearthSim.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
