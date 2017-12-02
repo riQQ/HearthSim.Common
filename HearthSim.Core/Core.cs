@@ -195,6 +195,12 @@ namespace HearthSim.Core
 				if(brawlInfo != null)
 					Game.TavernBrawl.Update(brawlInfo);
 			}
+
+			if(args.CurrentMode == Mode.FATAL_ERROR)
+			{
+				_logReader.Stop().Forget();
+				Game.OnHearthstoneExited();
+			}
 		}
 	}
 }
