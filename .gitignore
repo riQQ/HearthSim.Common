@@ -34,3 +34,6 @@ Resources/Generated/
 Resources/Tiles/
 HearthSim.UI/hsdata/
 HearthSim.UI/CardDefs.xml
+HSReplay-API-Client/
+HearthMirror/
+HearthDb/

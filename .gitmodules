@@ -1,9 +1,0 @@
-[submodule "HearthDb"]
-	path = HearthDb
-	url = https://github.com/HearthSim/HearthDb
-[submodule "HearthMirror"]
-	path = HearthMirror
-	url = https://github.com/hearthsim/HearthMirror
-[submodule "HSReplay-API-Client"]
-	path = HSReplay-API-Client
-	url = https://github.com/HearthSim/HSReplay-API-Client
