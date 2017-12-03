@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Util.Logging;
@@ -17,9 +15,22 @@ namespace HearthSim.UI
 {
 	public partial class AnimatedCardList : INotifyPropertyChanged
 	{
-		//private readonly ObservableCollection<AnimatedCard> _animatedCards = new ObservableCollection<AnimatedCard>();
-		public static readonly DependencyProperty AnimateProperty = DependencyProperty.Register("Animate", typeof(bool), typeof(AnimatedCardList), new PropertyMetadata(true));
-		public static readonly DependencyProperty TransitionOpacityProperty = DependencyProperty.Register("TransitionOpacity", typeof(bool), typeof(AnimatedCardList), new PropertyMetadata(true));
+		public static readonly DependencyProperty AnimateProperty =
+			DependencyProperty.Register("Animate", typeof(bool), typeof(AnimatedCardList), new PropertyMetadata(true));
+
+		public static readonly DependencyProperty TransitionOpacityProperty =
+			DependencyProperty.Register("TransitionOpacity", typeof(bool), typeof(AnimatedCardList), new PropertyMetadata(true));
+
+		public static readonly DependencyProperty CardsProperty =
+			DependencyProperty.Register("Cards", typeof(IEnumerable<Card>), typeof(AnimatedCardList),
+				new FrameworkPropertyMetadata(default(IEnumerable<Card>), OnCardsChanged));
+
+		public static readonly DependencyProperty EntitiesProperty =
+			DependencyProperty.Register("Entities", typeof(IEnumerable<Entity>), typeof(AnimatedCardList),
+				new FrameworkPropertyMetadata(default(IEnumerable<Entity>), FrameworkPropertyMetadataOptions.AffectsRender,
+					OnEntitiesChanged));
+
+		private readonly List<CardViewModel> _removing = new List<CardViewModel>();
 		private ObservableCollection<CardViewModel> _cardViewModels;
 
 		public AnimatedCardList()
@@ -42,22 +53,38 @@ namespace HearthSim.UI
 
 		public ObservableCollection<CardViewModel> CardViewModels
 		{
-			get { return _cardViewModels; }
+			get => _cardViewModels;
 			set
 			{
-				_cardViewModels = value; 
+				_cardViewModels = value;
 				OnPropertyChanged();
 			}
 		}
 
-		public void Update(IEnumerable<Entity> entites)
+		public IEnumerable<Card> Cards
 		{
-			Update(entites.Select(e => new CardViewModel(e)).ToList(), false);
+			get => (IEnumerable<Card>)GetValue(CardsProperty);
+			set => SetValue(CardsProperty, value);
 		}
 
-		public void Update(IEnumerable<Card> cards)
+		public IEnumerable<Entity> Entities
 		{
-			Update(cards.Select(c => new CardViewModel(c)).ToList(), false);
+			get => (IEnumerable<Entity>)GetValue(EntitiesProperty);
+			set => SetValue(EntitiesProperty, value);
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private static void OnEntitiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if(d is AnimatedCardList cardList)
+				cardList.Update(cardList.Entities.Select(x => new CardViewModel(x)).ToList(), false);
+		}
+
+		private static void OnCardsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if(d is AnimatedCardList cardList)
+				cardList.Update(cardList.Cards.Select(x => new CardViewModel(x)).ToList(), false);
 		}
 
 		public void Update(List<CardViewModel> cards, bool reset)
@@ -74,17 +101,16 @@ namespace HearthSim.UI
 						newCards.Add(card);
 					else if(existing.Count != card.Count || existing.InHand != card.InHand)
 					{
-						//var highlight = existing.Card.Count != card.Count;
-						existing.Count = card.Count;
+						var highlight = existing.Card.Count != card.Count;
+						existing.Card.Count = card.Count;
 						existing.InHand = card.InHand;
-						//TODO: trigger update animation
-						existing.RefreshBackground();
+						if(highlight)
+							existing.TriggerUpdate();
+						else
+							existing.RefreshBackground();
 					}
 					else if(existing.Created != card.Created)
-					{
-						// does not trigger update nimation
 						existing.RefreshBackground();
-					}
 				}
 				var toUpdate = new List<CardViewModel>();
 				foreach(var existing in CardViewModels)
@@ -100,8 +126,7 @@ namespace HearthSim.UI
 					if(newCard != null)
 					{
 						CardViewModels.Insert(CardViewModels.IndexOf(card), newCard);
-						newCard.RefreshBackground();
-						//TODO: trigger update animation
+						newCard.TriggerUpdate();
 						newCards.Remove(newCard);
 					}
 				}
@@ -111,7 +136,7 @@ namespace HearthSim.UI
 				{
 					CardViewModels.Insert(cards.IndexOf(card), card);
 					card.RefreshBackground();
-					//TODO: trigger fadein
+					card.FadeIn = true;
 				}
 			}
 			catch(Exception e)
@@ -122,21 +147,20 @@ namespace HearthSim.UI
 
 		private async void RemoveCard(CardViewModel card, bool fadeOut)
 		{
+			if(_removing.Contains(card))
+				return;
+			_removing.Add(card);
 			if(fadeOut)
-			{
-				//TODO: trigger fadeout
-				//await card.FadeOut(card.Card.Count > 0);
-			}
+				await card.TriggerFadeOut(card.Count > 0);
 			CardViewModels.Remove(card);
+			_removing.Remove(card);
 		}
 
 		private bool AreEqualForList(CardViewModel c1, CardViewModel c2)
 		{
 			return c1.Id == c2.Id && c1.Guessed == c2.Guessed && c1.Created == c2.Created
-				   && (!ThemeManager.Config.IndicateDiscarded || c1.Discarded == c2.Discarded);
+					&& (!ThemeManager.Config.IndicateDiscarded || c1.Discarded == c2.Discarded);
 		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

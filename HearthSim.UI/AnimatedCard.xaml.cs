@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
-using Card = HearthSim.Core.Hearthstone.Card;
 
 namespace HearthSim.UI
 {
@@ -12,6 +10,17 @@ namespace HearthSim.UI
 	/// </summary>
 	public partial class AnimatedCard
 	{
+		public static readonly DependencyProperty AnimateProperty =
+			DependencyProperty.Register("Animate", typeof(bool), typeof(AnimatedCard), new PropertyMetadata(true));
+
+		public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof(CardViewModel),
+			typeof(AnimatedCard), new FrameworkPropertyMetadata(OnCardChanged));
+
+		public static readonly DependencyProperty TransitionOpacityProperty =
+			DependencyProperty.Register("TransitionOpacity", typeof(bool), typeof(AnimatedCard), new PropertyMetadata(true));
+
+		private readonly List<string> _runningStoryBoards = new List<string>();
+
 		public AnimatedCard()
 		{
 			InitializeComponent();
@@ -23,9 +32,9 @@ namespace HearthSim.UI
 			set => SetValue(AnimateProperty, value);
 		}
 
-		public Card Card
+		public CardViewModel Card
 		{
-			get => (Card)GetValue(CardProperty);
+			get => (CardViewModel)GetValue(CardProperty);
 			set => SetValue(CardProperty, value);
 		}
 
@@ -35,23 +44,21 @@ namespace HearthSim.UI
 			set => SetValue(TransitionOpacityProperty, value);
 		}
 
-		public async Task FadeIn(bool fadeIn)
+		public async void FadeIn()
 		{
-			//Card.Update();
-			if(fadeIn && Animate)
-			{
-				if(TransitionOpacity)
-					await RunStoryBoard("StoryboardFadeIn");
-				else
-					await RunStoryBoard("StoryboardFadeInNoOpacity");
-			}
+			if(!Animate)
+				return;
+			if(TransitionOpacity)
+				await RunStoryBoard("StoryboardFadeIn");
+			else
+				await RunStoryBoard("StoryboardFadeInNoOpacity");
 		}
 
 		public async Task FadeOut(bool highlight)
 		{
 			if(highlight && Animate)
 				await RunStoryBoard("StoryboardUpdate");
-			//Card.Update();
+			Card.RefreshBackground();
 			if(Animate)
 			{
 				if(TransitionOpacity)
@@ -61,23 +68,26 @@ namespace HearthSim.UI
 			}
 		}
 
-		public async Task Update(bool highlight)
+		public async void Update()
 		{
-			if(highlight && Animate)
+			if(Animate)
 				await RunStoryBoard("StoryboardUpdate");
-			//Card.Update();
+			Card.RefreshBackground();
 		}
 
-		private readonly List<string> _runningStoryBoards = new List<string>();
-		public static readonly DependencyProperty AnimateProperty = DependencyProperty.Register("Animate", typeof(bool), typeof(AnimatedCard), new PropertyMetadata(true));
-		public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof(object), typeof(AnimatedCard), new FrameworkPropertyMetadata(FOo));
-
-		private static void FOo(DependencyObject o, DependencyPropertyChangedEventArgs args)
+		private static void OnCardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			Console.WriteLine(o);
+			if(d is AnimatedCard ac)
+			{
+				if(e.OldValue is CardViewModel oldCard)
+					oldCard.Update -= ac.Update;
+				var newCard = (CardViewModel)e.NewValue;
+				newCard.Update += ac.Update;
+				newCard.FadeOut = ac.FadeOut;
+				if(newCard.FadeIn)
+					ac.FadeIn();
+			}
 		}
-
-		public static readonly DependencyProperty TransitionOpacityProperty = DependencyProperty.Register("TransitionOpacity", typeof(bool), typeof(AnimatedCard), new PropertyMetadata(true));
 
 		public async Task RunStoryBoard(string key)
 		{

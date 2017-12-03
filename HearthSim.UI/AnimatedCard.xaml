@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ui="clr-namespace:HearthSim.UI" 
              mc:Ignorable="d" 
-             Name="Foo"
+             Name="AnimatedCardControl"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Storyboard x:Key="StoryboardFadeIn" Duration="0:0:1">
@@ -28,8 +28,8 @@
         </Storyboard>
     </UserControl.Resources>
     <Grid Name="Grid">
-        <ui:UICard DataContext="{Binding ElementName=Foo, Path=Card}" />
-        <!--<Rectangle Name="RectHighlight" Fill="{Binding Highlight}" Height="34" Width="217" RenderOptions.BitmapScalingMode="Fant"
-                   Opacity="0" VerticalAlignment="Center" IsHitTestVisible="False" />-->
+        <ui:UICard DataContext="{Binding ElementName=AnimatedCardControl, Path=Card}" />
+        <Rectangle Name="RectHighlight" Fill="{Binding ElementName=AnimatedCardControl, Path=Card.Highlight}" Height="34" Width="217" RenderOptions.BitmapScalingMode="Fant"
+                   Opacity="0" VerticalAlignment="Center" IsHitTestVisible="False" />
     </Grid>
 </UserControl>

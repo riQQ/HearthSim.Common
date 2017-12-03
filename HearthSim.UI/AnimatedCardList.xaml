@@ -12,7 +12,7 @@
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <ui:AnimatedCard
-                    Card="{Binding}"
+                    Card="{Binding Path=.}"
                     Animate="{Binding ElementName=CardList, Path=Animate}"
                     TransitionOpacity="{Binding ElementName=CardList, Path=TransitionOpacity}"
                    />

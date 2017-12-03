@@ -28,28 +28,42 @@ namespace DemoApp
 			InitializeComponent();
 			ThemeManager.Load(new ThemeConfig
 			{
-				Theme="Dark"
+				Theme="Dark",
+				RarityCardFrames = true,
+				RarityCardGems = true
 			});
 		}
 
 		private GameState Game => _core?.Game.CurrentGame;
 
-		public IEnumerable<string> LocalPlayerMulligan => Game != null
+		public IEnumerable<Card> LocalPlayerMulligan => Game != null
 			? _mulliganEntites.Select(x =>
 					new {Entity = Game.Entities[x.Key], Mulliganed = x.Value}
-				).Where(x => x.Entity.IsControlledBy(Game.MatchInfo.LocalPlayer.Id) && !x.Entity.IsCreated)
-				.Select(x => (x.Mulliganed ? "[x]" : "") + x.Entity.Id + ": " +  x.Entity.Card?.Data?.Name)
+				).Where(x => x.Entity.IsControlledBy(Game.MatchInfo.LocalPlayer.Id) && !x.Entity.IsCreated && x.Entity.HasCardId)
+				.Select(x => new Card(x.Entity.CardId, x.Mulliganed ? 0 : 1))
+			: null;
+
+		public IEnumerable<Card> OpposingPlayerMulligan => Game != null
+			? _mulliganEntites.Select(x =>
+					new {Entity = Game.Entities[x.Key], Mulliganed = x.Value}
+				).Where(x => x.Entity.IsControlledBy(Game.MatchInfo.OpposingPlayer.Id) && !x.Entity.IsCreated && x.Entity.HasCardId)
+				.Select(x => new Card(x.Entity.CardId, x.Mulliganed ? 0 : 1))
 			: null;
 
 		public IEnumerable<Card> LocalPlayerCards => Game?.LocalPlayer.GetRemainingCards();
+		public IEnumerable<Card> OpposingPlayerCards => Game?.OpposingPlayer.GetRemainingCards();
 
 		public IEnumerable<Entity> LocalPlayerHand => Game?.LocalPlayer.InHand;
+		public IEnumerable<Entity> OpposingPlayerHand => Game?.OpposingPlayer.InHand;
 
 		public IEnumerable<Entity> LocalPlayerSecrets => Game?.LocalPlayer.InSecret;
+		public IEnumerable<Entity> OpposingPlayerSecrets => Game?.OpposingPlayer.InSecret;
 
-		public IEnumerable<Entity> LocalPlayerGraveyard => Game?.LocalPlayer.InSecret;
+		public IEnumerable<Entity> LocalPlayerGraveyard => Game?.LocalPlayer.InGraveyard;
+		public IEnumerable<Entity> OpposingPlayerGraveyard => Game?.OpposingPlayer.InGraveyard;
 
 		public IEnumerable<Entity> LocalPlayerQuest => Game?.LocalPlayer.InQuest;
+		public IEnumerable<Entity> OpposingPlayerQuest => Game?.OpposingPlayer.InQuest;
 
 		public string QuestProgress
 		{
@@ -60,35 +74,66 @@ namespace DemoApp
 			}
 		}
 
+		public string OpposingQuestProgress
+		{
+			get
+			{
+				var quest = Game?.OpposingPlayer.InQuest.FirstOrDefault();
+				return quest != null ? $"{quest.GetTag(GameTag.QUEST_PROGRESS)}/{quest.GetTag(GameTag.QUEST_PROGRESS_TOTAL)}" : "";
+			}
+		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		private void UpdateMulligan(GameStateChangedEventArgs args)
 		{
-			var mulliganState = args.State.LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE);
-			if(mulliganState.HasValue && mulliganState != (int)Mulligan.DONE && args.Modifier is TagChange t)
+			if(args.Modifier is TagChange t)
 			{
-				if(t.Tag == GameTag.ZONE)
+				void Foo(int playerId, int? mulligan)
 				{
-					if(t.Value == (int)Zone.HAND && mulliganState < (int)Mulligan.DEALING)
-						_mulliganEntites[t.EntityId.Value] = false;
-					else if(t.Value == (int)Zone.DECK && t.PreviousValue == (int)Zone.HAND)
+					if(mulligan.HasValue && mulligan != (int)Mulligan.DONE)
 					{
-						_mulliganEntites[t.EntityId.Value] = true;
-						OnPropertyChanged(nameof(LocalPlayerMulligan));
+						if(t.Tag == GameTag.ZONE && args.State.Entities[t.EntityId.Value].IsControlledBy(playerId))
+						{
+							if(t.Value == (int)Zone.HAND && mulligan < (int)Mulligan.DEALING)
+								_mulliganEntites[t.EntityId.Value] = false;
+							else if(t.Value == (int)Zone.DECK && t.PreviousValue == (int)Zone.HAND)
+							{
+								_mulliganEntites[t.EntityId.Value] = true;
+								OnPropertyChanged(nameof(LocalPlayerMulligan));
+								OnPropertyChanged(nameof(OpposingPlayerMulligan));
+							}
+						}
 					}
 				}
+
+				var localPlayerMulligan = args.State.LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE);
+				var opposingPlayerMulligan = args.State.OpposingPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE);
+				Foo(args.State.LocalPlayer.PlayerId, localPlayerMulligan);
+				Foo(args.State.OpposingPlayer.PlayerId, opposingPlayerMulligan);
 			}
 		}
 
-		private void UpdatePlayerCard(GameStateChangedEventArgs gameStateChangedEventArgs)
+		private void UpdatePlayerCard(GameStateChangedEventArgs args)
 		{
-			PlayerCards1.Update(LocalPlayerCards);
-			OnPropertyChanged(nameof(LocalPlayerCards));
-			OnPropertyChanged(nameof(LocalPlayerHand));
-			OnPropertyChanged(nameof(LocalPlayerSecrets));
-			OnPropertyChanged(nameof(LocalPlayerGraveyard));
-			OnPropertyChanged(nameof(LocalPlayerQuest));
-			OnPropertyChanged(nameof(QuestProgress));
+			if(!(args.Modifier is TagChange t))
+				return;
+			if(t.Tag == GameTag.ZONE || t.Tag == GameTag.STATE)
+			{
+				OnPropertyChanged(nameof(LocalPlayerCards));
+				OnPropertyChanged(nameof(LocalPlayerHand));
+				OnPropertyChanged(nameof(LocalPlayerSecrets));
+				OnPropertyChanged(nameof(LocalPlayerGraveyard));
+				OnPropertyChanged(nameof(LocalPlayerQuest));
+				OnPropertyChanged(nameof(QuestProgress));
+
+				OnPropertyChanged(nameof(OpposingPlayerCards));
+				OnPropertyChanged(nameof(OpposingPlayerHand));
+				OnPropertyChanged(nameof(OpposingPlayerSecrets));
+				OnPropertyChanged(nameof(OpposingPlayerGraveyard));
+				OnPropertyChanged(nameof(OpposingPlayerQuest));
+				OnPropertyChanged(nameof(OpposingQuestProgress));
+			}
 		}
 
 		[NotifyPropertyChangedInvocator]
@@ -122,7 +167,15 @@ namespace DemoApp
 			_core = new Core(path, config);
 			_core.Game.GameStateChanged += UpdateMulligan;
 			_core.Game.GameStateChanged += UpdatePlayerCard;
+			_core.Game.GameEnded += Game_GameEnded;
 			_core.Start();
+		}
+
+		private void Game_GameEnded(GameEndEventArgs obj)
+		{
+			_mulliganEntites.Clear();
+			OnPropertyChanged(nameof(LocalPlayerMulligan));
+			OnPropertyChanged(nameof(OpposingPlayerMulligan));
 		}
 	}
 }

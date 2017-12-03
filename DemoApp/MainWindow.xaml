@@ -7,15 +7,16 @@
         xmlns:ui="clr-namespace:HearthSim.UI;assembly=HearthSim.UI"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
+        Name="Window"
         Loaded="MainWindow_OnLoaded"
         Title="MainWindow" Height="350" Width="525">
     <StackPanel Orientation="Horizontal">
         <GroupBox Header="Revealed Local Player">
-            <ui:AnimatedCardList Animate="True" TransitionOpacity="True" x:Name="PlayerCards1"/>
+            <ui:AnimatedCardList Cards="{Binding LocalPlayerCards, ElementName=Window}"/>
         </GroupBox>
         <StackPanel>
             <GroupBox Header="Local Player Mulligan">
-                <ListView ItemsSource="{Binding LocalPlayerMulligan}"/>
+                <ui:AnimatedCardList Cards="{Binding LocalPlayerMulligan, ElementName=Window}"/>
             </GroupBox>
             <GroupBox>
                 <GroupBox.Header>
@@ -24,17 +25,43 @@
                         <TextBlock Text="{Binding QuestProgress}"></TextBlock>
                     </StackPanel>
                 </GroupBox.Header>
-                <ListView ItemsSource="{Binding LocalPlayerQuest}"/>
+                <ui:AnimatedCardList Entities="{Binding LocalPlayerQuest, ElementName=Window}"/>
             </GroupBox>
             <GroupBox Header="Local Player Secrets">
-                <ListView ItemsSource="{Binding LocalPlayerSecrets}"/>
+                <ui:AnimatedCardList Entities="{Binding LocalPlayerSecrets, ElementName=Window}"/>
             </GroupBox>
             <GroupBox Header="Local Player Graveyard">
-                <ListView ItemsSource="{Binding LocalPlayerGraveyard}"/>
+                <ui:AnimatedCardList Entities="{Binding LocalPlayerGraveyard, ElementName=Window}"/>
             </GroupBox>
         </StackPanel>
         <GroupBox Header="Local Player Hand">
-            <ListView ItemsSource="{Binding LocalPlayerHand}"/>
+            <ui:AnimatedCardList Entities="{Binding LocalPlayerHand, ElementName=Window}"/>
+        </GroupBox>
+        <GroupBox Header="Revealed Opposing Player">
+            <ui:AnimatedCardList Cards="{Binding OpposingPlayerCards, ElementName=Window}"/>
+        </GroupBox>
+        <StackPanel>
+            <GroupBox Header="Opposing Player Mulligan">
+                <ui:AnimatedCardList Cards="{Binding OpposingPlayerMulligan, ElementName=Window}"/>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Opposing Player Quest "/>
+                        <TextBlock Text="{Binding OpposingQuestProgress}"></TextBlock>
+                    </StackPanel>
+                </GroupBox.Header>
+                <ui:AnimatedCardList Entities="{Binding OpposingPlayerQuest, ElementName=Window}"/>
+            </GroupBox>
+            <GroupBox Header="Opposing Player Secrets">
+                <ui:AnimatedCardList Entities="{Binding OpposingPlayerSecrets, ElementName=Window}"/>
+            </GroupBox>
+            <GroupBox Header="Opposing Player Graveyard">
+                <ui:AnimatedCardList Entities="{Binding OpposingPlayerGraveyard, ElementName=Window}"/>
+            </GroupBox>
+        </StackPanel>
+        <GroupBox Header="Opposing Player Hand">
+            <ui:AnimatedCardList Entities="{Binding OpposingPlayerHand, ElementName=Window}"/>
         </GroupBox>
     </StackPanel>
 </Window>
