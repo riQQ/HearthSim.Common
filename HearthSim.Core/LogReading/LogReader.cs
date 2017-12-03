@@ -39,7 +39,7 @@ namespace HearthSim.Core.LogReading
 			var startingPoint = GetStartingPoint();
 			Log.Debug($"Starting log readers at {startingPoint}");
 			foreach(var logReader in _watchers)
-				logReader.Start(startingPoint);
+				logReader.Start(logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
 			_running = true;
 			_stop = false;
 			var newLines = new SortedList<DateTime, List<Line>>();
@@ -65,12 +65,12 @@ namespace HearthSim.Core.LogReading
 			_running = false;
 		}
 
-		private DateTime GetStartingPoint()
+		private StartingPoint GetStartingPoint()
 		{
 			LogWatcher GetLogWatcher(string name) => _watchers.SingleOrDefault(x => x.Info.Name == name);
 			var power = Analyzer.FindEntryPoint(GetLogWatcher("Power"));
 			var decks = Analyzer.FindEntryPoint(GetLogWatcher("Decks"));
-			return decks > power ? decks : power;
+			return new StartingPoint(power, decks);
 		}
 
 		public async Task Stop()
@@ -82,6 +82,19 @@ namespace HearthSim.Core.LogReading
 			while(_running)
 				await Task.Delay(50);
 			await Task.WhenAll(_watchers.Select(x => x.Stop()));
+		}
+
+		private class StartingPoint
+		{
+			public StartingPoint(DateTime power, DateTime decks)
+			{
+				Power = power;
+				Decks = decks;
+			}
+
+			public DateTime Power { get; }
+			public DateTime Decks { get; }
+			public DateTime Default => Decks > Power ? Decks : Power;
 		}
 	}
 }

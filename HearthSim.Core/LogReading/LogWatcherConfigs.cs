@@ -5,7 +5,7 @@ namespace HearthSim.Core.LogReading
 	public static class LogWatcherConfigs
 	{
 		internal static LogWatcherData Power => 
-			new LogWatcherData("Power", new[] {"tag=GOLD_REWARD_STATE", "End Spectator"},
+			new LogWatcherData("Power", new[] {"tag=STATE value=COMPLETE", "GOLD_REWARD_STATE", "End Spectator"},
 				s => s.StartsWith("PowerTaskList.DebugPrintPower") || s.StartsWith("GameState."),
 				s => s.Contains("Spectating") || s.Contains("Spectator"));
 
