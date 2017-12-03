@@ -37,7 +37,11 @@ namespace HearthSim.Core.Hearthstone
 		internal override void OnCreateGame(GameCreatedEventArgs args)
 		{
 			if(CurrentGame != null)
+			{
 				CurrentGame.Modified -= OnGameStateChanged;
+				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
+					InvokeGameEnd(CurrentGame);
+			}
 			CurrentGame = new GameState();
 			CurrentGame.Modified += OnGameStateChanged;
 			CurrentGame.LocalPlayer.Deck = SelectedDeck;
@@ -48,21 +52,24 @@ namespace HearthSim.Core.Hearthstone
 		{
 			base.OnGameStateChanged(args);
 			if(args.Modifier is TagChange t && t.Tag == GameTag.STATE && t.Value == (int)State.COMPLETE)
+				InvokeGameEnd(args.State);
+		}
+
+		private void InvokeGameEnd(GameState game)
+		{
+			var wins = 0;
+			var losses = 0;
+			if(game.MatchInfo.GameType == (int)GameType.GT_ARENA)
 			{
-				var wins = 0;
-				var losses = 0;
-				if(args.State.MatchInfo.GameType == (int)GameType.GT_ARENA)
-				{
-					wins = Arena.Wins;
-					losses = Arena.Losses;
-				}
-				else if(Converters.IsBrawl((GameType)args.State.MatchInfo.GameType))
-				{
-					wins = TavernBrawl.Wins;
-					losses = TavernBrawl.Losses;
-				}
-				OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
+				wins = Arena.Wins;
+				losses = Arena.Losses;
 			}
+			else if(Converters.IsBrawl((GameType)game.MatchInfo.GameType))
+			{
+				wins = TavernBrawl.Wins;
+				losses = TavernBrawl.Losses;
+			}
+			OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
 		}
 
 		internal override void OnHearthstoneExited()
