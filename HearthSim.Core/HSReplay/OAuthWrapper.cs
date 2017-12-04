@@ -15,8 +15,8 @@ namespace HearthSim.Core.HSReplay
 	public sealed class OAuthWrapper
 	{
 		private readonly HSReplayNetConfig _config;
-		private readonly Lazy<OAuthClient> _client;
-		private readonly OAuthData _data;
+		private Lazy<OAuthClient> _client;
+		private OAuthData _data;
 
 		private readonly int[] _ports = { 17781, 17782, 17783, 17784, 17785, 17786, 17787, 17788, 17789 };
 		private const string TwitchExtensionId = "apwln3g3ia45kk690tzabfp525h9e1";
@@ -28,7 +28,12 @@ namespace HearthSim.Core.HSReplay
 		internal OAuthWrapper(HSReplayNetConfig config)
 		{
 			_config = config;
-			_data = OAuthData.Serializer.Load(config.DataDirectory);
+			Load();
+		}
+
+		private void Load()
+		{
+			_data = OAuthData.Serializer.Load(_config.DataDirectory);
 			_client = new Lazy<OAuthClient>(LoadClient);
 		}
 
@@ -78,6 +83,12 @@ namespace HearthSim.Core.HSReplay
 			await UpdateToken();
 			_data.Save();
 			return true;
+		}
+
+		public void DeleteToken()
+		{
+			OAuthData.Serializer.Delete(_data);
+			Load();
 		}
 
 		private async Task<bool> UpdateToken()
