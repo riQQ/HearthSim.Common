@@ -34,5 +34,10 @@ namespace HearthSim.Core.Util.Watchers
 			{
 			}
 		}
+
+		protected override void Reset()
+		{
+			_proc = null;
+		}
 	}
 }

@@ -146,6 +146,12 @@ namespace HearthSim.Core
 
 		public void Start() => _procWatcher.Run();
 
+		public void Stop()
+		{
+			_procWatcher.Stop().Forget();
+			_logReader.Stop().Forget();
+		}
+
 		private void PowerParser_BlockStart(BlockData block)
 		{
 			foreach(var cardId in _blockHelper.GetCreatedCards(block))
