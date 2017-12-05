@@ -77,13 +77,13 @@ namespace HearthSim.UI
 
 		private static void OnEntitiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if(d is AnimatedCardList cardList)
+			if(d is AnimatedCardList cardList && cardList.Entities != null)
 				cardList.Update(cardList.Entities.Select(x => new CardViewModel(x)).ToList(), false);
 		}
 
 		private static void OnCardsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if(d is AnimatedCardList cardList)
+			if(d is AnimatedCardList cardList && cardList.Cards != null)
 				cardList.Update(cardList.Cards.Select(x => new CardViewModel(x)).ToList(), false);
 		}
 
