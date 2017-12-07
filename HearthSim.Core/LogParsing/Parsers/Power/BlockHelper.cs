@@ -68,7 +68,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 				case Rogue.GangUp:
 					return Repeat(block.Target?.CardId, 3);
 				case Rogue.BeneathTheGrounds:
-					return Repeat(NonCollectible.Rogue.BeneaththeGrounds_AmbushToken, 3);
+					return Repeat(NonCollectible.Rogue.BeneaththeGrounds_NerubianAmbushToken, 3);
 				case Warrior.IronJuggernaut:
 					return new[] {NonCollectible.Warrior.IronJuggernaut_BurrowingMineToken};
 				case Druid.Recycle:
