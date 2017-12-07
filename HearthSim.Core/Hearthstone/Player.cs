@@ -44,7 +44,7 @@ namespace HearthSim.Core.Hearthstone
 			if(Deck == null)
 				return new List<Card>();
 			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
-			foreach(var entity in RevealedCards)
+			foreach(var entity in RevealedCards.Where(x => !x.IsInDeck))
 			{
 				var card = cards.FirstOrDefault(c => c.Id == entity.CardId);
 				if(card != null)
