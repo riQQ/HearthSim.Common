@@ -33,7 +33,10 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			{
 				var entity = new Entity(_data.Id, _data.CardId);
 				if(_data.Zone.HasValue)
-					entity.Tags[GameTag.ZONE] = (int)_data.Zone.Value;
+				{
+					entity.SetTag(GameTag.ZONE, (int)_data.Zone.Value);
+					entity.Info.OriginalZone = _data.Zone.Value;
+				}
 				entity.Info.JoustReveal = _joustReveal;
 				gameState.Entities[_data.Id] = entity;
 			}
