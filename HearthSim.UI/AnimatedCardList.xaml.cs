@@ -78,7 +78,11 @@ namespace HearthSim.UI
 		private static void OnEntitiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if(d is AnimatedCardList cardList && cardList.Entities != null)
-				cardList.Update(cardList.Entities.Select(x => new CardViewModel(x)).ToList(), false);
+			{
+				var cards = cardList.Entities.Where(x => x.HasCardId).GroupBy(x => x.CardId)
+					.Select(g => new CardViewModel(new Card(g.Key, g.Count())));
+				cardList.Update(cards.ToList(), false);
+			}
 		}
 
 		private static void OnCardsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
