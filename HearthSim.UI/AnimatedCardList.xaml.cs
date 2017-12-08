@@ -138,7 +138,8 @@ namespace HearthSim.UI
 					RemoveCard(card.Item1, card.Item2);
 				foreach(var card in newCards)
 				{
-					CardViewModels.Insert(cards.IndexOf(card), card);
+					var index = Math.Min(CardViewModels.Count, cards.IndexOf(card));
+					CardViewModels.Insert(index, card);
 					card.RefreshBackground();
 					card.FadeIn = true;
 				}
