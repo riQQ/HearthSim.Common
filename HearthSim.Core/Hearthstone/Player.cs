@@ -42,7 +42,7 @@ namespace HearthSim.Core.Hearthstone
 		public IReadOnlyCollection<Card> GetRemainingCards()
 		{
 			if(Deck == null)
-				return new List<Card>();
+				return RevealedCards.Select(x => x.IsInDeck ? new Card(x.CardId, 0) : x.Card.Clone()).ToList();
 			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
 			foreach(var entity in RevealedCards.Where(x => !x.IsInDeck))
 			{
