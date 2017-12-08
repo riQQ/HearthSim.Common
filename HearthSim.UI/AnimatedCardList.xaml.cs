@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
+using HearthSim.Core.Util;
 using HearthSim.Core.Util.Logging;
 using HearthSim.UI.Annotations;
 using HearthSim.UI.Themes;
@@ -81,14 +82,14 @@ namespace HearthSim.UI
 			{
 				var cards = cardList.Entities.Where(x => x.HasCardId).GroupBy(x => x.CardId)
 					.Select(g => new CardViewModel(new Card(g.Key, g.Count())));
-				cardList.Update(cards.ToList(), false);
+				cardList.Update(CardSorting.Sort(cards).ToList(), false);
 			}
 		}
 
 		private static void OnCardsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if(d is AnimatedCardList cardList && cardList.Cards != null)
-				cardList.Update(cardList.Cards.Select(x => new CardViewModel(x)).ToList(), false);
+				cardList.Update(CardSorting.Sort(cardList.Cards.Select(x => new CardViewModel(x))).ToList(), false);
 		}
 
 		public void Update(List<CardViewModel> cards, bool reset)

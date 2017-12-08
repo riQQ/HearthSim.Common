@@ -6,12 +6,13 @@ using System.Windows.Media;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
+using HearthSim.Core.Util;
 using HearthSim.UI.Annotations;
 using HearthSim.UI.Themes;
 
 namespace HearthSim.UI
 {
-	public class CardViewModel : INotifyPropertyChanged
+	public class CardViewModel : INotifyPropertyChanged, ISortableCard
 	{
 		public CardViewModel(Entity entity) : this(entity.Card)
 		{
