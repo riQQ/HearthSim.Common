@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HearthDb.Enums;
+using HearthSim.Core.Util;
 
 namespace HearthSim.Core.Hearthstone
 {
@@ -12,7 +13,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			Name = deck.Name;
 			DeckId = deck.Id;
-			Cards = Sort(deck.Cards.Select(x => new Card(x)));
+			Cards = CardSorting.Sort(deck.Cards.Select(x => new Card(x)));
 			Class = HearthDb.Cards.All.TryGetValue(deck.Hero, out var hero) ? hero.Class : CardClass.INVALID;
 		}
 
@@ -20,7 +21,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			Name = deck.Name;
 			DeckId = deck.DeckId;
-			Cards = Sort(deck.GetCards().Select(card => new Card(card.Key, card.Value)));
+			Cards = CardSorting.Sort(deck.GetCards().Select(card => new Card(card.Key, card.Value)));
 			Class = deck.GetHero().Class;
 		}
 
@@ -31,10 +32,5 @@ namespace HearthSim.Core.Hearthstone
 
 		public FormatType Format
 			=> (_format ?? (_format = Cards.Any(c => c.IsWild) ? FormatType.FT_WILD : FormatType.FT_STANDARD)).Value;
-
-		private IOrderedEnumerable<Card> Sort(IEnumerable<Card> cards)
-		{
-			return cards.OrderBy(c => c.Data?.Cost).ThenBy(c => c.Data?.Name);
-		}
 	}
 }

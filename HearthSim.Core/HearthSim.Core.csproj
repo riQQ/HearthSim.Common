@@ -59,6 +59,7 @@
     <Compile Include="Hearthstone\CollectionCard.cs" />
     <Compile Include="Hearthstone\Deck.cs" />
     <Compile Include="HSReplay\HSReplayNetConfig.cs" />
+    <Compile Include="Util\CardSorting.cs" />
     <Compile Include="Util\EventArgs\UploadErrorEventArgs.cs" />
     <Compile Include="Util\Exceptions\InvalidLogException.cs" />
     <Compile Include="Util\EventArgs\GameCreatedEventArgs.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Util\Extensions\TaskExtensions.cs" />
     <Compile Include="Util\Exceptions\HearthstoneNotFoundException.cs" />
     <Compile Include="Util\HearthstoneProc.cs" />
+    <Compile Include="Util\ISortableCard.cs" />
     <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Logging\Log.cs" />
     <Compile Include="Util\Logging\LogType.cs" />
