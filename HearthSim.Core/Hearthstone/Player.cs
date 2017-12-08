@@ -24,7 +24,7 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> Entities => _gameState.Entities.Values.Where(x => x.IsControlledBy(PlayerId));
 
-		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) || x.Info.OriginalController == PlayerId) && !x.Info.Stolen && x.IsPlayableCard && x.HasCardId && x.Info.OriginalZone != Zone.SETASIDE);
+		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) && !x.Info.Stolen || x.Info.OriginalController == PlayerId) && x.IsPlayableCard && x.HasCardId && x.Info.OriginalZone != Zone.SETASIDE);
 
 		public IEnumerable<Entity> InHand => Entities.Where(x => x.IsInHand);
 
@@ -43,7 +43,11 @@ namespace HearthSim.Core.Hearthstone
 		public IReadOnlyCollection<Card> GetRemainingCards()
 		{
 			if(Deck == null)
-				return RevealedCards.Select(x => x.IsInDeck ? new Card(x.CardId, 0) : x.Card.Clone()).ToList();
+			{
+				return RevealedCards.Where(x => x.Info.OriginalZone == Zone.HAND || x.Info.OriginalZone == Zone.DECK)
+					.GroupBy(x => new {x.CardId, x.IsInDeck})
+					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count())).ToList();
+			}
 			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
 			foreach(var entity in RevealedCards.Where(x => !x.IsInDeck))
 			{
