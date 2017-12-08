@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.Entities;
 
 namespace HearthSim.Core.Hearthstone
@@ -23,7 +24,7 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> Entities => _gameState.Entities.Values.Where(x => x.IsControlledBy(PlayerId));
 
-		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) || x.Info.OriginalController == PlayerId) && !x.IsCreated && !x.Info.Stolen && x.IsPlayableCard && x.HasCardId);
+		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) || x.Info.OriginalController == PlayerId) && !x.Info.Stolen && x.IsPlayableCard && x.HasCardId && x.Info.OriginalZone != Zone.SETASIDE);
 
 		public IEnumerable<Entity> InHand => Entities.Where(x => x.IsInHand);
 
