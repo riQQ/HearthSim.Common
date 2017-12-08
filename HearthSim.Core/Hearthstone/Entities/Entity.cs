@@ -7,17 +7,29 @@ namespace HearthSim.Core.Hearthstone.Entities
 	public partial class Entity
 	{
 		private Card _card;
+		private string _cardId;
 
 		public Entity(int id, string cardId)
 		{
-			Id = id;
-			CardId = cardId;
 			Tags = new Dictionary<GameTag, int>();
 			Info = new EntityInfo(this);
+			Id = id;
+			CardId = cardId;
 		}
 
 		public int Id { get; }
-		public string CardId { get; set; }
+
+		public string CardId
+		{
+			get => _cardId;
+			set
+			{
+				_cardId = value;
+				if(string.IsNullOrEmpty(Info.OriginalCardId))
+					Info.OriginalCardId = _cardId;
+			}
+		}
+
 		public Dictionary<GameTag, int> Tags { get; }
 		public EntityInfo Info { get; }
 
@@ -54,7 +66,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool Hidden { get; set; }
 		//public int CostReduction { get; set; }
 		public Zone? OriginalZone { get; set; }
-		//public string OriginalCardId { get; private set; }
+		public string OriginalCardId { get; internal set; }
 		//public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);
 		public bool CreatedInDeck => OriginalZone == Zone.DECK;
 		public bool CreatedInHand => OriginalZone == Zone.HAND;

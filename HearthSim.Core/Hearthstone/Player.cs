@@ -46,7 +46,7 @@ namespace HearthSim.Core.Hearthstone
 			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
 			foreach(var entity in RevealedCards.Where(x => !x.IsInDeck))
 			{
-				var card = cards.FirstOrDefault(c => c.Id == entity.CardId);
+				var card = cards.FirstOrDefault(c => c.Id == entity.Info.OriginalCardId);
 				if(card != null)
 					card.Count--;
 			}
