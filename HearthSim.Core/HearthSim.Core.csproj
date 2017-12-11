@@ -156,6 +156,7 @@
     <Compile Include="Util\Logging\LogType.cs" />
     <Compile Include="Util\Logging\LogWriter.cs" />
     <Compile Include="Util\Logging\LogWriterCreationException.cs" />
+    <Compile Include="Util\Math.cs" />
     <Compile Include="Util\Watchers\ArenaWatcher\ArenaWatcher.cs" />
     <Compile Include="Util\Watchers\ArenaWatcher\HearthMirrorArenaProvider.cs" />
     <Compile Include="Util\Watchers\PackWatcher\HearthMirrorPackProvider.cs" />

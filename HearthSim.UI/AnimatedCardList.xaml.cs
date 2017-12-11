@@ -11,6 +11,7 @@ using HearthSim.Core.Util;
 using HearthSim.Core.Util.Logging;
 using HearthSim.UI.Annotations;
 using HearthSim.UI.Themes;
+using Math = System.Math;
 
 namespace HearthSim.UI
 {
