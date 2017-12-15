@@ -13,7 +13,6 @@ namespace HearthSim.Core.LogReading.Internal
 {
 	internal class LogWatcher
 	{
-		public string FilePath { get; }
 		private ConcurrentQueue<Line> _lines = new ConcurrentQueue<Line>();
 		private bool _logFileExists;
 		private long _offset;
@@ -22,25 +21,25 @@ namespace HearthSim.Core.LogReading.Internal
 		private bool _stop;
 		private Thread _thread;
 
-		public LogWatcher(LogWatcherData info, string directory)
+		public LogWatcher(LogWatcherData info)
 		{
 			Info = info;
-			FilePath = Path.Combine(directory, Info.Name + ".log");
 		}
 
 		public LogWatcherData Info { get; }
 
-		public void Start(DateTime startingPoint)
+		public void Start(string directory, DateTime startingPoint)
 		{
 			if(_running)
 				return;
-			if(Util.ArchiveFile(FilePath))
+			var filePath = Path.Combine(directory, Info.Name + ".log");
+			if(Util.ArchiveFile(filePath))
 				Log.Debug($"Moved {Info.Name}.log to {Info.Name}_old.log");
 			_startingPoint = startingPoint;
 			_stop = false;
 			_offset = 0;
 			_logFileExists = false;
-			_thread = new Thread(ReadLogFile) {IsBackground = true};
+			_thread = new Thread(() => ReadLogFile(filePath)) {IsBackground = true};
 			_thread.Start();
 		}
 
@@ -64,14 +63,14 @@ namespace HearthSim.Core.LogReading.Internal
 			}
 		}
 
-		private void ReadLogFile()
+		private void ReadLogFile(string filePath)
 		{
 			_running = true;
-			_offset = Analyzer.GetOffset(FilePath, _startingPoint);
+			_offset = Analyzer.GetOffset(filePath, _startingPoint);
 			Log.Debug($"Waiting for {Info.Name}.log, offset={_offset}");
 			while(!_stop)
 			{
-				var fileInfo = new FileInfo(FilePath);
+				var fileInfo = new FileInfo(filePath);
 				if(fileInfo.Exists)
 				{
 					if(!_logFileExists)
@@ -79,7 +78,7 @@ namespace HearthSim.Core.LogReading.Internal
 						_logFileExists = true;
 						Log.Debug($"Found {Info.Name}.log");
 					}
-					using(var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+					using(var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 					{
 						fs.Seek(_offset, SeekOrigin.Begin);
 						if(fs.Length == _offset)

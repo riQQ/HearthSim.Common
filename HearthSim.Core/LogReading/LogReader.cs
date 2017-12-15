@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HearthSim.Core.LogConfig;
@@ -17,9 +18,9 @@ namespace HearthSim.Core.LogReading
 		private bool _running;
 		private bool _stop;
 
-		internal LogReader(string logDirectory, params LogWatcherData[] logReaderInfos)
+		internal LogReader(params LogWatcherData[] logReaderInfos)
 		{
-			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x, logDirectory)));
+			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x)));
 			LogConfigWatcher.Start();
 			LogConfigUpdater.LogConfigUpdated += LogConfigUpdated;
 			LogConfigUpdater.LogConfigUpdateFailed += LogConfigUpdateFailed;
@@ -31,15 +32,16 @@ namespace HearthSim.Core.LogReading
 
 		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(_watchers.Select(x => x.Info.Name));
 
-		public async void Start()
+		public async void Start(string hearthstoneDirectory)
 		{
 			if(_running)
 				return;
 			await UpdateLogConfig();
-			var startingPoint = GetStartingPoint();
+			var logDirectory = Path.Combine(hearthstoneDirectory, "Logs");
+			var startingPoint = GetStartingPoint(logDirectory);
 			Log.Debug($"Starting log readers at {startingPoint}");
 			foreach(var logReader in _watchers)
-				logReader.Start(logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
+				logReader.Start(logDirectory, logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
 			_running = true;
 			_stop = false;
 			var newLines = new SortedList<DateTime, List<Line>>();
@@ -65,11 +67,11 @@ namespace HearthSim.Core.LogReading
 			_running = false;
 		}
 
-		private StartingPoint GetStartingPoint()
+		private StartingPoint GetStartingPoint(string directory)
 		{
 			LogWatcher GetLogWatcher(string name) => _watchers.SingleOrDefault(x => x.Info.Name == name);
-			var power = Analyzer.FindEntryPoint(GetLogWatcher("Power"));
-			var decks = Analyzer.FindEntryPoint(GetLogWatcher("Decks"));
+			var power = Analyzer.FindEntryPoint(directory, GetLogWatcher("Power"));
+			var decks = Analyzer.FindEntryPoint(directory, GetLogWatcher("Decks"));
 			return new StartingPoint(power, decks);
 		}
 

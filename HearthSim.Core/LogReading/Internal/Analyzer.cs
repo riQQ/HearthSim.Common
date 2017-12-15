@@ -42,11 +42,12 @@ namespace HearthSim.Core.LogReading.Internal
 			return 0;
 		}
 
-		public static DateTime FindEntryPoint(LogWatcher logWatcher)
+		public static DateTime FindEntryPoint(string direcotry, LogWatcher logWatcher)
 		{
-			if(string.IsNullOrEmpty(logWatcher?.FilePath) || !logWatcher.Info.EntryPoints.Any())
+			if(string.IsNullOrEmpty(direcotry) || logWatcher == null || !logWatcher.Info.EntryPoints.Any())
 				return DateTime.MinValue;
-			var fileInfo = new FileInfo(logWatcher.FilePath);
+			var filePath = Path.Combine(direcotry, logWatcher.Info.Name + ".log");
+			var fileInfo = new FileInfo(filePath);
 			if(!fileInfo.Exists)
 				return DateTime.MinValue;
 			var ids = logWatcher.Info.EntryPoints.Select(x => new string(x.Reverse().ToArray())).ToList();

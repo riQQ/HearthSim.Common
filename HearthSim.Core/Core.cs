@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.Util;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
+using HearthSim.Core.Util.Logging;
 using HearthSim.Core.Util.Watchers;
 using HearthSim.Core.Util.Watchers.ArenaWatcher;
 using HearthSim.Core.Util.Watchers.PackWatcher;
@@ -29,8 +31,9 @@ namespace HearthSim.Core
 		private readonly ProcessWatcher _procWatcher;
 		private readonly ArenaWatcher _arenaWatcher;
 		private readonly PackWatcher _packWatcher;
+		private string _directory;
 
-		public Core(string hearthstoneDirectory, HSReplayNetConfig hsreplayNetConfig, params LogWatcherData[] additionalLogReaders)
+		public Core(HSReplayNetConfig hsreplayNetConfig, params LogWatcherData[] additionalLogReaders)
 		{
 			_hsreplayNetConfig = hsreplayNetConfig;
 			Game = new Game();
@@ -65,7 +68,6 @@ namespace HearthSim.Core
 			logParserManager.RegisterParser(rachelleParser);
 
 			_logReader = new LogReader(
-				Path.Combine(hearthstoneDirectory, "Logs"),
 				new[]
 				{
 					LogWatcherConfigs.Power,
@@ -135,7 +137,20 @@ namespace HearthSim.Core
 		{
 			Game.OnHearthstoneStarted();
 			Task.Run(async () => Game.Build = await HearthstoneProc.GetHearthstoneBuild());
-			_logReader.Start();
+			if(_directory == null)
+			{
+				try
+				{
+					_directory = new FileInfo(process.MainModule.FileName).Directory?.FullName;
+				}
+				catch(Exception e)
+				{
+					Log.Error("Could not find Hearthstone installation");
+					Log.Error(e);
+					return;
+				}
+			}
+			_logReader.Start(_directory);
 		}
 
 		private void ProcessWatcher_OnExit(Process process)
@@ -144,7 +159,11 @@ namespace HearthSim.Core
 			Game.OnHearthstoneExited();
 		}
 
-		public void Start() => _procWatcher.Run();
+		public void Start(string directory = null)
+		{
+			_directory = directory;
+			_procWatcher.Run();
+		}
 
 		public void Stop()
 		{
