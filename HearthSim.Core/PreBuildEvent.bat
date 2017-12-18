@@ -32,10 +32,10 @@ if exist "%SolutionDir%HearthMirror" (
 
 echo.
 
-if exist "%SolutionDir%HSReplay-Api" (
-  echo Updating "%SolutionDir%HSReplay"-Api to origin/master
-  git -C "%SolutionDir%HSReplay-Api" fetch
-  git -C "%SolutionDir%HSReplay-Api" reset --hard origin/master
+if exist "%SolutionDir%HSReplay-API-Client" (
+  echo Updating "%SolutionDir%HSReplay-API-Client" to origin/master
+  git -C "%SolutionDir%HSReplay-API-Client" fetch
+  git -C "%SolutionDir%HSReplay-API-Client" reset --hard origin/master
 ) else (
   git clone --depth 1 https://github.com/HearthSim/HSReplay-API-Client.git "%SolutionDir%HSReplay-API-Client"
 )
