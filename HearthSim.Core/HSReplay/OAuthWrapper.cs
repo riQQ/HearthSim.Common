@@ -42,13 +42,13 @@ namespace HearthSim.Core.HSReplay
 			return new OAuthClient(_config.OAuthKey, _config.UserAgent, _data.TokenData);
 		}
 
-		public async Task<bool> Authenticate()
+		public async Task<bool> Authenticate(params Scope[] scopes)
 		{
 			Log.Info("Authenticating with HSReplay.net...");
 			string url;
 			try
 			{
-				url = _client.Value.GetAuthenticationUrl(new[] { Scope.ReadSocialAccounts }, _ports);
+				url = _client.Value.GetAuthenticationUrl(scopes, _ports);
 			}
 			catch(Exception e)
 			{
