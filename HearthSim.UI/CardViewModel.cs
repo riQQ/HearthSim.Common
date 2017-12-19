@@ -34,7 +34,7 @@ namespace HearthSim.UI
 		public bool Guessed { get; set; }
 		public int Cost => Card?.Data?.Cost ?? 0;
 		public SolidColorBrush TextColor { get; set; } = new SolidColorBrush(Colors.White);
-		public string Name => Card?.Data?.Name;
+		public string Name => Card?.Name;
 		public bool Discarded { get; set; }
 
 		public Func<bool, Task> FadeOut { get; set; }

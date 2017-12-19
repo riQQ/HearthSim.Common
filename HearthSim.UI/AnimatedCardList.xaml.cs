@@ -105,7 +105,7 @@ namespace HearthSim.UI
 					var existing = CardViewModels.FirstOrDefault(x => AreEqualForList(x, card));
 					if(existing == null)
 						newCards.Add(card);
-					else if(existing.Count != card.Count || existing.InHand != card.InHand)
+					else if(existing.Count != card.Count || existing.InHand != card.InHand || existing.Name != card.Name)
 					{
 						var highlight = existing.Card.Count != card.Count;
 						existing.Card.Count = card.Count;
@@ -165,7 +165,7 @@ namespace HearthSim.UI
 
 		private bool AreEqualForList(CardViewModel c1, CardViewModel c2)
 		{
-			return c1.Id == c2.Id && c1.Guessed == c2.Guessed && c1.Created == c2.Created
+			return c1.Id == c2.Id && c1.Guessed == c2.Guessed && c1.Created == c2.Created && c1.Name == c2.Name
 					&& (!ThemeManager.Config.IndicateDiscarded || c1.Discarded == c2.Discarded);
 		}
 

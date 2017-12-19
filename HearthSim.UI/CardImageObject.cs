@@ -13,6 +13,7 @@ namespace HearthSim.UI
 		public CardImageObject(CardViewModel card)
 		{
 			Count = card.Count;
+			Name = card.Name;
 			Jousted = card.Guessed;
 			ColoredFrame = ThemeManager.Config.RarityCardFrames;
 			ColoredGem = ThemeManager.Config.RarityCardGems;
@@ -28,6 +29,7 @@ namespace HearthSim.UI
 		public bool ColoredGem { get; }
 		public bool Created { get; }
 		public string Theme { get; }
+		public string Name { get; }
 		public int TextColorHash { get; }
 
 		public override bool Equals(object obj)
@@ -38,7 +40,7 @@ namespace HearthSim.UI
 
 		protected bool Equals(CardImageObject other)
 			=> Count == other.Count && Jousted == other.Jousted && ColoredFrame == other.ColoredFrame
-				&& ColoredGem == other.ColoredGem
+				&& ColoredGem == other.ColoredGem && Name == other.Name
 				&& string.Equals(Theme, other.Theme) && TextColorHash == other.TextColorHash && Created == other.Created;
 
 		public override int GetHashCode()
@@ -52,6 +54,7 @@ namespace HearthSim.UI
 				hashCode = (hashCode * 397) ^ (Theme?.GetHashCode() ?? 0);
 				hashCode = (hashCode * 397) ^ TextColorHash;
 				hashCode = (hashCode * 397) ^ Created.GetHashCode();
+				hashCode = (hashCode * 397) ^ (Name?.GetHashCode() ?? 0);
 				return hashCode;
 			}
 		}

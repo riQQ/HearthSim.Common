@@ -51,11 +51,14 @@ namespace HearthSim.Core.Hearthstone
 
 		public string Id { get; set; }
 		public int Count { get; set; }
+		public string NamePrefix { get; set; }
+
 		public HearthDb.Card Data => _card ?? (_card = Cards.All.TryGetValue(Id, out var card) ? card : null);
 		public bool IsWild => WildSets.Contains(Data?.Set ?? CardSet.INVALID);
 
 		public int Cost => Data?.Cost ?? 0;
-		public string Name => Data?.Name ?? string.Empty;
+
+		public string Name => NamePrefix + (Data?.Name ?? string.Empty);
 
 		public Card Clone() => _card != null ? new Card(_card, Count) : new Card(Id, Count);
 	}
