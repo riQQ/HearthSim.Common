@@ -10,7 +10,7 @@ namespace HearthSim.Core.LogReading
 				s => s.Contains("Spectating") || s.Contains("Spectator"));
 
 		internal static LogWatcherData LoadingScreen =>
-			new LogWatcherData("LoadingScreen", new[] {"Gameplay.Start"},
+			new LogWatcherData("LoadingScreen", new[] {"currMode=FATAL_ERROR"},
 				s => s.StartsWith("LoadingScreen.OnSceneLoaded") || s.StartsWith("Gameplay."));
 
 		public static LogWatcherData Rachelle => new LogWatcherData("Rachelle");

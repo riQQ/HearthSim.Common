@@ -72,7 +72,8 @@ namespace HearthSim.Core.LogReading
 			LogWatcher GetLogWatcher(string name) => _watchers.SingleOrDefault(x => x.Info.Name == name);
 			var power = Analyzer.FindEntryPoint(directory, GetLogWatcher("Power"));
 			var decks = Analyzer.FindEntryPoint(directory, GetLogWatcher("Decks"));
-			return new StartingPoint(power, decks);
+			var loadingScreen = Analyzer.FindEntryPoint(directory, GetLogWatcher("LoadingScreen"));
+			return new StartingPoint(power, decks, loadingScreen);
 		}
 
 		public async Task Stop()
@@ -88,15 +89,18 @@ namespace HearthSim.Core.LogReading
 
 		private class StartingPoint
 		{
-			public StartingPoint(DateTime power, DateTime decks)
+			public StartingPoint(DateTime power, DateTime decks, DateTime loadingScreen)
 			{
 				Power = power;
 				Decks = decks;
+				LoadingScreen = loadingScreen;
+				Default = new[] {Power, Decks, LoadingScreen}.Max();
 			}
 
 			public DateTime Power { get; }
 			public DateTime Decks { get; }
-			public DateTime Default => Decks > Power ? Decks : Power;
+			public DateTime LoadingScreen { get; }
+			public DateTime Default { get; }
 		}
 	}
 }
