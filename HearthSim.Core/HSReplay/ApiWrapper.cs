@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -139,7 +140,7 @@ namespace HearthSim.Core.HSReplay
 				if(data == null)
 					return null;
 
-				var winrates = data.Data["data"].Children().OfType<JProperty>().Where(x => x.Values().Any());
+				var winrates = GetChildren(data.Data["data"]);
 				var dict = winrates.ToDictionary(
 					x => x.Name,
 					x => x.Value[0]["winrate"].Value<double>()
@@ -162,6 +163,58 @@ namespace HearthSim.Core.HSReplay
 				Log.Error(e);
 				return new Response<DeckWinrateData>(e);
 			}
+		}
+
+		public async Task<Response<List<Archetype>>> GetArchetypes()
+		{
+			Log.Info("Fetching archetypes");
+			try
+			{
+				var token = await GetUploadToken();
+				var data = await _client.GetArchetypes(token);
+				return data == null ? null : new Response<List<Archetype>>(data);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<List<Archetype>>(e);
+			}
+		}
+
+		public async Task<Response<ArchetypeMatchupsData>> GetArchetypeMatchups()
+		{
+			Log.Info("Fetching archetype matchups");
+			try
+			{
+				var token = await GetUploadToken();
+				var data = await _client.GetArchetypeMatchups(token);
+				var matchups = GetChildren(data.Data["data"]);
+				var dict = matchups.ToDictionary(
+					x => x.Name,
+					x => GetChildren(x.Value).ToDictionary(
+						y => y.Name,
+						y => y.Value["win_rate"].Value<double>()
+					)
+				);
+				return new Response<ArchetypeMatchupsData>(
+					new ArchetypeMatchupsData
+					{
+						ArchetypeMatchups = dict,
+						ClientTimeStamp = DateTime.Now,
+						ServerTimeStamp = data.ServerTimeStamp
+					}
+				);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<ArchetypeMatchupsData>(e);
+			}
+		}
+
+		private IEnumerable<JProperty> GetChildren(JToken obj)
+		{
+			return obj.Children().OfType<JProperty>().Where(x => x.Values().Any());
 		}
 
 		public class Response<T>
