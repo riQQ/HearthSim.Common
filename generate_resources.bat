@@ -1,5 +1,7 @@
 @echo off
 
+call update_card_tiles.bat
+
 if not exist "/Resources/Tiles" (
 	mkdir "Resources/Tiles"
 )
