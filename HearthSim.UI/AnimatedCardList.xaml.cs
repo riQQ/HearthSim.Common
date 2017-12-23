@@ -81,8 +81,8 @@ namespace HearthSim.UI
 		{
 			if(d is AnimatedCardList cardList && cardList.Entities != null)
 			{
-				var cards = cardList.Entities.Where(x => x.HasCardId).GroupBy(x => x.CardId)
-					.Select(g => new CardViewModel(new Card(g.Key, g.Count())));
+				var cards = cardList.Entities.Where(x => x.HasCardId).GroupBy(x => new {x.CardId, x.IsCreated})
+					.Select(g => new CardViewModel(new Card(g.Key.CardId, g.Count()), g.Key.IsCreated));
 				cardList.Update(CardSorting.Sort(cards).ToList(), false);
 			}
 		}
