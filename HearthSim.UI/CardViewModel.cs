@@ -32,6 +32,7 @@ namespace HearthSim.UI
 		public SolidColorBrush TextColor { get; set; } = new SolidColorBrush(Colors.White);
 		public string Name => Card?.Name;
 		public bool Discarded { get; set; }
+		public int EntityId => Card?.EntityId ?? 0;
 
 		public Func<bool, Task> FadeOut { get; set; }
 		public bool FadeIn { get; set; }

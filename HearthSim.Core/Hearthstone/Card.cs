@@ -60,6 +60,7 @@ namespace HearthSim.Core.Hearthstone
 		public int Cost => Data?.Cost ?? 0;
 
 		public string Name => NamePrefix + (Data?.Name ?? string.Empty);
+		public int EntityId { get; set; }
 
 		public Card Clone() => _card != null ? new Card(_card, Count) : new Card(Id, Count);
 	}
