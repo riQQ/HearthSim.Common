@@ -44,7 +44,6 @@ namespace HearthSim.Core.Hearthstone
 			}
 			CurrentGame = new GameState();
 			CurrentGame.Modified += OnGameStateChanged;
-			CurrentGame.LocalPlayer.Deck = SelectedDeck;
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
