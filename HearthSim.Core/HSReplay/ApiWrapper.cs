@@ -7,6 +7,7 @@ using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.Util.Logging;
 using HSReplay;
 using HSReplay.Responses;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HearthSim.Core.HSReplay
@@ -209,6 +210,30 @@ namespace HearthSim.Core.HSReplay
 			{
 				Log.Error(e);
 				return new Response<ArchetypeMatchupsData>(e);
+			}
+		}
+
+		public async Task<Response<ArchetypeMulliganData>> GetArchetypeMulligan(int archetypeId)
+		{
+			Log.Info("Fetching archetype mulligan");
+			try
+			{
+				var token = await GetUploadToken();
+				var data = await _client.GetArchetypeMulligan(token, archetypeId);
+				var archetypes = data.Data.SelectToken("data.ALL").Children();
+				return new Response<ArchetypeMulliganData>(
+					new ArchetypeMulliganData
+					{
+						MulliganData = archetypes.Select(x => x.ToObject<MulliganData>()).ToList(),
+						ClientTimeStamp = DateTime.Now,
+						ServerTimeStamp = data.ServerTimeStamp
+					}
+				);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<ArchetypeMulliganData>(e);
 			}
 		}
 

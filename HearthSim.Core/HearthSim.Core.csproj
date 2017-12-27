@@ -59,6 +59,7 @@
     <Compile Include="Hearthstone\CollectionCard.cs" />
     <Compile Include="Hearthstone\Deck.cs" />
     <Compile Include="HSReplay\Data\ArchetypeMatchupsData.cs" />
+    <Compile Include="HSReplay\Data\ArchetypeMulliganData.cs" />
     <Compile Include="HSReplay\HSReplayNetConfig.cs" />
     <Compile Include="Util\CardSorting.cs" />
     <Compile Include="Util\EventArgs\UploadErrorEventArgs.cs" />
