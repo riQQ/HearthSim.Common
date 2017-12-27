@@ -71,7 +71,7 @@ namespace HearthSim.Core.Hearthstone
 			OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
 		}
 
-		internal override void OnHearthstoneExited()
+		internal void Reset()
 		{
 			Collection.Unload();
 			Account.Unload();
@@ -81,6 +81,10 @@ namespace HearthSim.Core.Hearthstone
 			CurrentMode = Mode.INVALID;
 			CurrentGame = null;
 			Build = null;
+		}
+		internal override void OnHearthstoneExited()
+		{
+			Reset();
 			base.OnHearthstoneExited();
 		}
 

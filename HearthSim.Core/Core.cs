@@ -32,6 +32,7 @@ namespace HearthSim.Core
 		private readonly ArenaWatcher _arenaWatcher;
 		private readonly PackWatcher _packWatcher;
 		private string _directory;
+		private bool _running;
 
 		public Core(HSReplayNetConfig hsreplayNetConfig, params LogWatcherData[] additionalLogReaders)
 		{
@@ -161,14 +162,19 @@ namespace HearthSim.Core
 
 		public void Start(string directory = null)
 		{
+			if(_running)
+				return;
+			_running = true;
 			_directory = directory;
 			_procWatcher.Run();
 		}
 
-		public void Stop()
+		public async Task Stop()
 		{
-			_procWatcher.Stop().Forget();
-			_logReader.Stop().Forget();
+			await _procWatcher.Stop();
+			await _logReader.Stop();
+			Game.Reset();
+			_running = false;
 		}
 
 		private void PowerParser_BlockStart(BlockData block)
