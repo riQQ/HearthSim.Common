@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using HearthDb.Deckstrings;
+using HearthDb.Enums;
 using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.Util.Logging;
 using HSReplay;
 using HSReplay.Responses;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HearthSim.Core.HSReplay
@@ -234,6 +235,23 @@ namespace HearthSim.Core.HSReplay
 			{
 				Log.Error(e);
 				return new Response<ArchetypeMulliganData>(e);
+			}
+		}
+
+		public async Task<Response<DeckData>> GetDeck(Deck deck)
+		{
+			Log.Info("Fetching deck data");
+			try
+			{
+				var token = await GetUploadToken();
+				var data = await _client.GetDeck(token, (int) deck.Format, deck.HeroDbfId,
+					deck.CardDbfIds.SelectMany(x => Enumerable.Repeat(x.Key, x.Value)));
+				return new Response<DeckData>(data);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<DeckData>(e);
 			}
 		}
 
