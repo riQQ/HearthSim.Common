@@ -91,9 +91,9 @@ namespace HearthSim.Core.HSReplay
 			Load();
 		}
 
-		private async Task<bool> UpdateToken()
+		private async Task<bool> UpdateToken(bool force = false)
 		{
-			if(_data.TokenData != null && (DateTime.Now - _data.TokenDataCreatedAt).TotalSeconds < _data.TokenData.ExpiresIn)
+			if(!force && _data.TokenData != null && (DateTime.Now - _data.TokenDataCreatedAt).TotalSeconds < _data.TokenData.ExpiresIn)
 				return true;
 			if(string.IsNullOrEmpty(_data.Code) || string.IsNullOrEmpty(_data.RedirectUrl))
 			{
