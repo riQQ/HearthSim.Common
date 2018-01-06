@@ -81,9 +81,8 @@ namespace HearthSim.Core.HSReplay
 			_data.Code = data.Code;
 			_data.RedirectUrl = data.RedirectUrl;
 			Log.Info("Authentication complete");
-			await UpdateToken();
 			_data.Save();
-			return true;
+			return await UpdateToken();
 		}
 
 		public void DeleteToken()
