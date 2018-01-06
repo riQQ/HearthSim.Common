@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.HSReplay.Twitch.Data;
@@ -111,6 +112,12 @@ namespace HearthSim.Core.HSReplay
 						SaveTokenData(tokenData);
 						return true;
 					}
+				}
+				catch(WebException e)
+				{
+					Log.Error(e);
+					if(e.Response is HttpWebResponse response && response.StatusCode == HttpStatusCode.Unauthorized)
+						SaveTokenData(null);
 				}
 				catch(Exception e)
 				{
