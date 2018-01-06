@@ -15,6 +15,8 @@ namespace HearthSim.Core.Util.Logging
 		private static readonly Queue<Tuple<string, LogType, string, string>> LogQueue = new Queue<Tuple<string, LogType, string, string>>();
 		private static LogWriter _logWriter;
 
+		public static event Action<ErrorEventArgs> ErrorLogged;
+
 		public static bool Initialize(string directory, string baseFileName, int numOldLogFiles = 25, int maxAgeDays = 2)
 		{
 			if(_logWriter != null)
@@ -52,9 +54,37 @@ namespace HearthSim.Core.Util.Logging
 			=> WriteLine(msg, LogType.Warning, memberName, sourceFilePath);
 
 		public static void Error(string msg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "")
-			=> WriteLine(msg, LogType.Error, memberName, sourceFilePath);
+		{
+			WriteLine(msg, LogType.Error, memberName, sourceFilePath);
+			ErrorLogged?.Invoke(new ErrorEventArgs(msg, sourceFilePath, memberName));
+		}
 
 		public static void Error(Exception ex, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "")
-			=> WriteLine(ex.ToString(), LogType.Error, memberName, sourceFilePath);
+		{
+			WriteLine(ex.ToString(), LogType.Error, memberName, sourceFilePath);
+			ErrorLogged?.Invoke(new ErrorEventArgs(ex, sourceFilePath, memberName));
+		}
+	}
+
+	public class ErrorEventArgs : System.EventArgs
+	{
+		public ErrorEventArgs(string message, string sourceFilePath, string memberName)
+		{
+			Message = message;
+			SourceFilePath = sourceFilePath;
+			MemberName = memberName;
+		}
+
+		public ErrorEventArgs(Exception exception, string sourceFilePath, string memberName)
+		{
+			Exception = exception;
+			SourceFilePath = sourceFilePath;
+			MemberName = memberName;
+		}
+
+		public Exception Exception { get; }
+		public string Message { get; }
+		public string SourceFilePath { get; }
+		public string MemberName { get; }
 	}
 }
