@@ -8,6 +8,7 @@ namespace HearthSim.Core.Util.Logging
 		Debug,
 		Info,
 		Warning,
-		Error
+		Error,
+		Fatal
 	}
 }
