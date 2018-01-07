@@ -227,6 +227,11 @@ namespace HearthSim.Core.HSReplay
 			Log.Info("Fetching archetype matchups");
 			try
 			{
+				if(!await UpdateToken())
+				{
+					Log.Error("Could not update token data");
+					return new Response<ArchetypeMatchupsData>(new Exception("Could not update token"));
+				}
 				var data = await _client.Value.GetArchetypeMatchups(rankRange);
 				var matchups = GetChildren(data.Data["data"]);
 				var dict = matchups.ToDictionary(
@@ -257,6 +262,11 @@ namespace HearthSim.Core.HSReplay
 			Log.Info("Fetching archetype mulligan");
 			try
 			{
+				if(!await UpdateToken())
+				{
+					Log.Error("Could not update token data");
+					return new Response<ArchetypeMulliganData>(new Exception("Could not update token"));
+				}
 				var data = await _client.Value.GetArchetypeMulligan(archetypeId, rankRange);
 				var archetypes = data.Data.SelectToken("data.ALL").Children();
 				return new Response<ArchetypeMulliganData>(
