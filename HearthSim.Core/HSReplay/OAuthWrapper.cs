@@ -10,6 +10,8 @@ using HearthSim.Core.Util.Logging;
 using HSReplay.OAuth;
 using HSReplay.OAuth.Data;
 using HSReplay.Responses;
+using Newtonsoft.Json.Linq;
+using static HearthSim.Core.Util.JsonHelper;
 
 namespace HearthSim.Core.HSReplay
 {
@@ -217,6 +219,59 @@ namespace HearthSim.Core.HSReplay
 			catch(Exception e)
 			{
 				Log.Error(e);
+			}
+		}
+
+		public async Task<Response<ArchetypeMatchupsData>> GetArchetypeMatchups(string rankRange)
+		{
+			Log.Info("Fetching archetype matchups");
+			try
+			{
+				var data = await _client.Value.GetArchetypeMatchups(rankRange);
+				var matchups = GetChildren(data.Data["data"]);
+				var dict = matchups.ToDictionary(
+					x => x.Name,
+					x => GetChildren(x.Value).ToDictionary(
+						y => y.Name,
+						y => y.Value["win_rate"].Value<double>()
+					)
+				);
+				return new Response<ArchetypeMatchupsData>(
+					new ArchetypeMatchupsData
+					{
+						ArchetypeMatchups = dict,
+						ClientTimeStamp = DateTime.Now,
+						ServerTimeStamp = data.ServerTimeStamp
+					}
+				);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<ArchetypeMatchupsData>(e);
+			}
+		}
+
+		public async Task<Response<ArchetypeMulliganData>> GetArchetypeMulligan(int archetypeId, string rankRange)
+		{
+			Log.Info("Fetching archetype mulligan");
+			try
+			{
+				var data = await _client.Value.GetArchetypeMulligan(archetypeId, rankRange);
+				var archetypes = data.Data.SelectToken("data.ALL").Children();
+				return new Response<ArchetypeMulliganData>(
+					new ArchetypeMulliganData
+					{
+						MulliganData = archetypes.Select(x => x.ToObject<MulliganData>()).ToList(),
+						ClientTimeStamp = DateTime.Now,
+						ServerTimeStamp = data.ServerTimeStamp
+					}
+				);
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return new Response<ArchetypeMulliganData>(e);
 			}
 		}
 	}

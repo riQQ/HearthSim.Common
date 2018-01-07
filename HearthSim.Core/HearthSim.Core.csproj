@@ -61,6 +61,8 @@
     <Compile Include="HSReplay\Data\ArchetypeMatchupsData.cs" />
     <Compile Include="HSReplay\Data\ArchetypeMulliganData.cs" />
     <Compile Include="HSReplay\HSReplayNetConfig.cs" />
+    <Compile Include="Util\JsonHelper.cs" />
+    <Compile Include="HSReplay\Response.cs" />
     <Compile Include="Util\Analytics\InfluxClient.cs" />
     <Compile Include="Util\Analytics\InfluxPoint.cs" />
     <Compile Include="Util\Analytics\InfluxPointBuilder.cs" />

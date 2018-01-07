@@ -4,12 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HearthDb.Deckstrings;
-using HearthDb.Enums;
 using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.Util.Logging;
 using HSReplay;
 using HSReplay.Responses;
 using Newtonsoft.Json.Linq;
+using static HearthSim.Core.Util.JsonHelper;
 
 namespace HearthSim.Core.HSReplay
 {
@@ -252,30 +252,6 @@ namespace HearthSim.Core.HSReplay
 			{
 				Log.Error(e);
 				return new Response<DeckData>(e);
-			}
-		}
-
-		private IEnumerable<JProperty> GetChildren(JToken obj)
-		{
-			return obj.Children().OfType<JProperty>().Where(x => x.Values().Any());
-		}
-
-		public class Response<T>
-		{
-			public T Data { get; }
-			public Exception Exception { get; }
-			public bool Success { get; }
-
-			public Response(T data)
-			{
-				Data = data;
-				Success = true;
-			}
-
-			public Response(Exception ex)
-			{
-				Exception = ex;
-				Success = false;
 			}
 		}
 	}
