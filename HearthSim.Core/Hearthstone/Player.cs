@@ -55,6 +55,8 @@ namespace HearthSim.Core.Hearthstone
 				if(card != null)
 					card.Count--;
 			}
+			foreach(var entity in InDeck.Where(x => x.HasCardId && x.IsCreated).GroupBy(x => new {x.CardId}))
+				cards.Add(new Card(entity.Key.CardId, entity.Count()) {Created = true});
 			return cards;
 		}
 	}
