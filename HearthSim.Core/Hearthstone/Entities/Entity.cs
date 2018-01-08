@@ -71,5 +71,6 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool CreatedInDeck => OriginalZone == Zone.DECK;
 		public bool CreatedInHand => OriginalZone == Zone.HAND;
 		public bool JoustReveal { get; set; }
+		public bool IsCreated { get; set; }
 	}
 }
