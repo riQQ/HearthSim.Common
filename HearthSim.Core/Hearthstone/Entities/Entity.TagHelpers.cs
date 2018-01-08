@@ -31,7 +31,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool IsPlayableCard => IsMinion || IsSpell || IsWeapon || IsPlayableHero;
 
 		// Other
-		public bool IsCreated => HasTag(GameTag.CREATOR) || HasTag(GameTag.DISPLAYED_CREATOR) || Info.JoustReveal;
+		public bool IsCreated => HasTag(GameTag.CREATOR) || Info.JoustReveal || Info.IsCreated;
 		public bool IsControlledBy(int controllerId) => GetTag(GameTag.CONTROLLER) == controllerId;
 	}
 }
