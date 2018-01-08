@@ -236,10 +236,11 @@ namespace HearthSim.Core.HSReplay
 				var matchups = GetChildren(data.Data["data"]);
 				var dict = matchups.ToDictionary(
 					x => x.Name,
-					x => GetChildren(x.Value).ToDictionary(
-						y => y.Name,
-						y => y.Value["win_rate"].Value<double>()
-					)
+					x => GetChildren(x.Value)
+						.Where(y => y.Value["total_games"].Value<int>() >= 30)
+						.ToDictionary(
+							y => y.Name,
+							y => y.Value["win_rate"].Value<double>())
 				);
 				return new Response<ArchetypeMatchupsData>(
 					new ArchetypeMatchupsData
