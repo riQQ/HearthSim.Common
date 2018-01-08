@@ -52,7 +52,16 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 				case Mage.FrozenClone:
 					return Repeat(block.Target?.CardId, 2);
 				case Shaman.Moorabi:
+				case Rogue.SonyaShadowdancer:
 					return new[] { block.Target?.CardId };
+				case Neutral.HoardingDragon:
+					return Repeat(NonCollectible.Neutral.TheCoin, 2);
+				case Priest.GildedGargoyle:
+					return new[] { NonCollectible.Neutral.TheCoin };
+				case Druid.AstralTiger:
+					return new[] { Druid.AstralTiger};
+				case Rogue.Kingsbane:
+					return new[] { Rogue.Kingsbane };
 				default:
 					return new string[0];
 			}
@@ -73,6 +82,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 					return new[] {NonCollectible.Warrior.IronJuggernaut_BurrowingMineToken};
 				case Druid.Recycle:
 				case Mage.ManicSoulcaster:
+				case Neutral.ZolaTheGorgon:
 					return new[] {block.Target?.CardId};
 				case Mage.ForgottenTorch:
 					return new[] {NonCollectible.Mage.ForgottenTorch_RoaringTorchToken};
@@ -96,6 +106,16 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 					return new[] {NonCollectible.Neutral.ElisetheTrailblazer_UngoroPackToken};
 				case Mage.GhastlyConjurer:
 					return new[] {Mage.MirrorImage};
+				case Mage.DeckOfWonders:
+					return Repeat(NonCollectible.Mage.DeckofWonders_ScrollOfWonderToken, 5);
+				case Neutral.TheDarkness:
+					return Repeat(NonCollectible.Neutral.TheDarkness_DarknessCandleToken, 3);
+				case Rogue.FaldoreiStrider:
+					return Repeat(NonCollectible.Rogue.FaldoreiStrider_SpiderAmbushEnchantment, 3);
+				case Neutral.KingTogwaggle:
+					return new[] { NonCollectible.Neutral.KingTogwaggle_KingsRansomToken };
+				case NonCollectible.Neutral.TheCandle:
+					return new[] { NonCollectible.Neutral.TheCandle };
 				default:
 					return new string[0];
 			}
