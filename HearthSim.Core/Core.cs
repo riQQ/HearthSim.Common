@@ -138,16 +138,30 @@ namespace HearthSim.Core
 		{
 			Game.OnHearthstoneStarted();
 			Task.Run(async () => Game.Build = await HearthstoneProc.GetHearthstoneBuild());
+			StartLogReader(process);
+		}
+
+		private async void StartLogReader(Process process)
+		{
 			if(_directory == null)
 			{
-				try
+				for(var i = 1; i < 10; i++)
 				{
-					_directory = new FileInfo(process.MainModule.FileName).Directory?.FullName;
+					await Task.Delay(1000 * i);
+					try
+					{
+						_directory = new FileInfo(process.MainModule.FileName).Directory?.FullName;
+						Log.Debug($"Found Hearthstone installation at \"{_directory}\"");
+						break;
+					}
+					catch(Exception e)
+					{
+						Log.Error(e);
+					}
 				}
-				catch(Exception e)
+				if(_directory == null)
 				{
 					Log.Error("Could not find Hearthstone installation");
-					Log.Error(e);
 					return;
 				}
 			}
