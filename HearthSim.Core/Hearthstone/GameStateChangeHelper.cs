@@ -24,7 +24,10 @@ namespace HearthSim.Core.Hearthstone
 				if(!(modifier is TagChange tagChange) || !tagChange.EntityId.HasValue)
 					return;
 				if(tagChange.Tag == tag && tagChange.Value == value && (!prev.HasValue || prev.Value == tagChange.PreviousValue))
-					action.Invoke(state.Entities[tagChange.EntityId.Value]);
+				{
+					if(state.Entities.TryGetValue(tagChange.EntityId.Value, out var entity))
+						action.Invoke(entity);
+				}
 			};
 		}
 

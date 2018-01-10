@@ -13,7 +13,8 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 
 		public override void Apply2(GameState gameState)
 		{
-			gameState.Entities[_entityId].Info.Hidden = true;
+			if(gameState.Entities.TryGetValue(_entityId, out var entity))
+				entity.Info.Hidden = true;
 		}
 	}
 }

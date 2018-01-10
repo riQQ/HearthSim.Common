@@ -29,10 +29,12 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 				EntityId = gameState.CurrentEntity;
 			if(!EntityId.HasValue)
 				return;
-			var entity = gameState.Entities[EntityId.Value];
-			PreviousValue = entity.GetTag(Tag);
-			AugmentEntityInfo(entity);
-			entity.Tags[Tag] = Value;
+			if(gameState.Entities.TryGetValue(EntityId.Value, out var entity))
+			{
+				PreviousValue = entity.GetTag(Tag);
+				AugmentEntityInfo(entity);
+				entity.Tags[Tag] = Value;
+			}
 		}
 
 		private void AugmentEntityInfo(Entity entity)
