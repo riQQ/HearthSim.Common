@@ -33,6 +33,7 @@ namespace HearthSim.UI
 		public string Name => Card?.Name;
 		public bool Discarded { get; set; }
 		public int EntityId => Card?.EntityId ?? 0;
+		public bool HideStats => Card?.Data?.Entity.GetTag(GameTag.HIDE_STATS) > 0;
 
 		public Func<bool, Task> FadeOut { get; set; }
 		public bool FadeIn { get; set; }
@@ -56,6 +57,5 @@ namespace HearthSim.UI
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
-
 	}
 }

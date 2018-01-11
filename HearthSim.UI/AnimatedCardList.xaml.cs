@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Util;
@@ -56,9 +57,13 @@ namespace HearthSim.UI
 		public ObservableCollection<CardViewModel> CardViewModels
 		{
 			get => _cardViewModels;
-			set
+			private set
 			{
 				_cardViewModels = value;
+				var view = CollectionViewSource.GetDefaultView(_cardViewModels);
+				view.SortDescriptions.Add(new SortDescription(nameof(CardViewModel.HideStats), ListSortDirection.Descending));
+				view.SortDescriptions.Add(new SortDescription(nameof(CardViewModel.Cost), ListSortDirection.Ascending));
+				view.SortDescriptions.Add(new SortDescription(nameof(CardViewModel.Name), ListSortDirection.Ascending));
 				OnPropertyChanged();
 			}
 		}
@@ -83,14 +88,14 @@ namespace HearthSim.UI
 			{
 				var cards = cardList.Entities.Where(x => x.HasCardId).GroupBy(x => new {x.CardId, x.IsCreated})
 					.Select(g => new CardViewModel(new Card(g.Key.CardId, g.Count()), g.Key.IsCreated));
-				cardList.Update(CardSorting.Sort(cards).ToList(), false);
+				cardList.Update(cards.ToList(), false);
 			}
 		}
 
 		private static void OnCardsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if(d is AnimatedCardList cardList && cardList.Cards != null)
-				cardList.Update(CardSorting.Sort(cardList.Cards.Select(x => new CardViewModel(x))).ToList(), false);
+				cardList.Update(cardList.Cards.Select(x => new CardViewModel(x)).ToList(), false);
 		}
 
 		public void Update(List<CardViewModel> cards, bool reset)
@@ -131,7 +136,7 @@ namespace HearthSim.UI
 					toRemove.Add(new Tuple<CardViewModel, bool>(card, newCard == null));
 					if(newCard != null)
 					{
-						CardViewModels.Insert(CardViewModels.IndexOf(card), newCard);
+						CardViewModels.Add(newCard);
 						newCard.TriggerUpdate();
 						newCards.Remove(newCard);
 					}
@@ -140,8 +145,7 @@ namespace HearthSim.UI
 					RemoveCard(card.Item1, card.Item2);
 				foreach(var card in newCards)
 				{
-					var index = Math.Min(CardViewModels.Count, cards.IndexOf(card));
-					CardViewModels.Insert(index, card);
+					CardViewModels.Add(card);
 					card.RefreshBackground();
 					card.FadeIn = true;
 				}
