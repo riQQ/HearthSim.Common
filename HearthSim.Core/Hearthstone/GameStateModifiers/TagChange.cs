@@ -32,15 +32,19 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			if(gameState.Entities.TryGetValue(EntityId.Value, out var entity))
 			{
 				PreviousValue = entity.GetTag(Tag);
-				AugmentEntityInfo(entity);
+				AugmentEntityInfo(entity, gameState);
 				entity.Tags[Tag] = Value;
 			}
 		}
 
-		private void AugmentEntityInfo(Entity entity)
+		private void AugmentEntityInfo(Entity entity, GameState gameState)
 		{
-			if(Tag == GameTag.ZONE && PreviousValue == 0)
-				entity.Info.OriginalZone = (Zone)Value;
+			if(Tag == GameTag.ZONE)
+			{
+				if(PreviousValue == 0)
+					entity.Info.OriginalZone = (Zone)Value;
+				entity.Info.LastZoneChange = gameState.CurrentTurn;
+			}
 			if(Tag == GameTag.CONTROLLER && PreviousValue == 0)
 				entity.Info.OriginalController = Value;
 		}

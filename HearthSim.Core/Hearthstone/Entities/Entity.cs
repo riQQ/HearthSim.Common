@@ -56,7 +56,6 @@ namespace HearthSim.Core.Hearthstone.Entities
 			_entity = entity;
 		}
 
-		//public int Turn { get; set; }
 		//public bool Discarded { get; set; }
 		//public bool Returned { get; set; }
 		//public bool Mulliganed { get; set; }
@@ -72,5 +71,6 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool CreatedInHand => OriginalZone == Zone.HAND;
 		public bool JoustReveal { get; set; }
 		public bool IsCreated { get; set; }
+		public int LastZoneChange { get; set; }
 	}
 }

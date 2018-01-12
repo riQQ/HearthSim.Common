@@ -67,6 +67,8 @@ namespace HearthSim.Core.Hearthstone
 		public bool IsMulliganDone => LocalPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE) == (int)Mulligan.DONE
 									&& OpposingPlayerEntity?.GetTag(GameTag.MULLIGAN_STATE) == (int)Mulligan.DONE;
 
+		public int CurrentTurn => !IsMulliganDone ? 0 : ((GameEntity?.GetTag(GameTag.TURN) + 1) / 2 ?? 0);
+
 		internal void Apply(IGameStateModifier modifier)
 		{
 			var tagChange = modifier as TagChange;
