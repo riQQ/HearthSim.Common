@@ -22,8 +22,8 @@ namespace HearthSim.Core.LogReading
 		{
 			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x)));
 			LogConfigWatcher.Start();
-			LogConfigUpdater.LogConfigUpdated += LogConfigUpdated;
-			LogConfigUpdater.LogConfigUpdateFailed += LogConfigUpdateFailed;
+			LogConfigUpdater.LogConfigUpdated += () => LogConfigUpdated?.Invoke();
+			LogConfigUpdater.LogConfigUpdateFailed += args => LogConfigUpdateFailed?.Invoke(args);
 		}
 
 		public event Action<NewLinesEventArgs> NewLines;
