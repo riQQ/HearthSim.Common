@@ -98,6 +98,13 @@ namespace HearthSim.Core.HSReplay
 			if(opposingPlayer.CardBackId > 0)
 				opposing.Cardback = opposingPlayer.CardBackId;
 
+			if(game.OpposingPlayer.Deck?.Cards.Sum(x => x.Count) == 30)
+			{
+				opposing.DeckList = game.OpposingPlayer.Deck.Cards.SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToArray();
+				if(game.OpposingPlayer.Deck.DeckId > 0)
+					opposing.DeckId = game.OpposingPlayer.Deck.DeckId;
+			}
+
 			return new PlayerInfo(localPlayer.Id == 1 ? friendly : opposing, localPlayer.Id == 2 ? friendly : opposing);
 		}
 
