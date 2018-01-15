@@ -85,5 +85,7 @@ namespace HearthSim.Core.Util
 	{
 		[JsonIgnore]
 		string DataDirectory { get; set; }
+
+		void Save();
 	}
 }
