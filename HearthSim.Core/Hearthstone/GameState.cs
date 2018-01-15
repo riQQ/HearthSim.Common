@@ -41,6 +41,7 @@ namespace HearthSim.Core.Hearthstone
 		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
 		public GameServerInfo ServerInfo => _serverInfo ?? (_serverInfo = Reflection.GetServerInfo());
 
+		public bool SetupComplete { get; internal set; }
 		public Dictionary<int, Entity> Entities { get; }
 		public GameEntity GameEntity { get; set; }
 		public Dictionary<int, PlayerEntity> PlayerEntities { get; }

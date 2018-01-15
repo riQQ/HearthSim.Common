@@ -28,7 +28,9 @@ namespace HearthSim.Core.Hearthstone
 
 		// Game
 		public event Action<GameStateChangedEventArgs> GameStateChanged;
+		public event Action SetupComplete;
 
+		internal virtual void OnSetupComplete() => SetupComplete?.Invoke();
 		internal virtual void OnModeChanged(ModeChangedEventArgs args) => ModeChanged?.Invoke(args);
 		internal virtual void OnGameStateChanged(GameStateChangedEventArgs args) => GameStateChanged?.Invoke(args);
 		internal virtual void OnCreateGame(GameCreatedEventArgs args) => GameCreated?.Invoke(args);

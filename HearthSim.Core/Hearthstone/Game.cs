@@ -99,5 +99,11 @@ namespace HearthSim.Core.Hearthstone
 			SelectedDeck = new Deck(args.Deck);
 			base.OnQueuedForGame(args);
 		}
+
+		internal override void OnSetupComplete()
+		{
+			CurrentGame.SetupComplete = true;
+			base.OnSetupComplete();
+		}
 	}
 }

@@ -20,6 +20,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		private readonly Regex _playerEntityRegex = new Regex(@"Player\ EntityID=(?<id>(\d+))\ PlayerID=(?<playerId>(\d+))\ GameAccountId=(?<gameAccountId>(.+))");
 		private readonly Regex _tagChangeRegex = new Regex(@"TAG_CHANGE\ Entity=(?<entity>(.+))\ tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _updatingEntityRegex = new Regex(@"(?<type>(SHOW_ENTITY|CHANGE_ENTITY))\ -\ Updating\ Entity=(?<entity>(.+))\ CardID=(?<cardId>(\w*))");
+		private readonly Regex _debugDumpRegex = new Regex(@"DebugDump\(\) - ID=(?<id>(\d+) ParentID=\d+ PreviousId=\d+ TaskCount=\d+)");
 
 		private Block _currentBlock;
 
@@ -37,6 +38,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		internal event Action CreateGame;
 		internal event Action<BlockData> BlockStart;
 		internal event Action BlockEnd;
+		internal event Action SetupComplete;
 
 		public event Action<IGameStateModifier> GameStateChange;
 
@@ -152,6 +154,13 @@ namespace HearthSim.Core.LogParsing.Parsers
 				_currentBlock = _currentBlock?.CreateChild(blockData) ?? new Block(null, blockData);
 				BlockStart?.Invoke(blockData);
 				return;
+			}
+
+			match = _debugDumpRegex.Match(line.Text);
+			if(match.Success)
+			{
+				if(int.Parse(match.Groups["id"].Value) == 2)
+					SetupComplete?.Invoke();
 			}
 
 			if(line.Text.Contains("BLOCK_END"))
