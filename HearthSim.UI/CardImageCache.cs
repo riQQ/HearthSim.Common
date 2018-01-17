@@ -13,7 +13,7 @@ namespace HearthSim.UI
 
 		public static DrawingBrush Get(CardViewModel card)
 		{
-			if(card.Id == null || card.Name == null)
+			if(card?.Id == null || card.Name == null || Cache == null)
 				return new DrawingBrush();
 			var cardImageObj = new CardImageObject(card);
 			if(Cache.TryGetValue(card.Id, out Dictionary<int, CardImageObject> cache))
