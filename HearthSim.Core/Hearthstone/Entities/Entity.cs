@@ -72,5 +72,6 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public bool JoustReveal { get; set; }
 		public bool IsCreated { get; set; }
 		public int LastZoneChange { get; set; }
+		public int PreviousZone { get; set; }
 	}
 }

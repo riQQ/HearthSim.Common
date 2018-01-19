@@ -44,6 +44,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 				if(PreviousValue == 0)
 					entity.Info.OriginalZone = (Zone)Value;
 				entity.Info.LastZoneChange = gameState.CurrentTurn;
+				entity.Info.PreviousZone = PreviousValue ?? 0;
 			}
 			if(Tag == GameTag.CONTROLLER && PreviousValue == 0)
 				entity.Info.OriginalController = Value;
