@@ -55,8 +55,17 @@ namespace HearthSim.Core.Hearthstone
 				if(card != null)
 					card.Count--;
 			}
-			foreach(var entity in InDeck.Where(x => x.HasCardId && x.IsCreated).GroupBy(x => new {x.CardId}))
-				cards.Add(new Card(entity.Key.CardId, entity.Count()) {Created = true});
+			var inDeck = InDeck.Where(x => x.HasCardId).ToList();
+			foreach(var entity in inDeck.Where(x => x.IsCreated).GroupBy(x => x.CardId))
+				cards.Add(new Card(entity.Key, entity.Count()) {Created = true});
+			foreach(var entity in inDeck.Where(x => x.Info.Stolen && !x.IsCreated).GroupBy(x => x.CardId))
+			{
+				var card = cards.FirstOrDefault(c => c.Id == entity.Key);
+				if(card != null)
+					card.Count++;
+				else
+					cards.Add(new Card(entity.Key, entity.Count()));
+			}
 			return cards;
 		}
 	}
