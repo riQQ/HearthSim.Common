@@ -24,7 +24,7 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> Entities => _gameState.Entities.Values.Where(x => x.IsControlledBy(PlayerId));
 
-		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => (x.IsControlledBy(PlayerId) && !x.Info.Stolen || x.Info.OriginalController == PlayerId) && x.IsPlayableCard && x.HasCardId && x.Info.OriginalZone != Zone.SETASIDE);
+		public IEnumerable<Entity> RevealedCards => _gameState.Entities.Values.Where(x => x.Info.OriginalController == PlayerId && x.IsPlayableCard && x.HasCardId && x.Info.OriginalZone != Zone.SETASIDE);
 
 		public IEnumerable<Entity> InHand => Entities.Where(x => x.IsInHand);
 
