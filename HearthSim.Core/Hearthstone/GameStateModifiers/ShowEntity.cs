@@ -1,4 +1,5 @@
-﻿using HearthSim.Core.LogParsing.Parsers.Power;
+﻿using HearthDb.Enums;
+using HearthSim.Core.LogParsing.Parsers.Power;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
@@ -6,11 +7,13 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 	{
 		private readonly int _entityId;
 		private readonly string _cardId;
+		private readonly bool _revealCard;
 
-		public ShowEntity(EntityData data) : base(data)
+		public ShowEntity(EntityData data, BlockData parentBlock) : base(data)
 		{
 			_entityId = data.Id;
 			_cardId = data.CardId;
+			_revealCard = parentBlock?.Type == BlockType.REVEAL_CARD;
 		}
 
 		public override void Apply2(GameState gameState)
@@ -19,6 +22,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			{
 				entity.CardId = _cardId;
 				entity.Info.Hidden = false;
+				entity.Info.JoustReveal = _revealCard;
 			}
 		}
 

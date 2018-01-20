@@ -115,7 +115,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var type = match.Groups["type"].Value;
 				if(type == "CHANGE_ENTITY")
 					GameStateChange?.Invoke(new ChangeEntity(new EntityData(entity.Id, entity.Name, cardId, null)));
-				GameStateChange?.Invoke(new ShowEntity(new EntityData(entity.Id, entity.Name, cardId, null)));
+				GameStateChange?.Invoke(new ShowEntity(new EntityData(entity.Id, entity.Name, cardId, null), _currentBlock?.Data));
 				return;
 			}
 
