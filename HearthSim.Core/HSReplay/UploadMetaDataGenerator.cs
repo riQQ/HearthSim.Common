@@ -47,15 +47,18 @@ namespace HearthSim.Core.HSReplay
 
 		private static PlayerInfo GetPlayerInfo(GameState game, int wins, int losses)
 		{
-			var localPlayer = game?.MatchInfo?.LocalPlayer;
-			var opposingPlayer = game?.MatchInfo?.OpposingPlayer;
+			var matchInfo = game.MatchInfo;
+			if(matchInfo == null)
+				return null;
+			var localPlayer = matchInfo.LocalPlayer;
+			var opposingPlayer = matchInfo.OpposingPlayer;
 			if(localPlayer == null || opposingPlayer == null)
 				return null;
 
 			var friendly = new UploadMetaData.Player();
 			var opposing = new UploadMetaData.Player();
 
-			var standard = game.MatchInfo.FormatType == (int)FormatType.FT_STANDARD;
+			var standard = matchInfo.FormatType == (int)FormatType.FT_STANDARD;
 
 			var rank = standard ? localPlayer.StandardRank : localPlayer.WildRank;
 			if(rank > 0)
@@ -79,7 +82,7 @@ namespace HearthSim.Core.HSReplay
 					friendly.DeckId = game.LocalPlayer.Deck.DeckId;
 			}
 
-			if(game.MatchInfo.GameType == (int)GameType.GT_ARENA || IsBrawl((GameType)game.MatchInfo.GameType))
+			if(matchInfo.GameType == (int)GameType.GT_ARENA || IsBrawl((GameType)matchInfo.GameType))
 			{
 				if(wins > 0)
 					friendly.Wins = wins;

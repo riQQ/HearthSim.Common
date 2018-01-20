@@ -112,14 +112,17 @@ namespace HearthSim.Core.Hearthstone
 				entityId = GameEntity.Id;
 				return true;
 			}
-			if(MatchInfo?.LocalPlayer.Name == name)
+			var matchInfo = MatchInfo;
+			if(matchInfo == null)
+				return false;
+			if(matchInfo.LocalPlayer.Name == name)
 			{
-				entityId = PlayerEntities[MatchInfo.LocalPlayer.Id].Id;
+				entityId = PlayerEntities[matchInfo.LocalPlayer.Id].Id;
 				return true;
 			}
-			if(MatchInfo?.OpposingPlayer.Name == name)
+			if(matchInfo.OpposingPlayer.Name == name)
 			{
-				entityId = PlayerEntities[MatchInfo.OpposingPlayer.Id].Id;
+				entityId = PlayerEntities[matchInfo.OpposingPlayer.Id].Id;
 				return true;
 			}
 			return false;

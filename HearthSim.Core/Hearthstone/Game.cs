@@ -58,15 +58,19 @@ namespace HearthSim.Core.Hearthstone
 		{
 			var wins = 0;
 			var losses = 0;
-			if(game.MatchInfo.GameType == (int)GameType.GT_ARENA)
+			var matchInfo = game.MatchInfo;
+			if(matchInfo != null)
 			{
-				wins = Arena.Wins;
-				losses = Arena.Losses;
-			}
-			else if(Converters.IsBrawl((GameType)game.MatchInfo.GameType))
-			{
-				wins = TavernBrawl.Wins;
-				losses = TavernBrawl.Losses;
+				if(matchInfo.GameType == (int)GameType.GT_ARENA)
+				{
+					wins = Arena.Wins;
+					losses = Arena.Losses;
+				}
+				else if(Converters.IsBrawl((GameType)matchInfo.GameType))
+				{
+					wins = TavernBrawl.Wins;
+					losses = TavernBrawl.Losses;
+				}
 			}
 			OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
 		}

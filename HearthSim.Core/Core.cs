@@ -122,7 +122,9 @@ namespace HearthSim.Core
 		{
 			HSReplayNet.Twitch.Stop();
 			var matchInfo = args.GameState.MatchInfo;
-			var gameType = Converters.GetBnetGameType((GameType)matchInfo.GameType, (FormatType)matchInfo.FormatType);
+			var gameType = matchInfo != null
+				? Converters.GetBnetGameType((GameType) matchInfo.GameType, (FormatType) matchInfo.FormatType)
+				: BnetGameType.BGT_UNKNOWN;
 			if(!_hsreplayNetConfig.UploadGameTypes.Contains(gameType))
 				return;
 			var data = UploadMetaDataGenerator.Generate(args.Build, args.GameState, args.Wins, args.Losses);
