@@ -18,7 +18,7 @@ namespace HearthSim.Core.Hearthstone
 
 		public PlayerEntity PlayerEntity => _isLocalPlayer ? _gameState.LocalPlayerEntity : _gameState.OpposingPlayerEntity;
 
-		public string Name => _isLocalPlayer ? _gameState.MatchInfo.LocalPlayer.Name : _gameState.MatchInfo.OpposingPlayer.Name;
+		public string Name => _isLocalPlayer ? _gameState.MatchInfo?.LocalPlayer?.Name : _gameState.MatchInfo?.OpposingPlayer?.Name;
 
 		public int PlayerId => PlayerEntity?.PlayerId ?? 0;
 
