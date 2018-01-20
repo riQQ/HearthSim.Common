@@ -20,7 +20,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		private readonly Regex _playerEntityRegex = new Regex(@"Player\ EntityID=(?<id>(\d+))\ PlayerID=(?<playerId>(\d+))\ GameAccountId=(?<gameAccountId>(.+))");
 		private readonly Regex _tagChangeRegex = new Regex(@"TAG_CHANGE\ Entity=(?<entity>(.+))\ tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _updatingEntityRegex = new Regex(@"(?<type>(SHOW_ENTITY|CHANGE_ENTITY))\ -\ Updating\ Entity=(?<entity>(.+))\ CardID=(?<cardId>(\w*))");
-		private readonly Regex _debugDumpRegex = new Regex(@"DebugDump\(\) - ID=(?<id>(\d+) ParentID=\d+ PreviousId=\d+ TaskCount=\d+)");
+		private readonly Regex _debugDumpRegex = new Regex(@"DebugDump\(\) - ID=(?<id>(\d+)) ParentID=\d+ PreviousID=\d+ TaskCount=\d+");
 
 		private Block _currentBlock;
 
