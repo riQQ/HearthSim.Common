@@ -90,7 +90,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var id = int.Parse(match.Groups["id"].Value);
 				var cardId = match.Groups["cardId"].Value;
 				var zone = GameTagParser.ParseEnum<Zone>(match.Groups["zone"].Value);
-				if(zone != Zone.SETASIDE)
+				if(string.IsNullOrEmpty(cardId) && zone != Zone.SETASIDE)
 					cardId = _currentBlock?.Data.NextPredictedCard() ?? cardId;
 				GameStateChange?.Invoke(new FullEntity(new EntityData(id, null, cardId, zone), _currentBlock?.Data));
 				return;
