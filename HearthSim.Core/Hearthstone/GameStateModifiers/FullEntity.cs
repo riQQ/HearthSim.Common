@@ -36,9 +36,9 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 				{
 					entity.SetTag(GameTag.ZONE, (int)_data.Zone.Value);
 					entity.Info.OriginalZone = _data.Zone.Value;
-					if(gameState.IsMulliganDone && gameState.SetupComplete)
-						entity.Info.IsCreated = true;
 				}
+				if(gameState.IsMulliganDone && gameState.SetupComplete)
+					entity.Info.IsCreated = true;
 				entity.Info.JoustReveal = _joustReveal;
 				gameState.Entities[_data.Id] = entity;
 			}
