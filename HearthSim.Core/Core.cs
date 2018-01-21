@@ -24,7 +24,6 @@ namespace HearthSim.Core
 	public class Core
 	{
 		private readonly IGameDataProvider _gameDataProvider;
-		private readonly HSReplayNetConfig _hsreplayNetConfig;
 		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
 		private readonly ProcessWatcher _procWatcher;
@@ -33,10 +32,9 @@ namespace HearthSim.Core
 		private string _directory;
 		private bool _running;
 
-		public Core(HSReplayNetConfig hsreplayNetConfig, IEnumerable<LogWatcherData> additionalLogReaders = null, IGameDataProvider gameDataProvider = null)
+		public Core(HSReplayNetConfig hsreplayNetConfig = null, IEnumerable<LogWatcherData> additionalLogReaders = null, IGameDataProvider gameDataProvider = null)
 		{
 			_gameDataProvider = gameDataProvider ?? new HearthMirrorDataProvider();
-			_hsreplayNetConfig = hsreplayNetConfig;
 			Game = new Game(gameDataProvider);
 			_blockHelper = new BlockHelper(Game);
 			var logParserManager = new LogParserManager();
@@ -96,7 +94,8 @@ namespace HearthSim.Core
 			_packWatcher = new PackWatcher(gameDataProvider);
 			_packWatcher.PackOpened += Game.OnPackOpened;
 
-			HSReplayNet = new HSReplayNet(hsreplayNetConfig);
+			if(hsreplayNetConfig != null)
+				HSReplayNet = new HSReplayNet(hsreplayNetConfig);
 
 			Game.PackOpened += Game_OnPackOpened;
 			Game.GameCreated += Game_GameCreated;
@@ -110,18 +109,20 @@ namespace HearthSim.Core
 
 		private void Game_OnPackOpened(PackOpenedEventArgs args)
 		{
-			if(_hsreplayNetConfig.UploadPacks)
+			if(HSReplayNet?.Config.UploadPacks ?? false)
 				HSReplayNet.PackUploader.UploadPack(Game.Account, args.Pack);
 		}
 
 		private void Game_OnGameEnd(GameEndEventArgs args)
 		{
+			if(HSReplayNet == null)
+				return;
 			HSReplayNet.Twitch.Stop();
 			var matchInfo = args.GameState.MatchInfo;
 			var gameType = matchInfo != null
 				? Converters.GetBnetGameType((GameType) matchInfo.GameType, (FormatType) matchInfo.FormatType)
 				: BnetGameType.BGT_UNKNOWN;
-			if(!_hsreplayNetConfig.UploadGameTypes.Contains(gameType))
+			if(HSReplayNet.Config.UploadGameTypes.Contains(gameType))
 				return;
 			var data = UploadMetaDataGenerator.Generate(args.Build, args.GameState, args.Wins, args.Losses);
 			HSReplayNet.LogUploader.Upload(args.GameState.PowerLog.ToArray(), data).Forget();
@@ -129,7 +130,7 @@ namespace HearthSim.Core
 
 		private void Game_GameCreated(GameCreatedEventArgs args)
 		{
-			HSReplayNet.Twitch.WatchBoardState(args.Game);
+			HSReplayNet?.Twitch.WatchBoardState(args.Game);
 		}
 
 		private void ArenaParser_OnArenaRunComplete()

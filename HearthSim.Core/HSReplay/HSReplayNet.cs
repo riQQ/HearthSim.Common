@@ -7,6 +7,7 @@ namespace HearthSim.Core.HSReplay
 	{
 		internal HSReplayNet(HSReplayNetConfig config)
 		{
+			Config = config;
 			Account = Account.Serializer.Load(config.DataDirectory);
 			Api = new ApiWrapper(config, Account);
 			OAuth = new OAuthWrapper(config);
@@ -15,6 +16,7 @@ namespace HearthSim.Core.HSReplay
 			Twitch = new TwitchDataManager(OAuth, config);
 		}
 
+		internal HSReplayNetConfig Config { get; }
 		public LogUploader LogUploader { get; }
 		public Account Account { get; }
 		public ApiWrapper Api { get; }
