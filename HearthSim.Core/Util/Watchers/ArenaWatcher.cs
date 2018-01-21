@@ -2,14 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HearthMirror.Objects;
+using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Util.EventArgs;
+using Card = HearthMirror.Objects.Card;
 
-namespace HearthSim.Core.Util.Watchers.ArenaWatcher
+namespace HearthSim.Core.Util.Watchers
 {
 	internal class ArenaWatcher
 	{
 		private const int MaxDeckSize = 30;
-		private readonly IArenaProvider _arenaProvider;
+		private readonly IGameDataProvider _gameDataProvider;
 		private readonly int _delay;
 		private Card[] _prevChoices;
 		private ArenaInfo _prevInfo;
@@ -18,9 +20,9 @@ namespace HearthSim.Core.Util.Watchers.ArenaWatcher
 		private bool _sameChoices;
 		private bool _watch;
 
-		public ArenaWatcher(IArenaProvider arenaProvider = null, int delay = 500)
+		public ArenaWatcher(IGameDataProvider gameDataProvider = null, int delay = 500)
 		{
-			_arenaProvider = arenaProvider ?? throw new ArgumentNullException(nameof(arenaProvider));
+			_gameDataProvider = gameDataProvider ?? throw new ArgumentNullException(nameof(gameDataProvider));
 			_delay = delay;
 		}
 
@@ -56,7 +58,7 @@ namespace HearthSim.Core.Util.Watchers.ArenaWatcher
 
 		public bool Update()
 		{
-			var arenaInfo = _arenaProvider.GetArenaInfo();
+			var arenaInfo = _gameDataProvider.GetArenaInfo();
 			if(arenaInfo == null)
 				return false;
 			var numCards = arenaInfo.Deck.Cards.Sum(x => x.Count);
@@ -72,7 +74,7 @@ namespace HearthSim.Core.Util.Watchers.ArenaWatcher
 			}
 			if(HasChanged(arenaInfo, arenaInfo.CurrentSlot))
 			{
-				var choices = _arenaProvider.GetDraftChoices();
+				var choices = _gameDataProvider.GetDraftChoices();
 				if(choices == null || choices.Length == 0)
 					return false;
 				if(arenaInfo.CurrentSlot > _prevSlot)

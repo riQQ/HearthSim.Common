@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HearthDb.Enums;
-using HearthMirror;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.HSReplay;
@@ -18,13 +18,12 @@ using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Extensions;
 using HearthSim.Core.Util.Logging;
 using HearthSim.Core.Util.Watchers;
-using HearthSim.Core.Util.Watchers.ArenaWatcher;
-using HearthSim.Core.Util.Watchers.PackWatcher;
 
 namespace HearthSim.Core
 {
 	public class Core
 	{
+		private readonly IGameDataProvider _gameDataProvider;
 		private readonly HSReplayNetConfig _hsreplayNetConfig;
 		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
@@ -34,19 +33,16 @@ namespace HearthSim.Core
 		private string _directory;
 		private bool _running;
 
-		public Core(HSReplayNetConfig hsreplayNetConfig, params LogWatcherData[] additionalLogReaders)
+		public Core(HSReplayNetConfig hsreplayNetConfig, IEnumerable<LogWatcherData> additionalLogReaders = null, IGameDataProvider gameDataProvider = null)
 		{
+			_gameDataProvider = gameDataProvider ?? new HearthMirrorDataProvider();
 			_hsreplayNetConfig = hsreplayNetConfig;
-			Game = new Game();
+			Game = new Game(gameDataProvider);
 			_blockHelper = new BlockHelper(Game);
 			var logParserManager = new LogParserManager();
 
 			var powerParser = new PowerParser();
-			powerParser.CreateGame += () =>
-			{
-				Reflection.Reinitialize();
-				Game.OnCreateGame(null);
-			};
+			powerParser.CreateGame += () => Game.OnCreateGame(null);
 			powerParser.GameStateChange += mod => Game.CurrentGame?.Apply(mod);
 			powerParser.BlockStart += PowerParser_BlockStart;
 			powerParser.GameStateLog += args => Game.CurrentGame?.AppendLog(args);
@@ -81,7 +77,7 @@ namespace HearthSim.Core
 					LogWatcherConfigs.Decks,
 					LogWatcherConfigs.Arena,
 					LogWatcherConfigs.Rachelle
-				}.Concat(additionalLogReaders).ToArray()
+				}.Concat(additionalLogReaders ?? new List<LogWatcherData>()).ToArray()
 			);
 			_logReader.NewLines += eventArgs => logParserManager.Parse(eventArgs.Lines);
 			_logReader.LogConfigUpdated += Game.OnHearthstoneRestartRequired;
@@ -91,13 +87,13 @@ namespace HearthSim.Core
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
 			_procWatcher.OnExit += ProcessWatcher_OnExit;
 
-			_arenaWatcher = new ArenaWatcher(new HearthMirrorArenaProvider());
+			_arenaWatcher = new ArenaWatcher(gameDataProvider);
 			_arenaWatcher.RunComplete += Game.Arena.OnArenaRunComplete;
 			_arenaWatcher.CardPicked += Game.Arena.OnArenaDraftPick;
 			_arenaWatcher.ChoicesChanged += Game.Arena.OnArenaDraftChoices;
 			_arenaWatcher.DeckComplete += Game.Arena.OnArenaDraftComplete;
 
-			_packWatcher = new PackWatcher(new HearthMirrorPackProvider());
+			_packWatcher = new PackWatcher(gameDataProvider);
 			_packWatcher.PackOpened += Game.OnPackOpened;
 
 			HSReplayNet = new HSReplayNet(hsreplayNetConfig);
@@ -208,7 +204,7 @@ namespace HearthSim.Core
 		{
 			if(args.PreviousMode == Mode.COLLECTIONMANAGER || args.PreviousMode == Mode.PACKOPENING || args.PreviousMode == Mode.LOGIN)
 			{
-				var cards = Reflection.GetCollection()
+				var cards = _gameDataProvider.GetCollection()
 					?.GroupBy(x => x.Id)
 					.Select(g => new CollectionCard(
 						g.Key,
@@ -222,8 +218,8 @@ namespace HearthSim.Core
 			if(args.PreviousMode >= Mode.LOGIN && !Game.Account.IsLoaded)
 			{
 				Game.OnHearthstoneLoaded();
-				var battleTag = Reflection.GetBattleTag();
-				var account = Reflection.GetAccountId();
+				var battleTag = _gameDataProvider.GetBattleTag();
+				var account = _gameDataProvider.GetAccountId();
 				if(battleTag != null && account != null)
 				{
 					Game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
@@ -243,7 +239,7 @@ namespace HearthSim.Core
 
 			if(args.CurrentMode == Mode.TAVERN_BRAWL)
 			{
-				var brawlInfo = Reflection.GetBrawlInfo();
+				var brawlInfo = _gameDataProvider.GetBrawlInfo();
 				if(brawlInfo != null)
 					Game.TavernBrawl.Update(brawlInfo);
 			}

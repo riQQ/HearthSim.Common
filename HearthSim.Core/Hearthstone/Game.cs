@@ -7,8 +7,11 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class Game : GameEvents
 	{
-		internal Game()
+		private readonly IGameDataProvider _gameDataProvider;
+
+		internal Game(IGameDataProvider gameDataProvider)
 		{
+			_gameDataProvider = gameDataProvider;
 			Collection = new Collection();
 			Account = new Account();
 			Arena = new Arena();
@@ -42,7 +45,7 @@ namespace HearthSim.Core.Hearthstone
 				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
 					InvokeGameEnd(CurrentGame);
 			}
-			CurrentGame = new GameState();
+			CurrentGame = new GameState(_gameDataProvider);
 			CurrentGame.Modified += OnGameStateChanged;
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}

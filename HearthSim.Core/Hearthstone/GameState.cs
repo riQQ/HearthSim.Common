@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HearthDb.Enums;
-using HearthMirror;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
@@ -13,6 +12,7 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class GameState
 	{
+		private readonly IGameDataProvider _gameDataProvider;
 		private readonly Queue<IGameStateModifier> _creationTags;
 		private readonly List<IGameStateModifier> _modifiers;
 
@@ -20,8 +20,10 @@ namespace HearthSim.Core.Hearthstone
 		private readonly List<string> _powerLog;
 		private GameServerInfo _serverInfo;
 
-		public GameState()
+		public GameState(IGameDataProvider gameDataProvider)
 		{
+			gameDataProvider.Reset();
+			_gameDataProvider = gameDataProvider;
 			Entities = new Dictionary<int, Entity>();
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
@@ -38,8 +40,8 @@ namespace HearthSim.Core.Hearthstone
 		}
 
 		public IReadOnlyCollection<string> PowerLog => _powerLog.AsReadOnly();
-		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = Reflection.GetMatchInfo());
-		public GameServerInfo ServerInfo => _serverInfo ?? (_serverInfo = Reflection.GetServerInfo());
+		public MatchInfo MatchInfo => _matchInfo ?? (_matchInfo = _gameDataProvider.GetMatchInfo());
+		public GameServerInfo ServerInfo => _serverInfo ?? (_serverInfo = _gameDataProvider.GetServerInfo());
 
 		public bool SetupComplete { get; internal set; }
 		public Dictionary<int, Entity> Entities { get; }
