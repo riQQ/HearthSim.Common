@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using HearthSim.Core.LogConfig;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.LogReading.Internal;
 using HearthSim.Core.Util.EventArgs;
@@ -18,25 +17,19 @@ namespace HearthSim.Core.LogReading
 		private bool _running;
 		private bool _stop;
 
-		internal LogReader(params LogWatcherData[] logReaderInfos)
+		internal IEnumerable<string> Logs => _watchers.Select(x => x.Info.Name);
+
+		internal LogReader(IEnumerable<LogWatcherData> logReaderInfos)
 		{
 			_watchers.AddRange(logReaderInfos.Select(x => new LogWatcher(x)));
-			LogConfigWatcher.Start();
-			LogConfigUpdater.LogConfigUpdated += () => LogConfigUpdated?.Invoke();
-			LogConfigUpdater.LogConfigUpdateFailed += args => LogConfigUpdateFailed?.Invoke(args);
 		}
 
 		public event Action<NewLinesEventArgs> NewLines;
-		public event Action LogConfigUpdated;
-		public event Action<LogConfigErrorEventArgs> LogConfigUpdateFailed;
-
-		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(_watchers.Select(x => x.Info.Name));
 
 		public async void Start(string hearthstoneDirectory)
 		{
 			if(_running)
 				return;
-			await UpdateLogConfig();
 			var logDirectory = Path.Combine(hearthstoneDirectory, "Logs");
 			var startingPoint = GetStartingPoint(logDirectory);
 			Log.Debug($"Starting log readers at {startingPoint}");

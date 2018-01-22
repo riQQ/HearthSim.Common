@@ -8,6 +8,7 @@ using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.HSReplay;
+using HearthSim.Core.LogConfig;
 using HearthSim.Core.LogParsing;
 using HearthSim.Core.LogParsing.Parsers;
 using HearthSim.Core.LogParsing.Parsers.Power;
@@ -67,19 +68,19 @@ namespace HearthSim.Core
 			rachelleParser.GoldProgressWins += Game.OnGoldProgressWins;
 			logParserManager.RegisterParser(rachelleParser);
 
-			_logReader = new LogReader(
-				new[]
-				{
-					LogWatcherConfigs.Power,
-					LogWatcherConfigs.LoadingScreen,
-					LogWatcherConfigs.Decks,
-					LogWatcherConfigs.Arena,
-					LogWatcherConfigs.Rachelle
-				}.Concat(additionalLogReaders ?? new List<LogWatcherData>()).ToArray()
-			);
+			_logReader = new LogReader(new List<LogWatcherData>
+			{
+				LogWatcherConfigs.Power,
+				LogWatcherConfigs.LoadingScreen,
+				LogWatcherConfigs.Decks,
+				LogWatcherConfigs.Arena,
+				LogWatcherConfigs.Rachelle
+			}.Concat(additionalLogReaders ?? new List<LogWatcherData>()));
 			_logReader.NewLines += eventArgs => logParserManager.Parse(eventArgs.Lines);
-			_logReader.LogConfigUpdated += Game.OnHearthstoneRestartRequired;
-			_logReader.LogConfigUpdateFailed += Game.OnLogConfigError;
+
+			LogConfigWatcher.Start();
+			LogConfigUpdater.LogConfigUpdated += Game.OnHearthstoneRestartRequired;
+			LogConfigUpdater.LogConfigUpdateFailed += Game.OnLogConfigError;
 
 			_procWatcher = new ProcessWatcher();
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
@@ -105,7 +106,7 @@ namespace HearthSim.Core
 		public Game Game { get; }
 		public HSReplayNet HSReplayNet { get; }
 
-		public async Task UpdateLogConfig() => await _logReader.UpdateLogConfig();
+		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(_logReader.Logs);
 
 		private void Game_OnPackOpened(PackOpenedEventArgs args)
 		{
@@ -169,6 +170,7 @@ namespace HearthSim.Core
 					return;
 				}
 			}
+			await UpdateLogConfig();
 			_logReader.Start(_directory);
 		}
 
