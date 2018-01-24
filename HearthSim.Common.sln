@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.Core", "HearthSim.Core\HearthSim.Core.csproj", "{37F057D2-3E20-4571-9DB3-883541DD4E24}"
 EndProject
@@ -11,15 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthDb", "HearthDb\Hearth
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthMirror", "HearthMirror\HearthMirror\HearthMirror.csproj", "{1694A2F8-645A-4263-A6AB-FC26323FD675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{452317A4-0538-410A-A288-A48D4F4273A9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReplay", "HSReplay-API-Client\HSReplay\HSReplay.csproj", "{A6264074-8A96-417C-9673-5EE7E9820B1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.UI", "HearthSim.UI\HearthSim.UI.csproj", "{9EE45B90-3F4A-4484-BB29-CAACD5C08145}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceGenerator", "ResourceGenerator\ResourceGenerator.csproj", "{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{90F7B7E0-FFEB-477C-93B7-A69E64CEF339}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +39,6 @@ Global
 		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Debug|x86.Build.0 = Debug|x86
 		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Release|x86.ActiveCfg = Release|x86
 		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Release|x86.Build.0 = Release|x86
-		{452317A4-0538-410A-A288-A48D4F4273A9}.Debug|x86.ActiveCfg = Debug|x86
-		{452317A4-0538-410A-A288-A48D4F4273A9}.Debug|x86.Build.0 = Debug|x86
-		{452317A4-0538-410A-A288-A48D4F4273A9}.Release|x86.ActiveCfg = Release|x86
-		{452317A4-0538-410A-A288-A48D4F4273A9}.Release|x86.Build.0 = Release|x86
 		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Debug|x86.ActiveCfg = Debug|x86
 		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Debug|x86.Build.0 = Debug|x86
 		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Release|x86.ActiveCfg = Release|x86
@@ -62,5 +54,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A87E54C-2186-41B5-B685-A2CD2D3AEEFF}
 	EndGlobalSection
 EndGlobal
