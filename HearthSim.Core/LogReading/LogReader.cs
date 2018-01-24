@@ -10,7 +10,12 @@ using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.LogReading
 {
-	internal class LogReader
+	public interface ILogInput
+	{
+		event Action<NewLinesEventArgs> NewLines;
+	}
+
+	internal class LogReader : ILogInput
 	{
 		internal const int UpdateDelay = 100;
 		private readonly List<LogWatcher> _watchers = new List<LogWatcher>();

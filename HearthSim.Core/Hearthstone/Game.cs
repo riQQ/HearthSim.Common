@@ -7,11 +7,11 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class Game : GameEvents
 	{
-		private readonly IGameDataProvider _gameDataProvider;
+		public IGameDataProvider GameDataProvider { get; }
 
-		internal Game(IGameDataProvider gameDataProvider)
+		public Game(IGameDataProvider gameDataProvider)
 		{
-			_gameDataProvider = gameDataProvider;
+			GameDataProvider = gameDataProvider;
 			Collection = new Collection();
 			Account = new Account();
 			Arena = new Arena();
@@ -45,7 +45,7 @@ namespace HearthSim.Core.Hearthstone
 				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
 					InvokeGameEnd(CurrentGame);
 			}
-			CurrentGame = new GameState(_gameDataProvider);
+			CurrentGame = new GameState(GameDataProvider);
 			CurrentGame.Modified += OnGameStateChanged;
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
@@ -89,6 +89,7 @@ namespace HearthSim.Core.Hearthstone
 			CurrentGame = null;
 			Build = null;
 		}
+
 		internal override void OnHearthstoneExited()
 		{
 			Reset();

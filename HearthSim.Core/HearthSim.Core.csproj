@@ -51,7 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="EventManagers\GameEventManager.cs" />
     <Compile Include="Hearthstone\Account.cs" />
     <Compile Include="Hearthstone\Arena.cs" />
     <Compile Include="Hearthstone\Card.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Hearthstone\Deck.cs" />
     <Compile Include="Hearthstone\HearthMirrorDataProvider.cs" />
     <Compile Include="Hearthstone\IGameDataProvider.cs" />
+    <Compile Include="EventManagers\HSReplayNetEventManager.cs" />
     <Compile Include="HSReplay\Data\ArchetypeMatchupsData.cs" />
     <Compile Include="HSReplay\Data\ArchetypeMulliganData.cs" />
     <Compile Include="HSReplay\HSReplayNetConfig.cs" />
