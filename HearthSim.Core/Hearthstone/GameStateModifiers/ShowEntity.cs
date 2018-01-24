@@ -9,7 +9,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 		private readonly string _cardId;
 		private readonly bool _revealCard;
 
-		public ShowEntity(EntityData data, BlockData parentBlock) : base(data)
+		public ShowEntity(EntityData data, IBlockData parentBlock) : base(data)
 		{
 			_entityId = data.Id;
 			_cardId = data.CardId;

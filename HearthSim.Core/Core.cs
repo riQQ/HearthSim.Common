@@ -25,7 +25,6 @@ namespace HearthSim.Core
 	public class Core
 	{
 		private readonly IGameDataProvider _gameDataProvider;
-		private readonly BlockHelper _blockHelper;
 		private readonly LogReader _logReader;
 		private readonly ProcessWatcher _procWatcher;
 		private readonly ArenaWatcher _arenaWatcher;
@@ -37,13 +36,15 @@ namespace HearthSim.Core
 		{
 			_gameDataProvider = gameDataProvider ?? new HearthMirrorDataProvider();
 			Game = new Game(gameDataProvider);
-			_blockHelper = new BlockHelper(Game);
+			Game.PackOpened += Game_OnPackOpened;
+			Game.GameCreated += Game_GameCreated;
+			Game.GameEnded += Game_OnGameEnd;
+
 			var logParserManager = new LogParserManager();
 
-			var powerParser = new PowerParser();
+			var powerParser = new PowerParser(new DefaultGameInfoProvider(Game));
 			powerParser.CreateGame += () => Game.OnCreateGame(null);
 			powerParser.GameStateChange += mod => Game.CurrentGame?.Apply(mod);
-			powerParser.BlockStart += PowerParser_BlockStart;
 			powerParser.GameStateLog += args => Game.CurrentGame?.AppendLog(args);
 			powerParser.SetupComplete += () => Game.OnSetupComplete();
 			logParserManager.RegisterParser(powerParser);
@@ -97,10 +98,6 @@ namespace HearthSim.Core
 
 			if(hsreplayNetConfig != null)
 				HSReplayNet = new HSReplayNet(hsreplayNetConfig);
-
-			Game.PackOpened += Game_OnPackOpened;
-			Game.GameCreated += Game_GameCreated;
-			Game.GameEnded += Game_OnGameEnd;
 		}
 
 		public Game Game { get; }
@@ -195,12 +192,6 @@ namespace HearthSim.Core
 			await _logReader.Stop();
 			Game.Reset();
 			_running = false;
-		}
-
-		private void PowerParser_BlockStart(BlockData block)
-		{
-			foreach(var cardId in _blockHelper.GetCreatedCards(block))
-				block.PredictedCards.Add(cardId);
 		}
 
 		private void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)

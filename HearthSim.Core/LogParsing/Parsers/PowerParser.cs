@@ -11,6 +11,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 {
 	public class PowerParser : ILogParser
 	{
+		private readonly BlockHelper _blockHelper;
 		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)).*id=(?<id>\d*).*(cardId=(?<cardId>(\w*))).*Target=(?<target>(.+)).*SubOption=(?<subOption>(.+))");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _hideEntityRegex = new Regex(@"HIDE_ENTITY - .* (id=(?<id>\d+))");
@@ -23,6 +24,11 @@ namespace HearthSim.Core.LogParsing.Parsers
 		private readonly Regex _debugDumpRegex = new Regex(@"DebugDump\(\) - ID=(?<id>(\d+)) ParentID=\d+ PreviousID=\d+ TaskCount=\d+");
 
 		private Block _currentBlock;
+
+		internal PowerParser(IGameInfoProvider gameInfo)
+		{
+			_blockHelper = new BlockHelper(gameInfo);
+		}
 
 		public string LogName { get; } = "Power";
 
@@ -152,6 +158,8 @@ namespace HearthSim.Core.LogParsing.Parsers
 				}
 				var blockData = new BlockData(type, id, cardId, targetData);
 				_currentBlock = _currentBlock?.CreateChild(blockData) ?? new Block(null, blockData);
+				foreach(var card in _blockHelper.GetCreatedCards(blockData))
+					blockData.PredictedCards.Add(card);
 				BlockStart?.Invoke(blockData);
 				return;
 			}
@@ -172,16 +180,16 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		private class Block
 		{
-			public Block(Block parent, BlockData data)
+			public Block(Block parent, IBlockData data)
 			{
 				Parent = parent;
 				Data = data;
 			}
 
 			public Block Parent { get; }
-			public BlockData Data { get; }
+			public IBlockData Data { get; }
 
-			public Block CreateChild(BlockData data) => new Block(this, data);
+			public Block CreateChild(IBlockData data) => new Block(this, data);
 		}
 	}
 }

@@ -4,7 +4,7 @@ using HearthDb.Enums;
 
 namespace HearthSim.Core.LogParsing.Parsers.Power
 {
-	public class BlockData
+	public class BlockData : IBlockData
 	{
 		public BlockData(string type, int id, string cardId, EntityData target = null)
 		{
@@ -25,5 +25,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 
 		public string NextPredictedCard()
 			=> PredictedCards.Count > _predictedCardIndex ? PredictedCards[_predictedCardIndex++] : null;
+
+		public void AddPredictedCard(string cardId) => PredictedCards.Add(cardId);
 	}
 }

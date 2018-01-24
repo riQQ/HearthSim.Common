@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using HearthDb.Enums;
-using HearthSim.Core.Hearthstone;
 using static HearthDb.CardIds;
 using static HearthDb.CardIds.Collectible;
 
@@ -8,16 +7,16 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 {
 	internal class BlockHelper
 	{
-		private readonly Game _game;
+		private readonly IGameInfoProvider _gameInfo;
 
-		public BlockHelper(Game game)
+		public BlockHelper(IGameInfoProvider gameInfo)
 		{
-			_game = game;
+			_gameInfo = gameInfo;
 		}
 
 		private string[] Repeat(string str, int count) => Enumerable.Repeat(str, count).ToArray();
 
-		public string[] GetCreatedCards(BlockData block)
+		public string[] GetCreatedCards(IBlockData block)
 		{
 			switch(block.Type)
 			{
@@ -33,14 +32,14 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		/// <summary>
 		/// Cards created by triggers, deathrattles, secrets, etc
 		/// </summary>
-		private string[] Trigger(BlockData block)
+		private string[] Trigger(IBlockData block)
 		{
 			switch(block.CardId)
 			{
 				case Rogue.TradePrinceGallywix:
 					return new[]
 					{
-						_game.CurrentGame?.LastCardPlayed?.CardId,
+						_gameInfo.LastPlayedCard,
 						NonCollectible.Neutral.TradePrinceGallywix_GallywixsCoinToken
 					};
 				case Shaman.WhiteEyes:
@@ -70,7 +69,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		/// <summary>
 		/// Cards created by Battlecries and spells
 		/// </summary>
-		public string[] Power(BlockData block)
+		public string[] Power(IBlockData block)
 		{
 			switch(block.CardId)
 			{

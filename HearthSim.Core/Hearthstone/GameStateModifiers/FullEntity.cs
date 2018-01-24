@@ -9,7 +9,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 		private readonly EntityData _data;
 		private readonly bool _joustReveal;
 
-		public FullEntity(EntityData data, BlockData parentBlock) : base(data)
+		public FullEntity(EntityData data, IBlockData parentBlock) : base(data)
 		{
 			_data = data;
 			_joustReveal = parentBlock?.Type == BlockType.JOUST;
