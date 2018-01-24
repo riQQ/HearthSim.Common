@@ -35,12 +35,19 @@ namespace HearthSim.Core.LogParsing.Parsers
 		public void Parse(Line line)
 		{
 			if(line.Text.StartsWith("GameState."))
+			{
 				HandleGameState(line);
+				GameStateLog?.Invoke(new LogEventArgs(line));
+			}
 			else
+			{
 				HandlePowerTaskList(line);
+				PowerTaskListLog?.Invoke(new LogEventArgs(line));
+			}
 		}
 
-		internal event Action<GameStateLogEventArgs> GameStateLog;
+		internal event Action<LogEventArgs> GameStateLog;
+		internal event Action<LogEventArgs> PowerTaskListLog;
 		internal event Action CreateGame;
 		internal event Action<BlockData> BlockStart;
 		internal event Action BlockEnd;
@@ -52,7 +59,6 @@ namespace HearthSim.Core.LogParsing.Parsers
 		{
 			if(line.Text.Contains("CREATE_GAME"))
 				CreateGame?.Invoke();
-			GameStateLog?.Invoke(new GameStateLogEventArgs(line));
 		}
 
 		private EntityData ParseEntity(string entity)

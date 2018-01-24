@@ -2,9 +2,9 @@
 
 namespace HearthSim.Core.Util.EventArgs
 {
-	public class GameStateLogEventArgs : System.EventArgs
+	public class LogEventArgs : System.EventArgs
 	{
-		public GameStateLogEventArgs(Line line)
+		public LogEventArgs(Line line)
 		{
 			Line = line;
 		}

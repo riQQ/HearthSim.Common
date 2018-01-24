@@ -130,6 +130,6 @@ namespace HearthSim.Core.Hearthstone
 			return false;
 		}
 
-		public void AppendLog(GameStateLogEventArgs args) => _powerLog.Add(args.Line.RawLine);
+		public void AppendLog(LogEventArgs args) => _powerLog.Add(args.Line.RawLine);
 	}
 }

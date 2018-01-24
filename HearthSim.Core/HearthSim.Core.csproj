@@ -154,7 +154,7 @@
     <Compile Include="LogReading\LogReader.cs" />
     <Compile Include="LogReading\LogWatcherConfigs.cs" />
     <Compile Include="Util\EventArgs\NewLinesEventArgs.cs" />
-    <Compile Include="Util\EventArgs\GameStateLogEventArgs.cs" />
+    <Compile Include="Util\EventArgs\LogEventArgs.cs" />
     <Compile Include="LogParsing\Interfaces\ILogParser.cs" />
     <Compile Include="LogParsing\LogParserManager.cs" />
     <Compile Include="LogParsing\Parsers\PowerParser.cs" />
