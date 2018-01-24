@@ -35,7 +35,7 @@ namespace HearthSim.Core
 		public Core(HSReplayNetConfig hsreplayNetConfig = null, IEnumerable<LogWatcherData> additionalLogReaders = null, IGameDataProvider gameDataProvider = null)
 		{
 			_gameDataProvider = gameDataProvider ?? new HearthMirrorDataProvider();
-			Game = new Game(gameDataProvider);
+			Game = new Game(_gameDataProvider);
 			Game.PackOpened += Game_OnPackOpened;
 			Game.GameCreated += Game_GameCreated;
 			Game.GameEnded += Game_OnGameEnd;
@@ -87,13 +87,13 @@ namespace HearthSim.Core
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
 			_procWatcher.OnExit += ProcessWatcher_OnExit;
 
-			_arenaWatcher = new ArenaWatcher(gameDataProvider);
+			_arenaWatcher = new ArenaWatcher(_gameDataProvider);
 			_arenaWatcher.RunComplete += Game.Arena.OnArenaRunComplete;
 			_arenaWatcher.CardPicked += Game.Arena.OnArenaDraftPick;
 			_arenaWatcher.ChoicesChanged += Game.Arena.OnArenaDraftChoices;
 			_arenaWatcher.DeckComplete += Game.Arena.OnArenaDraftComplete;
 
-			_packWatcher = new PackWatcher(gameDataProvider);
+			_packWatcher = new PackWatcher(_gameDataProvider);
 			_packWatcher.PackOpened += Game.OnPackOpened;
 
 			if(hsreplayNetConfig != null)
