@@ -5,7 +5,7 @@ using HearthSim.Util.Logging;
 
 #endregion
 
-namespace HearthSim.Core.LogConfig
+namespace HearthSim.Core.LogReading.LogConfig
 {
 	internal class LogConfig
 	{

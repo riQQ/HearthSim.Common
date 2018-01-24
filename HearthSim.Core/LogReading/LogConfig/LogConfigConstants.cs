@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace HearthSim.Core.LogConfig
+namespace HearthSim.Core.LogReading.LogConfig
 {
 	internal class LogConfigConstants
 	{

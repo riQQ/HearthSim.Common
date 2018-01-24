@@ -119,11 +119,11 @@
     <Compile Include="Hearthstone\GameStateModifiers\TagChange.cs" />
     <Compile Include="Util\EventArgs\LogConfigErrorEventArgs.cs" />
     <Compile Include="Hearthstone\Player.cs" />
-    <Compile Include="LogConfig\LogConfig.cs" />
-    <Compile Include="LogConfig\LogConfigConstants.cs" />
-    <Compile Include="LogConfig\LogConfigItem.cs" />
-    <Compile Include="LogConfig\LogConfigUpdater.cs" />
-    <Compile Include="LogConfig\LogConfigWatcher.cs" />
+    <Compile Include="LogReading\LogConfig\LogConfig.cs" />
+    <Compile Include="LogReading\LogConfig\LogConfigConstants.cs" />
+    <Compile Include="LogReading\LogConfig\LogConfigItem.cs" />
+    <Compile Include="LogReading\LogConfig\LogConfigUpdater.cs" />
+    <Compile Include="LogReading\LogConfig\LogConfigWatcher.cs" />
     <Compile Include="Hearthstone\Enums\Mode.cs" />
     <Compile Include="LogParsing\Parsers\ArenaParser.cs" />
     <Compile Include="Util\EventArgs\ArenaRunCompleteEventArgs.cs" />

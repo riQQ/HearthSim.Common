@@ -3,7 +3,7 @@ using System.IO;
 using HearthSim.Util.Extensions;
 using HearthSim.Util.Logging;
 
-namespace HearthSim.Core.LogConfig
+namespace HearthSim.Core.LogReading.LogConfig
 {
 	internal class LogConfigWatcher
 	{

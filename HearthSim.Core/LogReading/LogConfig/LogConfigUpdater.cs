@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Util.Logging;
-using static HearthSim.Core.LogConfig.LogConfigConstants;
+using static HearthSim.Core.LogReading.LogConfig.LogConfigConstants;
 
-namespace HearthSim.Core.LogConfig
+namespace HearthSim.Core.LogReading.LogConfig
 {
 	internal class LogConfigUpdater
 	{
