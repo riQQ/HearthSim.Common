@@ -66,6 +66,8 @@
     <Compile Include="LogParsing\Parsers\Power\DefaultGameInfoProvider.cs" />
     <Compile Include="LogParsing\Parsers\Power\IBlockData.cs" />
     <Compile Include="LogParsing\Parsers\Power\IGameInfoProvider.cs" />
+    <Compile Include="Util\Analytics\HttpInfluxClient.cs" />
+    <Compile Include="Util\Analytics\UdpInfluxClient.cs" />
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="HSReplay\Response.cs" />
     <Compile Include="Util\Analytics\InfluxClient.cs" />
