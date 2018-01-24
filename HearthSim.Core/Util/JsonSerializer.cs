@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using Newtonsoft.Json;
 
 namespace HearthSim.Core.Util

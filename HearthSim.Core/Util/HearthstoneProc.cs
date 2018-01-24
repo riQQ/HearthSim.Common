@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HearthSim.Core.Util.Exceptions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Util
 {

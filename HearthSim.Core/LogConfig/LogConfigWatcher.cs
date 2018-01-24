@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using HearthSim.Core.Util.Extensions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Extensions;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.LogConfig
 {

@@ -1,7 +1,7 @@
 #region
 
 using System.Collections.Generic;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 #endregion
 

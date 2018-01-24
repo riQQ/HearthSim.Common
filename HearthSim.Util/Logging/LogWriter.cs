@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace HearthSim.Core.Util.Logging
+namespace HearthSim.Util.Logging
 {
 	internal class LogWriter
 	{
@@ -13,6 +13,8 @@ namespace HearthSim.Core.Util.Logging
 		private readonly int _maxAgeDays;
 		private static string _prevLine;
 		private static int _duplicateCount;
+
+		/// <exception cref="LogWriterCreationException"></exception>
 		public LogWriter(string directory, string baseFileName, int numOldLogFiles = 25, int maxAgeDays = 2)
 		{
 			_directory = directory;

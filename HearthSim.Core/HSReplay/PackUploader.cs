@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HearthSim.Core.Hearthstone;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using HSReplay;
 
 namespace HearthSim.Core.HSReplay

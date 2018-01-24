@@ -8,7 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Exceptions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using HSReplay;
 using HSReplay.LogValidation;
 

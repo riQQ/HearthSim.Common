@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace HearthSim.Core.Util.Analytics
+namespace HearthSim.Util.Analytics
 {
 	public abstract class InfluxClient
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HearthSim.Core.Util.EventArgs;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using static HearthSim.Core.LogConfig.LogConfigConstants;
 
 namespace HearthSim.Core.LogConfig

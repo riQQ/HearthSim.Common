@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using Newtonsoft.Json;
 
 namespace HearthSim.Core.HSReplay.Twitch

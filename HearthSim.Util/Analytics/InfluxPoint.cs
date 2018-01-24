@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HearthSim.Core.Util.Extensions;
+using HearthSim.Util.Extensions;
 
-namespace HearthSim.Core.Util.Analytics
+namespace HearthSim.Util.Analytics
 {
 	public class InfluxPoint
 	{

@@ -16,8 +16,8 @@ using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.Util;
 using HearthSim.Core.Util.EventArgs;
-using HearthSim.Core.Util.Extensions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Extensions;
+using HearthSim.Util.Logging;
 using HearthSim.Core.Util.Watchers;
 
 namespace HearthSim.Core

@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using HearthDb.Deckstrings;
 using HearthSim.Core.HSReplay.Data;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using HSReplay;
 using HSReplay.Responses;
 using Newtonsoft.Json.Linq;

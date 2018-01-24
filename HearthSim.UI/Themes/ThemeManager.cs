@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.UI.Themes
 {

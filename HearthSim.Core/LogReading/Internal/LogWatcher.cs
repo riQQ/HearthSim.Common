@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HearthSim.Core.LogReading.Data;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.LogReading.Internal
 {

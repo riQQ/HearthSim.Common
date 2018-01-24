@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Util.Watchers
 {

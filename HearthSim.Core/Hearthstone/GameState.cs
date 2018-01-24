@@ -6,7 +6,7 @@ using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.EventArgs;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
 {

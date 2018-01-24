@@ -106,6 +106,10 @@
       <Project>{37f057d2-3e20-4571-9db3-883541dd4e24}</Project>
       <Name>HearthSim.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HearthSim.Util\HearthSim.Util.csproj">
+      <Project>{3c626f97-7f98-4a4b-97f1-e376e89273e0}</Project>
+      <Name>HearthSim.Util</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Chunkfive.otf" />

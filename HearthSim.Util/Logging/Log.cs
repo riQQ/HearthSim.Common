@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 #endregion
 
-namespace HearthSim.Core.Util.Logging
+namespace HearthSim.Util.Logging
 {
 	[DebuggerStepThrough]
 	public class Log

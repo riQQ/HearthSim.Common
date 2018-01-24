@@ -1,6 +1,6 @@
 using System;
 
-namespace HearthSim.Core.Util.Logging
+namespace HearthSim.Util.Logging
 {
 	[Flags]
 	public enum LogType

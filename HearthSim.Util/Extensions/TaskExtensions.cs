@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace HearthSim.Core.Util.Extensions
+namespace HearthSim.Util.Extensions
 {
 	public static class TaskExtensions
 	{

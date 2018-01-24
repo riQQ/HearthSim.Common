@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using HearthSim.UI.Themes;
 
 namespace HearthSim.UI

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace HearthSim.Core.Util.Analytics
+namespace HearthSim.Util.Analytics
 {
 	public class InfluxPointBuilder
 	{

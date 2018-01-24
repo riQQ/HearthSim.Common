@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.HSReplay.Twitch.Data;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 using HSReplay.OAuth;
 using HSReplay.OAuth.Data;
 using HSReplay.Responses;

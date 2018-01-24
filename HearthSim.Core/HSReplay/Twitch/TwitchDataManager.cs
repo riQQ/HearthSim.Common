@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.HSReplay.Twitch.Data;
-using HearthSim.Core.Util.Extensions;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Extensions;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.HSReplay.Twitch
 {

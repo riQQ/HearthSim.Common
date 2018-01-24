@@ -2,9 +2,9 @@
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using HearthSim.Core.Util.Logging;
+using HearthSim.Util.Logging;
 
-namespace HearthSim.Core.Util.Analytics
+namespace HearthSim.Util.Analytics
 {
 	public class HttpInfluxClient : InfluxClient
 	{
