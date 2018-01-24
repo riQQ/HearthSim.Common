@@ -16,7 +16,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			_revealCard = parentBlock?.Type == BlockType.REVEAL_CARD;
 		}
 
-		public override void Apply2(GameState gameState)
+		protected override void ApplyImpl(GameState gameState)
 		{
 			if(gameState.Entities.TryGetValue(_entityId, out var entity))
 			{

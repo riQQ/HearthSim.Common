@@ -15,7 +15,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			_joustReveal = parentBlock?.Type == BlockType.JOUST;
 		}
 
-		public override void Apply2(GameState gameState)
+		protected override void ApplyImpl(GameState gameState)
 		{
 			if(_data is GameEntityData g)
 			{

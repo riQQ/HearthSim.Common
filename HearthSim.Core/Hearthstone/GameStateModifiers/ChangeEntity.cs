@@ -13,7 +13,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			_cardId = data.CardId;
 		}
 
-		public override void Apply2(GameState gameState)
+		protected override void ApplyImpl(GameState gameState)
 		{
 			if(gameState.Entities.TryGetValue(_entityId, out var entity))
 				entity.CardId = _cardId;

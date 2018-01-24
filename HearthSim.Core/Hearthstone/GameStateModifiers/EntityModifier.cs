@@ -14,11 +14,9 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 		public void Apply(GameState gameState)
 		{
 			gameState.CurrentEntity = _id;
-			Apply2(gameState);
+			ApplyImpl(gameState);
 		}
 
-		public virtual void Apply2(GameState gameState)
-		{
-		}
+		protected abstract void ApplyImpl(GameState gameState);
 	}
 }
