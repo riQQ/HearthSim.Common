@@ -6,47 +6,47 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
 	public class FullEntity : EntityModifier
 	{
-		private readonly EntityData _data;
-		private readonly bool _joustReveal;
+		public EntityData Data { get; }
+		public IBlockData ParentBlock { get; }
 
 		public FullEntity(EntityData data, IBlockData parentBlock) : base(data)
 		{
-			_data = data;
-			_joustReveal = parentBlock?.Type == BlockType.JOUST;
+			Data = data;
+			ParentBlock = parentBlock;
 		}
 
 		protected override void ApplyImpl(GameState gameState)
 		{
-			if(_data is GameEntityData g)
+			if(Data is GameEntityData g)
 			{
 				var entity = new GameEntity(g.Id);
 				gameState.GameEntity = entity;
-				gameState.Entities[_data.Id] = gameState.GameEntity;
+				gameState.Entities[Data.Id] = gameState.GameEntity;
 			}
-			else if(_data is PlayerEntityData p)
+			else if(Data is PlayerEntityData p)
 			{
 				var entity = new PlayerEntity(p.Id, p.PlayerId);
 				gameState.PlayerEntities[entity.PlayerId] = entity;
-				gameState.Entities[_data.Id] = entity;
+				gameState.Entities[Data.Id] = entity;
 			}
 			else
 			{
-				var entity = new Entity(_data.Id, _data.CardId);
-				if(_data.Zone.HasValue)
+				var entity = new Entity(Data.Id, Data.CardId);
+				if(Data.Zone.HasValue)
 				{
-					entity.SetTag(GameTag.ZONE, (int)_data.Zone.Value);
-					entity.Info.OriginalZone = _data.Zone.Value;
+					entity.SetTag(GameTag.ZONE, (int)Data.Zone.Value);
+					entity.Info.OriginalZone = Data.Zone.Value;
 				}
 				if(gameState.IsMulliganDone && gameState.SetupComplete)
 					entity.Info.IsCreated = true;
-				entity.Info.JoustReveal = _joustReveal;
-				gameState.Entities[_data.Id] = entity;
+				entity.Info.JoustReveal = ParentBlock?.Type == BlockType.JOUST;
+				gameState.Entities[Data.Id] = entity;
 			}
 		}
 
 		public override string ToString()
 		{
-			return $"FULL_ENTITY Id={_data.Id} Name={_data.Name} Zone={_data.Zone} CardId={_data.CardId}";
+			return $"FULL_ENTITY Id={Data.Id} Name={Data.Name} Zone={Data.Zone} CardId={Data.CardId}";
 		}
 	}
 }
