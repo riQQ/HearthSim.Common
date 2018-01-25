@@ -11,7 +11,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 		public int? EntityId { get; private set; }
 		public int? PreviousValue { get; private set; }
 		public string EntityName { get; }
-		public bool CreationTag { get; set; }
+		public bool CreationTag { get; }
 
 		public TagChange(TagChangeData data)
 		{
