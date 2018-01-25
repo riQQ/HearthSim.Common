@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.1.11\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -52,16 +55,30 @@
     <Compile Include="MockData\MockBlockData.cs" />
     <Compile Include="MockData\MockGameInfo.cs" />
     <Compile Include="LogReading\LineTest.cs" />
+    <Compile Include="LogTests\TestHelpers\TestData.cs" />
+    <Compile Include="MockData\MockGameData.cs" />
+    <Compile Include="MockData\MockLogInput.cs" />
+    <Compile Include="LogTests\LogTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LogParsing\BlockHelperTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LogTests\TestData\LogFiles\Power_1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="LogTests\TestData\data_1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HearthDb\HearthDb\HearthDb.csproj">
       <Project>{7ED14243-E02B-4B94-AF00-A67A62C282F0}</Project>
       <Name>HearthDb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HearthMirror\HearthMirror\HearthMirror.csproj">
+      <Project>{1694A2F8-645A-4263-A6AB-FC26323FD675}</Project>
+      <Name>HearthMirror</Name>
     </ProjectReference>
     <ProjectReference Include="..\HearthSim.Core\HearthSim.Core.csproj">
       <Project>{37F057D2-3E20-4571-9DB3-883541DD4E24}</Project>

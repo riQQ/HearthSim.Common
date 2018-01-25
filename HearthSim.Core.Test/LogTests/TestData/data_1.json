@@ -1,0 +1,13 @@
+{
+	"file": "LogTests/TestData/LogFiles/Power_1.txt",
+  "replay": "https://hsreplay.net/replay/vtw8ESbFTn28b9tdU7BjhC",
+	"local_player": {
+		"name": "Epix",
+		"id": 2,
+		"deck": "AAECAYsWApG8ArnBAg7bA6cFqAWnCLEI06oC2a4C07wCs8ECncICscIC48sC+NIC+9MCAA=="
+	},
+	"opposing_player": {
+		"name": "enixVdepria",
+		"id": 1
+	}
+}
