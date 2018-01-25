@@ -55,7 +55,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		public event Action<IGameStateModifier> GameStateChange;
 
-		public void HandleGameState(Line line)
+		private void HandleGameState(Line line)
 		{
 			if(line.Text.Contains("CREATE_GAME"))
 				CreateGame?.Invoke();
