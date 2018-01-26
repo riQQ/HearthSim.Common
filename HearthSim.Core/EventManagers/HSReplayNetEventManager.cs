@@ -36,7 +36,7 @@ namespace HearthSim.Core.EventManagers
 			var gameType = matchInfo != null
 				? Converters.GetBnetGameType((GameType) matchInfo.GameType, (FormatType) matchInfo.FormatType)
 				: BnetGameType.BGT_UNKNOWN;
-			if(_hsReplayNet.Config.UploadGameTypes.Contains(gameType))
+			if(!_hsReplayNet.Config.UploadGameTypes.Contains(gameType))
 				return;
 			var data = UploadMetaDataGenerator.Generate(args.Build, args.GameState, args.Wins, args.Losses);
 			_hsReplayNet.LogUploader.Upload(args.GameState.PowerLog.ToArray(), data).Forget();
