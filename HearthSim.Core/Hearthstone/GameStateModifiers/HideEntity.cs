@@ -4,16 +4,16 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
 	public class HideEntity : EntityModifier
 	{
-		private readonly int _entityId;
+		public int EntityId { get; }
 
 		public HideEntity(EntityData data) : base(data)
 		{
-			_entityId = data.Id;
+			EntityId = data.Id;
 		}
 
 		protected override void ApplyImpl(GameState gameState)
 		{
-			if(gameState.Entities.TryGetValue(_entityId, out var entity))
+			if(gameState.Entities.TryGetValue(EntityId, out var entity))
 				entity.Info.Hidden = true;
 		}
 	}

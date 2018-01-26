@@ -5,30 +5,30 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
 	public class ShowEntity : EntityModifier
 	{
-		private readonly int _entityId;
-		private readonly string _cardId;
-		private readonly bool _revealCard;
+		public int EntityId { get; }
+		public string CardId { get; }
+		public IBlockData ParentBlock { get; }
 
 		public ShowEntity(EntityData data, IBlockData parentBlock) : base(data)
 		{
-			_entityId = data.Id;
-			_cardId = data.CardId;
-			_revealCard = parentBlock?.Type == BlockType.REVEAL_CARD;
+			EntityId = data.Id;
+			CardId = data.CardId;
+			ParentBlock = parentBlock;
 		}
 
 		protected override void ApplyImpl(GameState gameState)
 		{
-			if(gameState.Entities.TryGetValue(_entityId, out var entity))
+			if(gameState.Entities.TryGetValue(EntityId, out var entity))
 			{
-				entity.CardId = _cardId;
+				entity.CardId = CardId;
 				entity.Info.Hidden = false;
-				entity.Info.JoustReveal = _revealCard;
+				entity.Info.JoustReveal = ParentBlock?.Type == BlockType.REVEAL_CARD;
 			}
 		}
 
 		public override string ToString()
 		{
-			return $"SHOW_ENTITY Id={_entityId} CardId={_cardId}";
+			return $"SHOW_ENTITY Id={EntityId} CardId={CardId}";
 		}
 	}
 }

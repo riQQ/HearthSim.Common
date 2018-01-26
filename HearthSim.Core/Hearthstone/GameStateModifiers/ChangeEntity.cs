@@ -4,24 +4,24 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
 	public class ChangeEntity : EntityModifier
 	{
-		private readonly int _entityId;
-		private readonly string _cardId;
+		public int EntityId { get; }
+		public string CardId { get; }
 
 		public ChangeEntity(EntityData data) : base(data)
 		{
-			_entityId = data.Id;
-			_cardId = data.CardId;
+			EntityId = data.Id;
+			CardId = data.CardId;
 		}
 
 		protected override void ApplyImpl(GameState gameState)
 		{
-			if(gameState.Entities.TryGetValue(_entityId, out var entity))
-				entity.CardId = _cardId;
+			if(gameState.Entities.TryGetValue(EntityId, out var entity))
+				entity.CardId = CardId;
 		}
 
 		public override string ToString()
 		{
-			return $"CHANGE_ENTITY Id={_entityId} CardId={_cardId}";
+			return $"CHANGE_ENTITY Id={EntityId} CardId={CardId}";
 		}
 	}
 }
