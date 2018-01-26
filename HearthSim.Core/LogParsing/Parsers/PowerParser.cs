@@ -12,10 +12,9 @@ namespace HearthSim.Core.LogParsing.Parsers
 	public class PowerParser : ILogParser
 	{
 		private readonly BlockHelper _blockHelper;
-		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)).*id=(?<id>\d*).*(cardId=(?<cardId>(\w*))).*Target=(?<target>(.+)).*SubOption=(?<subOption>(.+))");
+		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)) Entity=(?<entity>(.+)) EffectCardId=.* EffectIndex=.+ Target=(?<target>(.+)) SubOption=(?<subOption>(.+))( TriggerKeyWord=\d+)?");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _hideEntityRegex = new Regex(@"HIDE_ENTITY - .* (id=(?<id>\d+))");
-		private readonly Regex _entityRegex = new Regex(@"(?=id=(?<id>(\d+)))(?=name=(?<name>(\w+)))?(?=zone=(?<zone>(\w+)))?(?=zonePos=(?<zonePos>(\d+)))?(?=cardId=(?<cardId>(\w+)))?(?=player=(?<player>(\d+)))?(?=type=(?<type>(\w+)))?");
 		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
 		private readonly Regex _gameEntityRegex = new Regex(@"GameEntity\ EntityID=(?<id>(\d+))");
 		private readonly Regex _playerEntityRegex = new Regex(@"Player\ EntityID=(?<id>(\d+))\ PlayerID=(?<playerId>(\d+))\ GameAccountId=(?<gameAccountId>(.+))");
@@ -154,18 +153,9 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var type = match.Groups["type"].Value;
-				var id = int.Parse(match.Groups["id"].Value);
-				var cardId = match.Groups["cardId"].Value.Trim();
-				var target = match.Groups["target"].Value.Trim();
-				var entityMatch = _entityRegex.Match(target);
-				EntityData targetData = null;
-				if(entityMatch.Success)
-				{
-					var entityId = int.Parse(entityMatch.Groups["id"].Value.Trim());
-					var entityCardId = entityMatch.Groups["cardId"].Value.Trim();
-					targetData = new EntityData(entityId, "", entityCardId, null);
-				}
-				var blockData = new BlockData(type, id, cardId, targetData);
+				var entity = ParseEntity(match.Groups["entity"].Value.Trim());
+				var target = ParseEntity(match.Groups["target"].Value.Trim());
+				var blockData = new BlockData(type, entity.Id, entity.CardId, target);
 				_currentBlock = _currentBlock?.CreateChild(blockData) ?? new Block(null, blockData);
 				foreach(var card in _blockHelper.GetCreatedCards(blockData))
 					blockData.PredictedCards.Add(card);
