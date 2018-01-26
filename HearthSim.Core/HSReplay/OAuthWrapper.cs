@@ -93,7 +93,7 @@ namespace HearthSim.Core.HSReplay
 			Load();
 		}
 
-		private async Task<bool> UpdateToken(bool force = false)
+		public async Task<bool> UpdateToken(bool force = false)
 		{
 			if(!force && _data.TokenData != null && (DateTime.Now - _data.TokenDataCreatedAt).TotalSeconds < _data.TokenData.ExpiresIn)
 				return true;
