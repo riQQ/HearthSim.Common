@@ -9,5 +9,6 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		EntityData Target { get; }
 		string CardId { get; }
 		BlockType? Type { get; }
+		int Id { get; }
 	}
 }

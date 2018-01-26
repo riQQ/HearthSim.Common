@@ -17,5 +17,6 @@ namespace HearthSim.Core.Test.MockData
 		public EntityData Target { get; set; }
 		public string CardId { get; set; }
 		public BlockType? Type { get; set; }
+		public int Id { get; set; }
 	}
 }
