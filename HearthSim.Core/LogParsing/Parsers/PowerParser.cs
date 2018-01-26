@@ -63,18 +63,21 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		private EntityData ParseEntity(string entity)
 		{
-			int id;
-			string name = null;
+			if(string.IsNullOrWhiteSpace(entity))
+				return null;
 			entity = entity.Replace("UNKNOWN ENTITY ", "");
-			var entityMatch = _entityRegex.Match(entity);
-			if(entityMatch.Success)
-				id = int.Parse(entityMatch.Groups["id"].Value);
-			else if(!int.TryParse(entity, out id))
+			var idMatch = Regex.Match(entity, @"id=(\d+)");
+			if(idMatch.Success)
 			{
-				id = -1;
-				name = entity;
+				var cardIdMatch = Regex.Match(entity, @"cardId=(\w+)");
+				var cardId = cardIdMatch.Success ? cardIdMatch.Groups[1].Value : null;
+				var zoneMatch = Regex.Match(entity, @"zone=(\d+)");
+				var zone = zoneMatch.Success ? Enum.TryParse(zoneMatch.Groups[1].Value, out Zone z) ? z : (Zone?)null : null;
+				return new EntityData(int.Parse(idMatch.Groups[1].Value), null, cardId, zone);
 			}
-			return new EntityData(id, name, null, null);
+			if(int.TryParse(entity, out var id))
+				return id == 0 ? null : new EntityData(id, null, null, null);
+			return new EntityData(-1, entity, null, null);
 		}
 
 		private void HandlePowerTaskList(Line line)
