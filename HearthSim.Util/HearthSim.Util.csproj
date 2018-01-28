@@ -57,6 +57,7 @@
     <Compile Include="Logging\LogWriter.cs" />
     <Compile Include="Logging\LogWriterCreationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
