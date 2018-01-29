@@ -157,7 +157,14 @@ namespace HearthSim.Core.Test.LogParsing
 		[TestMethod]
 		public void GameStateChange_ChangeEntity()
 		{
-			throw new NotImplementedException();
+			ChangeEntity changeEntity = null;
+			var parser = new PowerParser(new MockGameInfo());
+			parser.GameStateChange += args => changeEntity = args as ChangeEntity;
+
+			parser.Parse(new Line("Power", "D 13:14:00.5727617 PowerTaskList.DebugPrintPower() -     CHANGE_ENTITY - Updating Entity=[entityName=Shifting Scroll id=28 zone=HAND zonePos=7 cardId=LOOT_104 player=1] CardID=UNG_948"));
+			Assert.IsNotNull(changeEntity);
+			Assert.AreEqual(28, changeEntity.EntityId);
+			Assert.AreEqual("UNG_948", changeEntity.CardId);
 		}
 
 		[TestMethod]
