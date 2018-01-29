@@ -52,6 +52,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LogParsing\ArenaParserTests.cs" />
+    <Compile Include="LogParsing\DecksParserTests.cs" />
+    <Compile Include="LogParsing\LoadingScreenParserTests.cs" />
+    <Compile Include="LogParsing\RachelleParserTests.cs" />
     <Compile Include="MockData\MockParser.cs" />
     <Compile Include="LogParsing\PowerParserTests.cs" />
     <Compile Include="LogParsing\LogParserManagerTests.cs" />
