@@ -12,20 +12,21 @@ namespace HearthSim.Core.Util.Watchers
 
 		private bool _watch;
 
-		protected Watcher(int delay = 500)
+		protected Watcher(int updateDelay = 500)
 		{
-			Delay = delay;
+			UpdateDelay = updateDelay;
 		}
 
-		protected int Delay { get; }
-		protected bool Running { get; private set; }
+		public int UpdateDelay { get; }
+
+		public bool IsRunning { get; private set; }
 
 		/// <summary>
 		///     Resets variables and starts the watcher, if not already running.
 		/// </summary>
 		public void Run()
 		{
-			if(Running)
+			if(IsRunning)
 				return;
 			_watch = true;
 			Reset();
@@ -38,26 +39,27 @@ namespace HearthSim.Core.Util.Watchers
 		public async Task Stop()
 		{
 			_watch = false;
-			while(Running)
-				await Task.Delay(Delay);
+			while(IsRunning)
+				await Task.Delay(UpdateDelay);
 		}
 
 		private async void UpdateAsync()
 		{
-			Running = true;
+			IsRunning = true;
 			while(_watch)
 			{
-				await Task.Delay(Delay);
+				await Task.Delay(UpdateDelay);
 				if(!_watch)
 					break;
 				if(Update() == UpdateResult.Break)
 					break;
 			}
-			Running = false;
+
+			IsRunning = false;
 		}
 
 		/// <summary>
-		///     Update function called every x milliseconds (delay set in ctor).
+		///     Update function called every x milliseconds (updateDelay set in ctor).
 		/// </summary>
 		/// <returns>Watcher should stop</returns>
 		public abstract UpdateResult Update();
