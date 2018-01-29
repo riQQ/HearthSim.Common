@@ -52,7 +52,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MockData\MockParser.cs" />
     <Compile Include="LogParsing\PowerParserTests.cs" />
+    <Compile Include="LogParsing\LogParserManagerTests.cs" />
     <Compile Include="MockData\MockBlockData.cs" />
     <Compile Include="MockData\MockGameInfo.cs" />
     <Compile Include="LogReading\LineTest.cs" />
