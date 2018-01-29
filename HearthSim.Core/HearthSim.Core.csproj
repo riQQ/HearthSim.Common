@@ -164,6 +164,7 @@
     <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Math.cs" />
     <Compile Include="Util\Watchers\ArenaWatcher.cs" />
+    <Compile Include="Util\Watchers\DungeonWatcher.cs" />
     <Compile Include="Util\Watchers\PackWatcher.cs" />
     <Compile Include="Util\Watchers\ProcessWatcher.cs" />
     <Compile Include="Util\Watchers\Watcher.cs" />

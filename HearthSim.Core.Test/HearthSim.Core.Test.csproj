@@ -68,6 +68,7 @@
     <Compile Include="LogTests\LogTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LogParsing\BlockHelperTests.cs" />
+    <Compile Include="Watchers\DungeonRunWatcherTests.cs" />
     <Compile Include="Watchers\WatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
