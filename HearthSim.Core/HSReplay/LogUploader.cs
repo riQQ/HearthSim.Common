@@ -43,12 +43,12 @@ namespace HearthSim.Core.HSReplay
 			var item = new UploaderItem(log.GetHashCode());
 			if(_inProgress.Contains(item))
 			{
-				Log.Info($"{item.Hash} already in progress. Waiting for it to complete...");
+				Log.Debug($"{item.Hash} already in progress. Waiting for it to complete...");
 				_inProgress.Add(item);
 				return await item.Status;
 			}
 			_inProgress.Add(item);
-			Log.Info($"Uploading {item.Hash}...");
+			Log.Debug($"Uploading {item.Hash}...");
 			UploadStatus status;
 			try
 			{
@@ -59,7 +59,7 @@ namespace HearthSim.Core.HSReplay
 				Log.Error(ex);
 				status = new UploadStatus(ex);
 			}
-			Log.Info($"{item.Hash} complete. Success={status.Success}");
+			Log.Debug($"{item.Hash} complete. Success={status.Success}");
 			UploadComplete?.Invoke(new UploadCompleteEventArgs(data, status));
 			foreach(var waiting in _inProgress.Where(x => x.Hash == item.Hash))
 				waiting.Complete(status);
@@ -72,11 +72,11 @@ namespace HearthSim.Core.HSReplay
 			try
 			{
 				var lines = logLines.SkipWhile(x => !x.Contains("CREATE_GAME")).ToArray();
-				Log.Info("Creating upload request...");
+				Log.Debug("Creating upload request...");
 				var uploadRequest = await _api.CreateUploadRequest(data);
-				Log.Info("Upload Id: " + uploadRequest.ShortId);
+				Log.Debug("Upload Id: " + uploadRequest.ShortId);
 				await _api.UploadLog(uploadRequest, lines);
-				Log.Info("Upload complete");
+				Log.Debug("Upload complete");
 				return new UploadStatus(uploadRequest.ShortId, uploadRequest.ReplayUrl);
 			}
 			catch(WebException ex)

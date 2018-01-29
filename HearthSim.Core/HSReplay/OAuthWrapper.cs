@@ -47,7 +47,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<bool> Authenticate(params Scope[] scopes)
 		{
-			Log.Info("Authenticating with HSReplay.net...");
+			Log.Debug("Authenticating with HSReplay.net...");
 			string url;
 			try
 			{
@@ -73,7 +73,7 @@ namespace HearthSim.Core.HSReplay
 				Log.Error(ex);
 				AuthenticationError?.Invoke($"Could not open browser to complete authentication. Please go to '{url}' to continue authentication.");
 			}
-			Log.Info("Waiting for callback...");
+			Log.Debug("Waiting for callback...");
 			var data = await callbackTask;
 			if(data == null)
 			{
@@ -82,7 +82,7 @@ namespace HearthSim.Core.HSReplay
 			}
 			_data.Code = data.Code;
 			_data.RedirectUrl = data.RedirectUrl;
-			Log.Info("Authentication complete");
+			Log.Debug("Authentication complete");
 			_data.Save();
 			return await UpdateToken();
 		}
@@ -104,7 +104,7 @@ namespace HearthSim.Core.HSReplay
 			}
 			if(!string.IsNullOrEmpty(_data.TokenData?.RefreshToken))
 			{
-				Log.Info("Refreshing token data...");
+				Log.Debug("Refreshing token data...");
 				try
 				{
 					var tokenData = await _client.Value.RefreshToken();
@@ -127,7 +127,7 @@ namespace HearthSim.Core.HSReplay
 			}
 			try
 			{
-				Log.Info("Fetching new token...");
+				Log.Debug("Fetching new token...");
 				var tokenData = await _client.Value.GetToken(_data.Code, _data.RedirectUrl);
 				if(tokenData == null)
 				{
@@ -146,7 +146,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<bool> UpdateTwitchUsers()
 		{
-			Log.Info("Fetching twitch accounts...");
+			Log.Debug("Fetching twitch accounts...");
 			try
 			{
 				if(!await UpdateToken())
@@ -157,7 +157,7 @@ namespace HearthSim.Core.HSReplay
 				var twitchAccounts = await _client.Value.GetTwitchAccounts();
 				_data.TwitchUsers = twitchAccounts;
 				_data.Save();
-				Log.Info($"Saved {twitchAccounts.Count} account(s): {string.Join(", ", twitchAccounts.Select(x => x.Username))}");
+				Log.Debug($"Saved {twitchAccounts.Count} account(s): {string.Join(", ", twitchAccounts.Select(x => x.Username))}");
 				return twitchAccounts.Count != 0;
 			}
 			catch(Exception e)
@@ -169,7 +169,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<bool> UpdateAccountData()
 		{
-			Log.Info("Updating account data...");
+			Log.Debug("Updating account data...");
 			try
 			{
 				if(!await UpdateToken())
@@ -180,7 +180,7 @@ namespace HearthSim.Core.HSReplay
 				var account = await _client.Value.GetHSReplayNetAccount();
 				_data.Account = account;
 				_data.Save();
-				Log.Info($"Found account: {account?.Username ?? "None"}");
+				Log.Debug($"Found account: {account?.Username ?? "None"}");
 				return account != null;
 			}
 			catch(Exception e)
@@ -201,7 +201,7 @@ namespace HearthSim.Core.HSReplay
 			_data.TokenData = data;
 			_data.TokenDataCreatedAt = DateTime.Now;
 			_data.Save();
-			Log.Info("Saved token data");
+			Log.Debug("Saved token data");
 		}
 
 		public async Task SendTwitchPayload(int twitchUserId, Payload payload)
@@ -224,7 +224,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<ArchetypeMatchupsData>> GetArchetypeMatchups(string rankRange)
 		{
-			Log.Info("Fetching archetype matchups");
+			Log.Debug("Fetching archetype matchups");
 			try
 			{
 				if(!await UpdateToken())
@@ -260,7 +260,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<ArchetypeMulliganData>> GetArchetypeMulligan(int archetypeId, string rankRange)
 		{
-			Log.Info("Fetching archetype mulligan");
+			Log.Debug("Fetching archetype mulligan");
 			try
 			{
 				if(!await UpdateToken())

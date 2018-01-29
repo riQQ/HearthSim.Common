@@ -40,7 +40,7 @@ namespace HearthSim.Core.Util
 					if(_waiting)
 					{
 						_waiting = false;
-						Log.Info($"Process found! {executable.FullName}");
+						Log.Debug($"Process found! {executable.FullName}");
 					}
 					return executable.Directory?.FullName;
 				}

@@ -19,7 +19,7 @@ namespace HearthSim.Core.HSReplay
 		{
 			try
 			{
-				Log.Info($"Uploading new pack: Id={pack.BoosterType}, Cards=[{string.Join(", ", pack.Cards.Select(x => x.Id + (x.Golden > 0 ? " (g)" : "")))}]");
+				Log.Debug($"Uploading new pack: Id={pack.BoosterType}, Cards=[{string.Join(", ", pack.Cards.Select(x => x.Id + (x.Golden > 0 ? " (g)" : "")))}]");
 				var payload = GeneratePayload(account, pack);
 				if(payload != null)
 					await _api.UploadPack(payload);

@@ -32,7 +32,7 @@ namespace HearthSim.Core.HSReplay
 			string token;
 			try
 			{
-				Log.Info("Requesting new upload token...");
+				Log.Debug("Requesting new upload token...");
 				token = await _client.CreateUploadToken();
 				if(string.IsNullOrEmpty(token))
 					throw new Exception("Reponse contained no upload-token.");
@@ -44,7 +44,7 @@ namespace HearthSim.Core.HSReplay
 			}
 			_account.UploadToken = token;
 			_account.Save();
-			Log.Info("Received new upload-token.");
+			Log.Debug("Received new upload-token.");
 			return token;
 		}
 
@@ -53,7 +53,7 @@ namespace HearthSim.Core.HSReplay
 			try
 			{
 				var token = await GetUploadToken();
-				Log.Info("Getting claim url...");
+				Log.Debug("Getting claim url...");
 				var url =  await _client.GetClaimAccountUrl(token);
 				return new Response<string>(url);
 			}
@@ -66,7 +66,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<Account>> UpdateAccountStatus()
 		{
-			Log.Info("Checking account status...");
+			Log.Debug("Checking account status...");
 			try
 			{
 				var token = await GetUploadToken();
@@ -76,7 +76,7 @@ namespace HearthSim.Core.HSReplay
 				_account.Status = accountStatus?.User != null ? AccountStatus.Registered : AccountStatus.Anonymous;
 				_account.LastUpdated = DateTime.Now;
 				_account.Save();
-				Log.Info($"Id={_account.Id}, Username={_account.Username}, Status={_account.Status}");
+				Log.Debug($"Id={_account.Id}, Username={_account.Username}, Status={_account.Status}");
 				return new Response<Account>(_account);
 			}
 			catch(WebException ex)
@@ -109,7 +109,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<DecksData>> GetAvailableDecks()
 		{
-			Log.Info("Fetching available decks...");
+			Log.Debug("Fetching available decks...");
 			try
 			{
 				var token = await GetUploadToken();
@@ -134,7 +134,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<DeckWinrateData>> GetDeckWinrates(string deckId, bool wild)
 		{
-			Log.Info("Fetching winrates for deck " + deckId);
+			Log.Debug("Fetching winrates for deck " + deckId);
 			try
 			{
 				var token = await GetUploadToken();
@@ -169,7 +169,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<List<Archetype>>> GetArchetypes()
 		{
-			Log.Info("Fetching archetypes");
+			Log.Debug("Fetching archetypes");
 			try
 			{
 				var token = await GetUploadToken();
@@ -185,7 +185,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<ArchetypeMatchupsData>> GetArchetypeMatchups()
 		{
-			Log.Info("Fetching archetype matchups");
+			Log.Debug("Fetching archetype matchups");
 			try
 			{
 				var token = await GetUploadToken();
@@ -216,7 +216,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<ArchetypeMulliganData>> GetArchetypeMulligan(int archetypeId)
 		{
-			Log.Info("Fetching archetype mulligan");
+			Log.Debug("Fetching archetype mulligan");
 			try
 			{
 				var token = await GetUploadToken();
@@ -240,7 +240,7 @@ namespace HearthSim.Core.HSReplay
 
 		public async Task<Response<DeckData>> GetDeck(Deck deck)
 		{
-			Log.Info("Fetching deck data");
+			Log.Debug("Fetching deck data");
 			try
 			{
 				var token = await GetUploadToken();
