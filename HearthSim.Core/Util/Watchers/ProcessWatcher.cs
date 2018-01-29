@@ -10,7 +10,7 @@ namespace HearthSim.Core.Util.Watchers
 		public Action<Process> OnExit;
 		private Process _proc;
 
-		public override void Update()
+		public override UpdateResult Update()
 		{
 			try
 			{
@@ -33,6 +33,7 @@ namespace HearthSim.Core.Util.Watchers
 			catch(Exception)
 			{
 			}
+			return UpdateResult.Continue;
 		}
 
 		protected override void Reset()
