@@ -36,7 +36,7 @@ namespace HearthSim.UI.Themes
 			{
 				if(Regex.IsMatch(di.Name, ThemeRegex))
 				{
-					Log.Info($"Found theme: {di.Name}");
+					Log.Debug($"Found theme: {di.Name}");
 					Themes.Add(new Theme(di.Name, di.FullName, GetBuilderType(di.Name)));
 				}
 				else
