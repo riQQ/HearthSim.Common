@@ -81,7 +81,7 @@ namespace HearthSim.Core.Hearthstone
 					tagChange.ResolveEntityId(entityId);
 				else
 				{
-					Log.Debug($"Could not apply tag={tagChange.Tag}, value={tagChange.Tag} on {tagChange.EntityName}");
+					Log.Debug($"Could not apply tag={tagChange.Tag}, value={tagChange.Value} on {tagChange.EntityName}");
 					return;
 				}
 			}
