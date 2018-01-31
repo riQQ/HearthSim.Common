@@ -8,6 +8,7 @@ namespace HearthSim.Core.Hearthstone
 	public class Deck
 	{
 		private FormatType? _format;
+		private string _deckstring;
 
 		public Deck(HearthMirror.Objects.Deck deck)
 		{
@@ -46,5 +47,24 @@ namespace HearthSim.Core.Hearthstone
 
 		public FormatType Format
 			=> (_format ?? (_format = Cards.Any(c => c.IsWild) ? FormatType.FT_WILD : FormatType.FT_STANDARD)).Value;
+
+		public string GetDeckstring()
+		{
+			return _deckstring ?? (_deckstring = HearthDb.Deckstrings.DeckSerializer.Serialize(new HearthDb.Deckstrings.Deck
+			{
+				Name = Name,
+				Format = Format,
+				CardDbfIds = Cards.Where(x => x.Data?.DbfId > 0).ToDictionary(x => x.Data.DbfId, x => x.Count),
+				DeckId = DeckId,
+				HeroDbfId = HearthDb.Cards.Collectible.Values.FirstOrDefault(x => x.Class == Class && x.Type == CardType.HERO)
+								?.DbfId
+							?? 0
+			}, false));
+		}
+
+		public override string ToString()
+		{
+			return $"[Name={Name}, Class={Class}, DeckId={DeckId}, Format={Format}, Deckstring={GetDeckstring()}]";
+		}
 	}
 }
