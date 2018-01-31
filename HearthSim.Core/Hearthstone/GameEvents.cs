@@ -31,6 +31,7 @@ namespace HearthSim.Core.Hearthstone
 		// Game
 		public event Action<GameStateChangedEventArgs> GameStateChanged;
 		public event Action SetupComplete;
+		public event Action<ActivePlayerDeckChangedEventArgs> ActivePlayerDeckChanged;
 
 		internal virtual void OnSetupComplete() => SetupComplete?.Invoke();
 		internal virtual void OnModeChanged(ModeChangedEventArgs args) => ModeChanged?.Invoke(args);
@@ -49,5 +50,7 @@ namespace HearthSim.Core.Hearthstone
 			DungeonRunMatchStarted?.Invoke(args);
 		internal virtual void OnDungeonRunDeckUpdated(DungeonRunDeckUpdatedEventArgs args) =>
 			DungeonRunDeckUpdated?.Invoke(args);
+		internal virtual void OnActivePlayerDeckChanged(ActivePlayerDeckChangedEventArgs args) =>
+			ActivePlayerDeckChanged?.Invoke(args);
 	}
 }

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.Entities;
+using HearthSim.Core.Util.EventArgs;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
 {
@@ -9,6 +12,9 @@ namespace HearthSim.Core.Hearthstone
 	{
 		private readonly GameState _gameState;
 		private readonly bool _isLocalPlayer;
+		private Deck _deck;
+
+		internal event Action<ActivePlayerDeckChangedEventArgs> DeckChanged;
 
 		public Player(GameState gameState, bool isLocalPlayer)
 		{
@@ -38,7 +44,19 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> InQuest => Entities.Where(x => x.IsInSecret && x.IsQuest);
 
-		public Deck Deck { get; set; }
+		public Deck Deck
+		{
+			get => _deck;
+			set
+			{
+				if(_deck != value)
+				{
+					_deck = value;
+					Log.Debug($"{(_isLocalPlayer ? "Local Player" : "Opposing Player")} deck changed to {value}");
+					DeckChanged?.Invoke(new ActivePlayerDeckChangedEventArgs(_isLocalPlayer, value));
+				}
+			}
+		}
 
 		public IReadOnlyCollection<Card> GetRemainingCards()
 		{

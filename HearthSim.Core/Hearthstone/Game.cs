@@ -42,11 +42,15 @@ namespace HearthSim.Core.Hearthstone
 			if(CurrentGame != null)
 			{
 				CurrentGame.Modified -= OnGameStateChanged;
+				CurrentGame.LocalPlayer.DeckChanged -= OnActivePlayerDeckChanged;
+				CurrentGame.OpposingPlayer.DeckChanged -= OnActivePlayerDeckChanged;
 				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
 					InvokeGameEnd(CurrentGame);
 			}
 			CurrentGame = new GameState(GameDataProvider);
 			CurrentGame.Modified += OnGameStateChanged;
+			CurrentGame.LocalPlayer.DeckChanged += OnActivePlayerDeckChanged;
+			CurrentGame.OpposingPlayer.DeckChanged += OnActivePlayerDeckChanged;
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
