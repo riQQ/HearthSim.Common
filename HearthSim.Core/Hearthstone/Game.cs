@@ -120,7 +120,8 @@ namespace HearthSim.Core.Hearthstone
 
 		internal override void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args)
 		{
-			SelectedDeck = args.Deck;
+			if(args.IsNew && args.Deck != null)
+				SelectedDeck = args.Deck;
 			base.OnDungeonRunMatchStarted(args);
 		}
 
