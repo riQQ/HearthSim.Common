@@ -54,7 +54,7 @@ namespace HearthSim.Core.Util.Watchers
 						_prevCards = dungeonInfo.DbfIds.ToList();
 						_prevLootChoice = dungeonInfo.PlayerChosenLoot;
 						_prevTreasureChoice = dungeonInfo.PlayerChosenTreasure;
-						if(_prevLootChoice > 0 && _prevTreasureChoice > 0)
+						if(_prevLootChoice > 0 && (_prevTreasureChoice > 0 || dungeonInfo.Treasure == null))
 						{
 							DungeonRunDeckUpdated?.Invoke(new DungeonRunDeckUpdatedEventArgs(BuildDeck(dungeonInfo)));
 							return UpdateResult.Break;

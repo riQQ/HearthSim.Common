@@ -101,11 +101,35 @@ namespace HearthSim.Core.Test.Watchers
 				PlayerChosenLoot = 1,
 				PlayerChosenTreasure = 1
 			};
+
 			var result = _watcher.Update();
 			Assert.IsNotNull(_info);
 
 			var dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
 			var expectedDbfIds = new[] {Backstab, BattleTotem, DeadlyPoison}.OrderBy(x => x);
+			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
+			Assert.AreEqual(Watcher.UpdateResult.Break, result);
+		}
+
+		[TestMethod]
+		public void InAdventureScreen_RunActiveChosenNoTreasure_NewData()
+		{
+			_data.InAdventureScreen = true;
+			_data.MockDungeonInfo = new MockDungeonInfo
+			{
+				RunActive = true,
+				DbfIds = new List<int> { Backstab },
+				LootA = new List<int> { Category, DeadlyPoison },
+				LootB = new List<int> { Category, PitSnake },
+				LootC = new List<int> { Category, SinisterStrike },
+				PlayerChosenLoot = 1,
+			};
+
+			var result = _watcher.Update();
+			Assert.IsNotNull(_info);
+
+			var dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
+			var expectedDbfIds = new[] {Backstab, DeadlyPoison}.OrderBy(x => x);
 			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
 			Assert.AreEqual(Watcher.UpdateResult.Break, result);
 		}
