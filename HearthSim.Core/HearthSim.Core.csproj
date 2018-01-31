@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hearthstone\DungeonRun.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="EventManagers\GameEventManager.cs" />
     <Compile Include="Hearthstone\Account.cs" />
@@ -164,6 +165,8 @@
     <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Math.cs" />
     <Compile Include="Util\Watchers\ArenaWatcher.cs" />
+    <Compile Include="Util\EventArgs\DungeonDeckUpdatedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\DungeonRunStartedEventArgs.cs" />
     <Compile Include="Util\Watchers\DungeonWatcher.cs" />
     <Compile Include="Util\Watchers\PackWatcher.cs" />
     <Compile Include="Util\Watchers\ProcessWatcher.cs" />

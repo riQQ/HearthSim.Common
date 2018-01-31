@@ -4,6 +4,9 @@ using System.Linq;
 using HearthDb;
 using HearthDb.Enums;
 using HearthMirror.Objects;
+using HearthSim.Core.Hearthstone;
+using HearthSim.Core.Util.EventArgs;
+using Deck = HearthSim.Core.Hearthstone.Deck;
 
 namespace HearthSim.Core.Util.Watchers
 {
@@ -27,8 +30,8 @@ namespace HearthSim.Core.Util.Watchers
 			_dataProvider = dataProvider;
 		}
 
-		public event Action<DungeonInfo> DungeonInfoChanged;
-		public event Action<RunType> DungeonRunMatchStarted;
+		public event Action<DungeonDeckUpdatedEventArgs> DungeonDeckUpdated;
+		public event Action<DungeonRunStartedEventArgs> DungeonRunMatchStarted;
 
 		protected override void Reset()
 		{
@@ -51,9 +54,11 @@ namespace HearthSim.Core.Util.Watchers
 						_prevCards = dungeonInfo.DbfIds.ToList();
 						_prevLootChoice = dungeonInfo.PlayerChosenLoot;
 						_prevTreasureChoice = dungeonInfo.PlayerChosenTreasure;
-						DungeonInfoChanged?.Invoke(dungeonInfo);
 						if(_prevLootChoice > 0 && _prevTreasureChoice > 0)
+						{
+							DungeonDeckUpdated?.Invoke(new DungeonDeckUpdatedEventArgs(BuildDeck(dungeonInfo)));
 							return UpdateResult.Break;
+						}
 					}
 				}
 				else
@@ -66,7 +71,8 @@ namespace HearthSim.Core.Util.Watchers
 					if(card.Set == CardSet.LOOTAPALOOZA && card.Id.Contains("BOSS"))
 					{
 						var newRun = _initialOpponents.Contains(_dataProvider.OpponentHeroId);
-						DungeonRunMatchStarted?.Invoke(newRun ? RunType.New : RunType.Existing);
+						var deck = newRun ? DungeonRun.GetDefaultDeck(_dataProvider.LocalPlayerClass) : null;
+						DungeonRunMatchStarted?.Invoke(new DungeonRunStartedEventArgs(newRun, deck));
 						return UpdateResult.Break;
 					}
 				}
@@ -75,10 +81,19 @@ namespace HearthSim.Core.Util.Watchers
 			return UpdateResult.Continue;
 		}
 
-		public enum RunType
+		public Deck BuildDeck(DungeonInfo info)
 		{
-			New,
-			Existing
+			var allCards = info.DbfIds.ToList();
+			if(info.PlayerChosenLoot > 0)
+			{
+				var loot = new[] { info.LootA, info.LootB, info.LootC };
+				var chosen = loot[info.PlayerChosenLoot - 1];
+				for(var i = 1; i < chosen.Count; i++)
+					allCards.Add(chosen[i]);
+			}
+			if(info.PlayerChosenTreasure > 0)
+				allCards.Add(info.Treasure[info.PlayerChosenTreasure - 1]);
+			return new Deck("Dungeon Run", (CardClass)info.HeroCardClass, allCards);
 		}
 
 		public interface IDungeonRunDataProvider
@@ -86,6 +101,7 @@ namespace HearthSim.Core.Util.Watchers
 			bool InAiMatch { get; }
 			bool InAdventureScreen { get; }
 			string OpponentHeroId { get; }
+			CardClass LocalPlayerClass { get; }
 			DungeonInfo GetDungeonInfo();
 		}
 	}

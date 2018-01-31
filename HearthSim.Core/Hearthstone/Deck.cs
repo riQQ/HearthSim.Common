@@ -25,6 +25,20 @@ namespace HearthSim.Core.Hearthstone
 			Class = deck.GetHero().Class;
 		}
 
+		public Deck(string name, CardClass cardClass, IEnumerable<string> cards)
+		{
+			Name = name;
+			Class = cardClass;
+			Cards = CardSorting.Sort(cards.GroupBy(x => x).Select(x => new Card(x.Key, x.Count())));
+		}
+
+		public Deck(string name, CardClass cardClass, IEnumerable<int> cards)
+		{
+			Name = name;
+			Class = cardClass;
+			Cards = CardSorting.Sort(cards.GroupBy(x => x).Select(x => new Card(x.Key, x.Count())));
+		}
+
 		public CardClass Class { get; }
 		public IOrderedEnumerable<Card> Cards { get; }
 		public string Name { get; }
