@@ -2,6 +2,7 @@
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.EventArgs;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
 {
@@ -34,6 +35,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			CurrentMode = args.CurrentMode;
 			PreviousMode = args.PreviousMode;
+			Log.Debug($"{PreviousMode} => {CurrentMode}");
 			base.OnModeChanged(args);
 		}
 
@@ -51,6 +53,10 @@ namespace HearthSim.Core.Hearthstone
 			CurrentGame.Modified += OnGameStateChanged;
 			CurrentGame.LocalPlayer.DeckChanged += OnActivePlayerDeckChanged;
 			CurrentGame.OpposingPlayer.DeckChanged += OnActivePlayerDeckChanged;
+			Log.Debug($"{CurrentGame.MatchInfo?.LocalPlayer.Name ?? "unknown"} "
+					+ $"vs {CurrentGame.MatchInfo?.OpposingPlayer.Name ?? "unknown"} "
+					+ $"GameType={(GameType)(CurrentGame.MatchInfo?.GameType ?? 0)} "
+					+ $"Format={(FormatType)(CurrentGame.MatchInfo?.FormatType ?? 0)}");
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
@@ -79,11 +85,17 @@ namespace HearthSim.Core.Hearthstone
 					losses = TavernBrawl.Losses;
 				}
 			}
+
+			Log.Debug($"{matchInfo?.LocalPlayer.Name ?? "unknown"} "
+					+ $"vs {matchInfo?.OpposingPlayer.Name ?? "unknown"} "
+					+ $"ended ({(PlayState)CurrentGame.LocalPlayerEntity.GetTag(GameTag.PLAYSTATE)})");
+
 			OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
 		}
 
 		internal void Reset()
 		{
+			Log.Debug("Unloading and resettings everything");
 			Collection.Unload();
 			Account.Unload();
 			Arena.Unload();
@@ -96,24 +108,28 @@ namespace HearthSim.Core.Hearthstone
 
 		internal override void OnHearthstoneExited()
 		{
+			Log.Debug("Hearthstone exited");
 			Reset();
 			base.OnHearthstoneExited();
 		}
 
 		internal override void OnHearthstoneLoaded()
 		{
+			Log.Debug("Hearthstone is running");
 			IsRunning = true;
 			base.OnHearthstoneLoaded();
 		}
 
 		internal override void OnQueuedForGame(QueuedForGameEventArgs args)
 		{
+			Log.Debug("Settings SelectedDeck=" + args.Deck);
 			SelectedDeck = new Deck(args.Deck);
 			base.OnQueuedForGame(args);
 		}
 
 		internal override void OnSetupComplete()
 		{
+			Log.Debug("Setup complete");
 			CurrentGame.SetupComplete = true;
 			base.OnSetupComplete();
 		}
@@ -121,12 +137,16 @@ namespace HearthSim.Core.Hearthstone
 		internal override void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args)
 		{
 			if(args.IsNew && args.Deck != null)
+			{
+				Log.Debug("Settings SelectedDeck=" + args.Deck);
 				SelectedDeck = args.Deck;
+			}
 			base.OnDungeonRunMatchStarted(args);
 		}
 
 		internal override void OnDungeonRunDeckUpdated(DungeonRunDeckUpdatedEventArgs args)
 		{
+			Log.Debug("Settings SelectedDeck=" + args.Deck);
 			SelectedDeck = args.Deck;
 			base.OnDungeonRunDeckUpdated(args);
 		}
