@@ -75,7 +75,7 @@ namespace HearthSim.Core.HSReplay
 			if(stars > 0)
 				friendly.Stars = stars;
 
-			if(game.LocalPlayer.Deck?.Cards.Sum(x => x.Count) == 30)
+			if(game.LocalPlayer.Deck?.Cards.Sum(x => x.Count) > 0)
 			{
 				friendly.DeckList = game.LocalPlayer.Deck.Cards.SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToArray();
 				if(game.LocalPlayer.Deck.DeckId > 0)
@@ -101,7 +101,7 @@ namespace HearthSim.Core.HSReplay
 			if(opposingPlayer.CardBackId > 0)
 				opposing.Cardback = opposingPlayer.CardBackId;
 
-			if(game.OpposingPlayer.Deck?.Cards.Sum(x => x.Count) == 30)
+			if(game.OpposingPlayer.Deck?.Cards.Sum(x => x.Count) > 0)
 			{
 				opposing.DeckList = game.OpposingPlayer.Deck.Cards.SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToArray();
 				if(game.OpposingPlayer.Deck.DeckId > 0)
