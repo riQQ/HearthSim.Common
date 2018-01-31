@@ -30,8 +30,8 @@ namespace HearthSim.Core.Util.Watchers
 			_dataProvider = dataProvider;
 		}
 
-		public event Action<DungeonDeckUpdatedEventArgs> DungeonDeckUpdated;
-		public event Action<DungeonRunStartedEventArgs> DungeonRunMatchStarted;
+		public event Action<DungeonRunDeckUpdatedEventArgs> DungeonRunDeckUpdated;
+		public event Action<DungeonRunMatchStartedEventArgs> DungeonRunMatchStarted;
 
 		protected override void Reset()
 		{
@@ -56,7 +56,7 @@ namespace HearthSim.Core.Util.Watchers
 						_prevTreasureChoice = dungeonInfo.PlayerChosenTreasure;
 						if(_prevLootChoice > 0 && _prevTreasureChoice > 0)
 						{
-							DungeonDeckUpdated?.Invoke(new DungeonDeckUpdatedEventArgs(BuildDeck(dungeonInfo)));
+							DungeonRunDeckUpdated?.Invoke(new DungeonRunDeckUpdatedEventArgs(BuildDeck(dungeonInfo)));
 							return UpdateResult.Break;
 						}
 					}
@@ -72,7 +72,7 @@ namespace HearthSim.Core.Util.Watchers
 					{
 						var newRun = _initialOpponents.Contains(_dataProvider.OpponentHeroId);
 						var deck = newRun ? DungeonRun.GetDefaultDeck(_dataProvider.LocalPlayerClass) : null;
-						DungeonRunMatchStarted?.Invoke(new DungeonRunStartedEventArgs(newRun, deck));
+						DungeonRunMatchStarted?.Invoke(new DungeonRunMatchStartedEventArgs(newRun, deck));
 						return UpdateResult.Break;
 					}
 				}
@@ -81,7 +81,7 @@ namespace HearthSim.Core.Util.Watchers
 			return UpdateResult.Continue;
 		}
 
-		public Deck BuildDeck(DungeonInfo info)
+		private Deck BuildDeck(DungeonInfo info)
 		{
 			var allCards = info.DbfIds.ToList();
 			if(info.PlayerChosenLoot > 0)

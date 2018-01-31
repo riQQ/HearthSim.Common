@@ -2,11 +2,11 @@
 
 namespace HearthSim.Core.Util.EventArgs
 {
-	public class DungeonDeckUpdatedEventArgs : System.EventArgs
+	public class DungeonRunDeckUpdatedEventArgs : System.EventArgs
 	{
 		public Deck Deck { get; }
 
-		public DungeonDeckUpdatedEventArgs(Deck deck)
+		public DungeonRunDeckUpdatedEventArgs(Deck deck)
 		{
 			Deck = deck;
 		}

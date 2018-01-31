@@ -113,5 +113,17 @@ namespace HearthSim.Core.Hearthstone
 			CurrentGame.SetupComplete = true;
 			base.OnSetupComplete();
 		}
+
+		internal override void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args)
+		{
+			SelectedDeck = args.Deck;
+			base.OnDungeonRunMatchStarted(args);
+		}
+
+		internal override void OnDungeonRunDeckUpdated(DungeonRunDeckUpdatedEventArgs args)
+		{
+			SelectedDeck = args.Deck;
+			base.OnDungeonRunDeckUpdated(args);
+		}
 	}
 }

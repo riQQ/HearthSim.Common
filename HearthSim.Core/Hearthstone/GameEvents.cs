@@ -25,6 +25,8 @@ namespace HearthSim.Core.Hearthstone
 
 		// Decks
 		public event Action<QueuedForGameEventArgs> QueuedForGame;
+		public event Action<DungeonRunMatchStartedEventArgs> DungeonRunMatchStarted;
+		public event Action<DungeonRunDeckUpdatedEventArgs> DungeonRunDeckUpdated;
 
 		// Game
 		public event Action<GameStateChangedEventArgs> GameStateChanged;
@@ -43,5 +45,9 @@ namespace HearthSim.Core.Hearthstone
 		internal virtual void OnHearthstoneLoaded() => HearthstoneLoaded?.Invoke();
 		internal virtual void OnHearthstoneExited() => HearthstoneExited?.Invoke();
 		internal virtual void OnPackOpened(PackOpenedEventArgs args) => PackOpened?.Invoke(args);
+		internal virtual void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args) =>
+			DungeonRunMatchStarted?.Invoke(args);
+		internal virtual void OnDungeonRunDeckUpdated(DungeonRunDeckUpdatedEventArgs args) =>
+			DungeonRunDeckUpdated?.Invoke(args);
 	}
 }

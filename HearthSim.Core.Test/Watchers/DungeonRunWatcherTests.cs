@@ -23,8 +23,8 @@ namespace HearthSim.Core.Test.Watchers
 		private const int SinisterStrike = 710;
 		private const int Category = -1;
 
-		private DungeonRunStartedEventArgs _run;
-		private DungeonDeckUpdatedEventArgs _info;
+		private DungeonRunMatchStartedEventArgs _run;
+		private DungeonRunDeckUpdatedEventArgs _info;
 		private MockDungeonRunData _data;
 		private DungeonRunWatcher _watcher;
 
@@ -36,7 +36,7 @@ namespace HearthSim.Core.Test.Watchers
 			_data = new MockDungeonRunData();
 			_watcher = new DungeonRunWatcher(_data, 100);
 			_watcher.DungeonRunMatchStarted += run => _run = run;
-			_watcher.DungeonDeckUpdated += info => _info = info;
+			_watcher.DungeonRunDeckUpdated += info => _info = info;
 		}
 
 		[TestMethod]

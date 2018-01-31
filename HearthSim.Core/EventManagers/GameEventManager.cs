@@ -8,6 +8,7 @@ using HearthSim.Core.LogParsing.Parsers.Power;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Core.Util.Watchers;
+using HearthSim.Util.Extensions;
 
 namespace HearthSim.Core.EventManagers
 {
@@ -17,6 +18,7 @@ namespace HearthSim.Core.EventManagers
 		private readonly IGameDataProvider _gameData;
 		private readonly ArenaWatcher _arenaWatcher;
 		private readonly PackWatcher _packWatcher;
+		private readonly DungeonRunWatcher _dungeonRunWatcher;
 
 		public GameEventManager(Game game, ILogInput logInput, IGameDataProvider gameData)
 		{
@@ -31,6 +33,10 @@ namespace HearthSim.Core.EventManagers
 
 			_packWatcher = new PackWatcher(gameData);
 			_packWatcher.PackOpened += game.OnPackOpened;
+
+			_dungeonRunWatcher = new DungeonRunWatcher(new DungeonRunData(game, gameData));
+			_dungeonRunWatcher.DungeonRunMatchStarted += game.OnDungeonRunMatchStarted;
+			_dungeonRunWatcher.DungeonRunDeckUpdated += game.OnDungeonRunDeckUpdated;
 
 			var logParserManager = new LogParserManager();
 
@@ -100,6 +106,11 @@ namespace HearthSim.Core.EventManagers
 				_packWatcher.Run();
 			else
 				_packWatcher.Stop();
+
+			if(args.CurrentMode == Mode.ADVENTURE || args.PreviousMode == Mode.ADVENTURE && args.CurrentMode == Mode.GAMEPLAY)
+				_dungeonRunWatcher.Run();
+			else
+				_dungeonRunWatcher.Stop().Forget();
 
 			if(args.CurrentMode == Mode.TAVERN_BRAWL)
 			{
