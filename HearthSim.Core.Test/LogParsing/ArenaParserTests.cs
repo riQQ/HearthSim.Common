@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HearthSim.Core.LogParsing.Parsers;
+using HearthSim.Core.LogReading.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HearthSim.Core.Test.LogParsing
@@ -7,9 +8,13 @@ namespace HearthSim.Core.Test.LogParsing
 	public class ArenaParserTests
 	{
 		[TestMethod]
-		public void TestMethod1()
+		public void RunComplete()
 		{
-			throw new NotImplementedException();
+			var complete = false;
+			var parser = new ArenaParser();
+			parser.ArenaRunComplete += () => complete = true;
+			parser.Parse(new Line("Arena", "D 18:21:33.7795321 SetDraftMode - IN_REWARDS"));
+			Assert.IsTrue(complete);
 		}
 	}
 }
