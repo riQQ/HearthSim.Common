@@ -10,7 +10,8 @@ namespace HearthSim.Core.LogReading.Data
 		public Line(string logName, string line)
 		{
 			LogName = logName;
-			RawLine = line;
+			RawLine = line ?? string.Empty;
+			Text = line ?? string.Empty;
 			Time = DateTime.Now;
 
 			var match = LineRegex.Match(line);
