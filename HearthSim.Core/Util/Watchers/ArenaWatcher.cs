@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Util.EventArgs;
@@ -8,22 +7,18 @@ using Card = HearthMirror.Objects.Card;
 
 namespace HearthSim.Core.Util.Watchers
 {
-	internal class ArenaWatcher
+	internal class ArenaWatcher : Watcher
 	{
 		private const int MaxDeckSize = 30;
 		private readonly IGameDataProvider _gameDataProvider;
-		private readonly int _delay;
 		private Card[] _prevChoices;
 		private ArenaInfo _prevInfo;
 		private int _prevSlot = -1;
-		private bool _running;
 		private bool _sameChoices;
-		private bool _watch;
 
-		public ArenaWatcher(IGameDataProvider gameDataProvider = null, int delay = 500)
+		public ArenaWatcher(IGameDataProvider gameDataProvider = null, int delay = 500) : base(delay)
 		{
 			_gameDataProvider = gameDataProvider ?? throw new ArgumentNullException(nameof(gameDataProvider));
-			_delay = delay;
 		}
 
 		public event Action<ArenaChoicesChangedEventArgs> ChoicesChanged;
@@ -31,36 +26,17 @@ namespace HearthSim.Core.Util.Watchers
 		public event Action<ArenaDeckComlpeteEventArgs> DeckComplete;
 		public event Action<ArenaRunCompleteEventArgs> RunComplete;
 
-		public void Run()
+		protected override void Reset()
 		{
-			_watch = true;
-			if(!_running)
-				Watch();
-		}
-
-		public void Stop() => _watch = false;
-
-		private async void Watch()
-		{
-			_running = true;
 			_prevSlot = -1;
 			_prevInfo = null;
-			while(_watch)
-			{
-				await Task.Delay(_delay);
-				if(!_watch)
-					break;
-				if(Update())
-					break;
-			}
-			_running = false;
 		}
 
-		public bool Update()
+		public override UpdateResult Update()
 		{
 			var arenaInfo = _gameDataProvider.GetArenaInfo();
 			if(arenaInfo == null)
-				return false;
+				return UpdateResult.Continue;
 			var numCards = arenaInfo.Deck.Cards.Sum(x => x.Count);
 			if(numCards == MaxDeckSize)
 			{
@@ -69,14 +45,13 @@ namespace HearthSim.Core.Util.Watchers
 				DeckComplete?.Invoke(new ArenaDeckComlpeteEventArgs(arenaInfo));
 				if(arenaInfo.Rewards?.Any() ?? false)
 					RunComplete?.Invoke(new ArenaRunCompleteEventArgs(arenaInfo));
-				_watch = false;
-				return true;
+				return UpdateResult.Break;
 			}
 			if(HasChanged(arenaInfo, arenaInfo.CurrentSlot))
 			{
 				var choices = _gameDataProvider.GetDraftChoices();
 				if(choices == null || choices.Length == 0)
-					return false;
+					return UpdateResult.Continue;
 				if(arenaInfo.CurrentSlot > _prevSlot)
 				{
 					if(ChoicesHaveChanged(choices) || _sameChoices)
@@ -87,7 +62,7 @@ namespace HearthSim.Core.Util.Watchers
 					else
 					{
 						_sameChoices = true;
-						return false;
+						return UpdateResult.Continue;
 					}
 				}
 				if(_prevSlot == 0 && arenaInfo.CurrentSlot == 1)
@@ -98,7 +73,7 @@ namespace HearthSim.Core.Util.Watchers
 				_prevInfo = arenaInfo;
 				_prevChoices = choices;
 			}
-			return false;
+			return UpdateResult.Continue;
 		}
 
 		private bool ChoicesHaveChanged(Card[] choices) => _prevChoices == null || choices[0] != _prevChoices[0]
