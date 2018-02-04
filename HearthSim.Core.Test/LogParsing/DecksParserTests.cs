@@ -123,5 +123,33 @@ namespace HearthSim.Core.Test.LogParsing
 			Assert.IsNull(deck);
 			Assert.AreEqual(637, heroId);
 		}
+
+		[TestMethod]
+		public void InvalidLines()
+		{
+			List <Deck> decks = null;
+			var parser = new DecksParser();
+			parser.FoundDecks += args => decks = args.Decks;
+
+			parser.Parse(new Line("Decks", "Invalid line 1"));
+			parser.Parse(new Line("Decks", "Invalid line 2"));
+			parser.Parse(new Line("Decks", "Invalid line 3"));
+
+			Assert.IsNull(decks);
+		}
+
+		[TestMethod]
+		public void InvalidDeck()
+		{
+			List <Deck> decks = null;
+			var parser = new DecksParser();
+			parser.FoundDecks += args => decks = args.Decks;
+
+			parser.Parse(new Line("Decks", "I 16:47:47.3726325 ### "));
+			parser.Parse(new Line("Decks", "I 16:47:47.3726325 # Deck ID: 1430830822"));
+			parser.Parse(new Line("Decks", "I 16:47:47.3726325 INVALID_DECKSTRING"));
+
+			Assert.IsNull(decks);
+		}
 	}
 }
