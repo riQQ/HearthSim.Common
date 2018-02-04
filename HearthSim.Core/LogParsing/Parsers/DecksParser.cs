@@ -47,7 +47,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 				UpdateState(State.FinishedEditingDeck);
 			else if(_findingGame.Contains(line.Text))
 				UpdateState(State.FindingGameWithDeck);
-			else if(line.Text == findingGameWithHero)
+			else if(line.Text.StartsWith(findingGameWithHero))
 			{
 				UpdateState(State.FindingGameWithHero);
 				if(int.TryParse(line.Text.Substring(findingGameWithHero.Length), out var dbfId))
