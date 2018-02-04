@@ -11,6 +11,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 {
 	public class DecksParser : ILogParser
 	{
+		private readonly int _decksTimeout;
 		private readonly List<Deck> _current;
 		private readonly List<string> _currentDeck;
 
@@ -23,8 +24,10 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		private State _state;
 
-		public DecksParser()
+		/// <param name="decksTimeout">Milliseconds to wait before invoking FoundDecks</param>
+		public DecksParser(int decksTimeout = 1000)
 		{
+			_decksTimeout = decksTimeout;
 			_current = new List<Deck>();
 			_currentDeck = new List<string>();
 			_state = State.None;
@@ -76,7 +79,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 		private async void InvokeFoundDecksAsync()
 		{
-			await Task.Delay(1000);
+			await Task.Delay(_decksTimeout);
 			InvokeFoundDecks();
 		}
 
