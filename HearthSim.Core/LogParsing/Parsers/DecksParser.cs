@@ -6,6 +6,7 @@ using HearthDb.Deckstrings;
 using HearthSim.Core.LogParsing.Interfaces;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.Util.EventArgs;
+using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.LogParsing.Parsers
 {
@@ -55,16 +56,24 @@ namespace HearthSim.Core.LogParsing.Parsers
 			}
 			else
 			{
-				_currentDeck.Add(line.Text);
+				if(_currentDeck.Count > 0 || line.Text.StartsWith("#"))
+					_currentDeck.Add(line.Text);
 				if(_currentDeck.Count == 3)
 				{
-					var deck = DeckSerializer.Deserialize(string.Join("\n", _currentDeck));
-					if(_state == State.FindingGameWithDeck)
-						FindingGame?.Invoke(new QueuedForGameEventArgs(deck));
-					else if(_state == State.FinishedEditingDeck)
-						EditedDeck?.Invoke(new DeckEditedEventArgs(deck));
-					else
-						_current.Add(deck);
+					try
+					{
+						var deck = DeckSerializer.Deserialize(string.Join("\n", _currentDeck));
+						if(_state == State.FindingGameWithDeck)
+							FindingGame?.Invoke(new QueuedForGameEventArgs(deck));
+						else if(_state == State.FinishedEditingDeck)
+							EditedDeck?.Invoke(new DeckEditedEventArgs(deck));
+						else
+							_current.Add(deck);
+					}
+					catch(Exception e)
+					{
+						Log.Error(e);
+					}
 					_currentDeck.Clear();
 				}
 			}
