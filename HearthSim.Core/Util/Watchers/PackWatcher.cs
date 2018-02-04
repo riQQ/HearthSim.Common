@@ -9,60 +9,40 @@ using Card = HearthMirror.Objects.Card;
 
 namespace HearthSim.Core.Util.Watchers
 {
-	internal class PackWatcher
+	internal class PackWatcher : Watcher
 	{
 		private readonly List<Card> _previousPack = new List<Card>();
-		private readonly int _delay;
-		private bool _running;
-		private bool _watch;
 		private bool _invokeEvent;
 		private readonly IGameDataProvider _gameDataProvider;
 
-		public PackWatcher(IGameDataProvider gameDataProvider, int delay = 500)
+		public PackWatcher(IGameDataProvider gameDataProvider, int delay = 500) : base(delay)
 		{
 			_gameDataProvider = gameDataProvider ?? throw new ArgumentNullException(nameof(gameDataProvider));
-			_delay = delay;
 		}
 		public event Action<PackOpenedEventArgs> PackOpened;
 
-		public void Run()
+		public override UpdateResult Update()
 		{
-			_watch = true;
-			if(!_running)
-				CheckForPacks();
-		}
-
-		public void Stop() => _watch = false;
-
-		private async void CheckForPacks()
-		{
-			_running = true;
-			while(_watch)
+			var cards = _gameDataProvider.GetPackCards();
+			if(cards?.Count == 5)
 			{
-				await Task.Delay(_delay);
-				if(!_watch)
-					break;
-				var cards = _gameDataProvider.GetPackCards();
-				if(cards?.Count == 5)
-				{
-					if(cards.All(x => _previousPack.Any(c => c.Id == x.Id & c.Premium == x.Premium)))
-						continue;
-					if(_previousPack.Any())
-						_invokeEvent = true;
-					_previousPack.Clear();
-					_previousPack.AddRange(cards);
-					if(_invokeEvent)
-					{
-						var pack = new Pack((Booster)_gameDataProvider.GetPackId(),
-							cards.Select(x => new CollectionCard(x.Id, x.Premium ? 0 : x.Count, x.Premium ? x.Count : 0)));
-						PackOpened?.Invoke(new PackOpenedEventArgs(pack));
-					}
-				}
-				else
+				if(cards.All(x => _previousPack.Any(c => c.Id == x.Id & c.Premium == x.Premium)))
+					return UpdateResult.Continue;
+				if(_previousPack.Any())
 					_invokeEvent = true;
+				_previousPack.Clear();
+				_previousPack.AddRange(cards);
+				if(_invokeEvent)
+				{
+					var pack = new Pack((Booster)_gameDataProvider.GetPackId(),
+						cards.Select(x => new CollectionCard(x.Id, x.Premium ? 0 : x.Count, x.Premium ? x.Count : 0)));
+					PackOpened?.Invoke(new PackOpenedEventArgs(pack));
+				}
 			}
-			_running = false;
-		}
+			else
+				_invokeEvent = true;
 
+			return UpdateResult.Continue;
+		}
 	}
 }
