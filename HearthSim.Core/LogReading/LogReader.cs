@@ -37,7 +37,7 @@ namespace HearthSim.Core.LogReading
 				return;
 			var logDirectory = Path.Combine(hearthstoneDirectory, "Logs");
 			var startingPoint = GetStartingPoint(logDirectory);
-			Log.Debug($"Starting log readers at {startingPoint}");
+			Log.Debug($"Starting log readers at [{startingPoint}]");
 			foreach(var logReader in _watchers)
 				logReader.Start(logDirectory, logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
 			_running = true;
@@ -99,6 +99,11 @@ namespace HearthSim.Core.LogReading
 			public DateTime Decks { get; }
 			public DateTime LoadingScreen { get; }
 			public DateTime Default { get; }
+
+			public override string ToString()
+			{
+				return $"Power={Power}, Decks={Decks}, LoadingScreen={LoadingScreen}, Default={Default}";
+			}
 		}
 	}
 }
