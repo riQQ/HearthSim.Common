@@ -150,5 +150,12 @@ namespace HearthSim.Core.Hearthstone
 			SelectedDeck = args.Deck;
 			base.OnDungeonRunDeckUpdated(args);
 		}
+
+		internal override void OnGameEnded(GameEndEventArgs args)
+		{
+			Log.Debug("Clearing selected deck");
+			SelectedDeck = null;
+			base.OnGameEnded(args);
+		}
 	}
 }
