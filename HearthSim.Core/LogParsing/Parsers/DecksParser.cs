@@ -87,7 +87,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		{
 			if(_state != State.ReceivingDecks || _current.Count <= 0)
 				return;
-			FoundDecks?.Invoke(new ConstructedDeckFoundEventArgs(_current));
+			FoundDecks?.Invoke(new ConstructedDeckFoundEventArgs(_current.ToList()));
 			_current.Clear();
 		}
 
