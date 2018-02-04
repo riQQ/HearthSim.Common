@@ -123,7 +123,7 @@ namespace HearthSim.Core.Hearthstone
 		internal override void OnQueuedForGame(QueuedForGameEventArgs args)
 		{
 			Log.Debug("Settings SelectedDeck=" + args.Deck);
-			SelectedDeck = new Deck(args.Deck);
+			SelectedDeck = args.Deck != null ? new Deck(args.Deck) : null;
 			base.OnQueuedForGame(args);
 		}
 
