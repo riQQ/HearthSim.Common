@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Hearthstone\DungeonRunData.cs" />
     <Compile Include="Hearthstone\DungeonRun.cs" />
+    <Compile Include="Hearthstone\IGameState.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="EventManagers\GameEventManager.cs" />
     <Compile Include="Hearthstone\Account.cs" />

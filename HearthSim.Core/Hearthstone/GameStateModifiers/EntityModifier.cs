@@ -11,12 +11,12 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			_id = data.Id;
 		}
 
-		public void Apply(GameState gameState)
+		public void Apply(IGameState gameState)
 		{
 			gameState.CurrentEntity = _id;
 			ApplyImpl(gameState);
 		}
 
-		protected abstract void ApplyImpl(GameState gameState);
+		protected abstract void ApplyImpl(IGameState gameState);
 	}
 }

@@ -10,13 +10,13 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class Player
 	{
-		private readonly GameState _gameState;
+		private readonly IGameState _gameState;
 		private readonly bool _isLocalPlayer;
 		private Deck _deck;
 
 		internal event Action<ActivePlayerDeckChangedEventArgs> DeckChanged;
 
-		public Player(GameState gameState, bool isLocalPlayer)
+		public Player(IGameState gameState, bool isLocalPlayer)
 		{
 			_gameState = gameState;
 			_isLocalPlayer = isLocalPlayer;

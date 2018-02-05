@@ -67,7 +67,7 @@ namespace HearthSim.Core.Hearthstone
 				InvokeGameEnd(args.State);
 		}
 
-		private void InvokeGameEnd(GameState game)
+		private void InvokeGameEnd(IGameState game)
 		{
 			var wins = 0;
 			var losses = 0;

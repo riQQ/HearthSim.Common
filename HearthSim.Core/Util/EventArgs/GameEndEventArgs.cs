@@ -4,7 +4,7 @@ namespace HearthSim.Core.Util.EventArgs
 {
 	public class GameEndEventArgs : System.EventArgs
 	{
-		public GameEndEventArgs(int? build, GameState gameState, int wins, int losses)
+		public GameEndEventArgs(int? build, IGameState gameState, int wins, int losses)
 		{
 			Build = build;
 			GameState = gameState;
@@ -13,7 +13,7 @@ namespace HearthSim.Core.Util.EventArgs
 		}
 
 		public int? Build { get; }
-		public GameState GameState { get; }
+		public IGameState GameState { get; }
 		public int Wins { get; }
 		public int Losses { get; }
 	}

@@ -16,7 +16,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			ParentBlock = parentBlock;
 		}
 
-		protected override void ApplyImpl(GameState gameState)
+		protected override void ApplyImpl(IGameState gameState)
 		{
 			if(gameState.Entities.TryGetValue(EntityId, out var entity))
 			{

@@ -11,7 +11,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			EntityId = data.Id;
 		}
 
-		protected override void ApplyImpl(GameState gameState)
+		protected override void ApplyImpl(IGameState gameState)
 		{
 			if(gameState.Entities.TryGetValue(EntityId, out var entity))
 				entity.Info.Hidden = true;

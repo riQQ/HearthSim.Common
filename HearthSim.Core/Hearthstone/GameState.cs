@@ -10,7 +10,7 @@ using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
 {
-	public class GameState
+	public class GameState : IGameState
 	{
 		private readonly IGameDataProvider _gameDataProvider;
 		private readonly Queue<IGameStateModifier> _creationTags;
@@ -55,7 +55,7 @@ namespace HearthSim.Core.Hearthstone
 		public Player OpposingPlayer { get; }
 
 		//TODO move this into the parser
-		public int CurrentEntity { get; internal set; }
+		public int CurrentEntity { get; set; }
 
 		public Entity LastCardPlayed 
 			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;

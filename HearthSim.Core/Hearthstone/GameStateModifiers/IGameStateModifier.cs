@@ -2,6 +2,6 @@
 {
 	public interface IGameStateModifier
 	{
-		void Apply(GameState gameState);
+		void Apply(IGameState gameState);
 	}
 }

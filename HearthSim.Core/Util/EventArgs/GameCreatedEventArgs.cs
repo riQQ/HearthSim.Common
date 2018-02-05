@@ -4,11 +4,11 @@ namespace HearthSim.Core.Util.EventArgs
 {
 	public class GameCreatedEventArgs : System.EventArgs
 	{
-		public GameCreatedEventArgs(GameState game)
+		public GameCreatedEventArgs(IGameState game)
 		{
 			Game = game;
 		}
 
-		public GameState Game { get; }
+		public IGameState Game { get; }
 	}
 }

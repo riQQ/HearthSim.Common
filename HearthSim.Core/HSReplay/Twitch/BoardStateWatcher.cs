@@ -26,7 +26,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 			_currentBoardState = null;
 		}
 
-		public async void Start(GameState game)
+		public async void Start(IGameState game)
 		{
 			if(_running)
 				return;
@@ -48,7 +48,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 			_running = false;
 		}
 
-		private BoardState GetBoardState(GameState game)
+		private BoardState GetBoardState(IGameState game)
 		{
 			if(game.LocalPlayerEntity == null || game.OpposingPlayerEntity == null)
 				return null;

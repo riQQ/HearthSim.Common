@@ -8,7 +8,7 @@ namespace HearthSim.Core.HSReplay
 {
 	internal static class UploadMetaDataGenerator
 	{
-		public static UploadMetaData Generate(int? build, GameState game, int wins, int losses)
+		public static UploadMetaData Generate(int? build, IGameState game, int wins, int losses)
 		{
 			var metaData = new UploadMetaData();
 			var playerInfo = GetPlayerInfo(game, wins, losses);
@@ -45,7 +45,7 @@ namespace HearthSim.Core.HSReplay
 			return metaData;
 		}
 
-		private static PlayerInfo GetPlayerInfo(GameState game, int wins, int losses)
+		private static PlayerInfo GetPlayerInfo(IGameState game, int wins, int losses)
 		{
 			var matchInfo = game.MatchInfo;
 			if(matchInfo == null)

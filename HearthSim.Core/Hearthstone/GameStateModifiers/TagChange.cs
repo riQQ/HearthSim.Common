@@ -22,7 +22,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			CreationTag = data.CreationTag;
 		}
 
-		public void Apply(GameState gameState)
+		public void Apply(IGameState gameState)
 		{
 			if(CreationTag)
 				EntityId = gameState.CurrentEntity;
@@ -36,7 +36,7 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			}
 		}
 
-		private void AugmentEntityInfo(Entity entity, GameState gameState)
+		private void AugmentEntityInfo(Entity entity, IGameState gameState)
 		{
 			if(Tag == GameTag.ZONE)
 			{

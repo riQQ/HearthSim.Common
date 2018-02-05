@@ -5,13 +5,13 @@ namespace HearthSim.Core.Util.EventArgs
 {
 	public class GameStateChangedEventArgs : System.EventArgs
 	{
-		public GameStateChangedEventArgs(IGameStateModifier modifier, GameState state)
+		public GameStateChangedEventArgs(IGameStateModifier modifier, IGameState state)
 		{
 			Modifier = modifier;
 			State = state;
 		}
 
 		public IGameStateModifier Modifier { get; }
-		public GameState State { get; }
+		public IGameState State { get; }
 	}
 }
