@@ -52,6 +52,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameStateModifiers\EntityModifierTests.cs" />
+    <Compile Include="GameStateModifiers\ChangeEntityTests.cs" />
+    <Compile Include="GameStateModifiers\FullEntityTests.cs" />
+    <Compile Include="GameStateModifiers\HideEntityTests.cs" />
+    <Compile Include="MockData\MockGameState.cs" />
+    <Compile Include="GameStateModifiers\ShowEntityTests.cs" />
+    <Compile Include="GameStateModifiers\TagChangeTests.cs" />
     <Compile Include="LogParsing\ArenaParserTests.cs" />
     <Compile Include="LogParsing\DecksParserTests.cs" />
     <Compile Include="LogParsing\LoadingScreenParserTests.cs" />
