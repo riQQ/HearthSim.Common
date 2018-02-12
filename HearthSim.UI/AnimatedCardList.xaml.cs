@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using HearthSim.Core.Hearthstone;
@@ -11,6 +12,7 @@ using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Util.Logging;
 using HearthSim.UI.Annotations;
 using HearthSim.UI.Themes;
+using HearthSim.Util.Extensions;
 
 namespace HearthSim.UI
 {
@@ -98,6 +100,11 @@ namespace HearthSim.UI
 
 		public void Update(List<CardViewModel> cards, bool reset)
 		{
+			UpdateAsync(cards, reset).Forget();
+		}
+
+		public async Task UpdateAsync(List<CardViewModel> cards, bool reset)
+		{
 			try
 			{
 				if(reset)
@@ -139,8 +146,7 @@ namespace HearthSim.UI
 						newCards.Remove(newCard);
 					}
 				}
-				foreach(var card in toRemove)
-					RemoveCard(card.Item1, card.Item2);
+				await Task.WhenAll(toRemove.Select(card => RemoveCard(card.Item1, card.Item2)));
 				foreach(var card in newCards)
 				{
 					CardViewModels.Add(card);
@@ -154,7 +160,7 @@ namespace HearthSim.UI
 			}
 		}
 
-		private async void RemoveCard(CardViewModel card, bool fadeOut)
+		private async Task RemoveCard(CardViewModel card, bool fadeOut)
 		{
 			if(_removing.Contains(card))
 				return;
