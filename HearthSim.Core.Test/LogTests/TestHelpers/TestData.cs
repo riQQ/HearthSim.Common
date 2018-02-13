@@ -27,7 +27,7 @@ namespace HearthSim.Core.Test.LogTests.TestHelpers
 			public string Deck { get; set; }
 
 			public MatchInfo.Player ToMatchInfoPlayer()
-				=> new MatchInfo.Player(Id, Name, 0, 0, 0, 0, 0, 0, 0, null);
+				=> new MatchInfo.Player(Id, Name, 0, 0, 0, 0, 0, 0, 0, null, null);
 		}
 
 		public static TestData Load(string file)
