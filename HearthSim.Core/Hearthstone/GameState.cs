@@ -104,7 +104,7 @@ namespace HearthSim.Core.Hearthstone
 				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));
 		}
 
-		private bool TryResolveEntityName(string name, out int entityId)
+		private bool TryResolveEntityName(string name, out int entityId, bool retry = true)
 		{
 			entityId = -1;
 			if(name == null)
@@ -130,6 +130,14 @@ namespace HearthSim.Core.Hearthstone
 			{
 				entityId = PlayerEntities[matchInfo.OpposingPlayer.Id].Id;
 				return true;
+			}
+
+			if(retry)
+			{
+				Log.Debug($"Could not resolve entity \"{name}\", retrying");
+				_matchInfo = null;
+				_gameDataProvider.Reset();
+				return TryResolveEntityName(name, out entityId, false);
 			}
 			return false;
 		}
