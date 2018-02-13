@@ -117,12 +117,16 @@ namespace HearthSim.Core.Hearthstone
 			var matchInfo = MatchInfo;
 			if(matchInfo == null)
 				return false;
-			if(matchInfo.LocalPlayer.Name == name)
+
+			bool IsPlayer(MatchInfo.Player player)
+				=> player.BattleTag?.Name == name || player.Name == name;
+
+			if(IsPlayer(matchInfo.LocalPlayer))
 			{
 				entityId = PlayerEntities[matchInfo.LocalPlayer.Id].Id;
 				return true;
 			}
-			if(matchInfo.OpposingPlayer.Name == name)
+			if(IsPlayer(matchInfo.OpposingPlayer))
 			{
 				entityId = PlayerEntities[matchInfo.OpposingPlayer.Id].Id;
 				return true;
