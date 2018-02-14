@@ -4,18 +4,18 @@ using HearthSim.Core.LogParsing.Parsers.Power;
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
-	public class FullEntity : EntityModifier
+	public class FullEntity : IGameStateModifier
 	{
 		public EntityData Data { get; }
 		public IBlockData ParentBlock { get; }
 
-		public FullEntity(EntityData data, IBlockData parentBlock) : base(data)
+		public FullEntity(EntityData data, IBlockData parentBlock)
 		{
 			Data = data;
 			ParentBlock = parentBlock;
 		}
 
-		protected override void ApplyImpl(IGameState gameState)
+		public void Apply(IGameState gameState)
 		{
 			if(Data is GameEntityData g)
 			{

@@ -24,8 +24,6 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 
 		public void Apply(IGameState gameState)
 		{
-			if(CreationTag)
-				EntityId = gameState.CurrentEntity;
 			if(!EntityId.HasValue)
 				return;
 			if(gameState.Entities.TryGetValue(EntityId.Value, out var entity))

@@ -11,13 +11,13 @@ namespace HearthSim.Core.Test.GameStateModifiers
 	public class EntityModifierTests
 	{
 		private MockEntityModifier _mod;
-		private GameState _gs;
+		private MockGameState _gs;
 
 		[TestInitialize]
 		public void Initialize()
 		{
 			_mod = new MockEntityModifier(new EntityData(1, "NAME", "CARD_ID", Zone.DECK));
-			_gs = new GameState(new MockGameData());
+			_gs = new MockGameState();
 		}
 
 		[TestMethod]
@@ -27,20 +27,13 @@ namespace HearthSim.Core.Test.GameStateModifiers
 			Assert.IsTrue(_mod.Applied);
 		}
 
-		[TestMethod]
-		public void EntityModfier_CurrentEntitySet()
+		public class MockEntityModifier : IGameStateModifier
 		{
-			_mod.Apply(_gs);
-			Assert.AreEqual(1, _gs.CurrentEntity);
-		}
-
-		public class MockEntityModifier : EntityModifier
-		{
-			public MockEntityModifier(EntityData data) : base(data)
+			public MockEntityModifier(EntityData data)
 			{
 			}
 
-			protected override void ApplyImpl(IGameState gameState)
+			public void Apply(IGameState gameState)
 			{
 				Applied = true;
 			}

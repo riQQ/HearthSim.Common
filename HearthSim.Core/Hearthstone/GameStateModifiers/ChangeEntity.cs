@@ -2,18 +2,18 @@
 
 namespace HearthSim.Core.Hearthstone.GameStateModifiers
 {
-	public class ChangeEntity : EntityModifier
+	public class ChangeEntity : IGameStateModifier
 	{
 		public int EntityId { get; }
 		public string CardId { get; }
 
-		public ChangeEntity(EntityData data) : base(data)
+		public ChangeEntity(EntityData data)
 		{
 			EntityId = data.Id;
 			CardId = data.CardId;
 		}
 
-		protected override void ApplyImpl(IGameState gameState)
+		public void Apply(IGameState gameState)
 		{
 			if(gameState.Entities.TryGetValue(EntityId, out var entity))
 				entity.CardId = CardId;

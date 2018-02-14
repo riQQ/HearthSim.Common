@@ -23,6 +23,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 		private readonly Regex _debugDumpRegex = new Regex(@"DebugDump\(\) - ID=(?<id>(\d+)) ParentID=\d+ PreviousID=\d+ TaskCount=\d+");
 
 		private Block _currentBlock;
+		private int _currentEntity;
 
 		internal PowerParser(IGameInfoProvider gameInfo)
 		{
@@ -85,6 +86,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var id = int.Parse(match.Groups["id"].Value);
+				_currentEntity = id;
 				GameStateChange?.Invoke(new FullEntity(new GameEntityData(id), null));
 				return;
 			}
@@ -94,6 +96,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var entityId = int.Parse(match.Groups["id"].Value);
 				var playerId = int.Parse(match.Groups["playerId"].Value);
+				_currentEntity = playerId;
 				GameStateChange?.Invoke(new FullEntity(new PlayerEntityData(entityId, playerId), null));
 				return;
 			}
@@ -102,6 +105,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var id = int.Parse(match.Groups["id"].Value);
+				_currentEntity = id;
 				var cardId = match.Groups["cardId"].Value;
 				var zone = GameTagParser.ParseEnum<Zone>(match.Groups["zone"].Value);
 				if(string.IsNullOrEmpty(cardId) && zone != Zone.SETASIDE)
@@ -126,6 +130,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var cardId = match.Groups["cardId"].Value;
 				var entity = ParseEntity(match.Groups["entity"].Value);
+				_currentEntity = entity.Id;
 				var type = match.Groups["type"].Value;
 				if(type == "CHANGE_ENTITY")
 					GameStateChange?.Invoke(new ChangeEntity(new EntityData(entity.Id, entity.Name, cardId, null)));
@@ -139,7 +144,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var tag = GameTagParser.ParseEnum<GameTag>(match.Groups["tag"].Value);
 				var value = GameTagParser.ParseTag(tag, match.Groups["value"].Value);
-				GameStateChange?.Invoke(new TagChange(new TagChangeData(tag, value, true, null, null)));
+				GameStateChange?.Invoke(new TagChange(new TagChangeData(tag, value, true, _currentEntity, null)));
 				return;
 			}
 
@@ -147,6 +152,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			if(match.Success)
 			{
 				var id = int.Parse(match.Groups["id"].Value);
+				_currentEntity = id;
 				GameStateChange?.Invoke(new HideEntity(new EntityData(id, "", null, null)));
 			}
 

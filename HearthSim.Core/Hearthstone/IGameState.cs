@@ -9,7 +9,6 @@ namespace HearthSim.Core.Hearthstone
 	public interface IGameState
 	{
 		DateTime CreatedAt { get; }
-		int CurrentEntity { get; set; }
 		int CurrentTurn { get; }
 		Dictionary<int, Entity> Entities { get; }
 		GameEntity GameEntity { get; set; }

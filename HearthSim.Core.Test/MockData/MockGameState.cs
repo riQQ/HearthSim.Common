@@ -10,7 +10,6 @@ namespace HearthSim.Core.Test.MockData
 	public class MockGameState : IGameState
 	{
 		public DateTime CreatedAt { get; set; }
-		public int CurrentEntity { get; set; }
 		public int CurrentTurn { get; set; }
 		public GameEntity GameEntity { get; set; }
 		public Entity LastCardPlayed { get; set; }

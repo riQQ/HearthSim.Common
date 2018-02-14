@@ -120,7 +120,6 @@
     <Compile Include="Util\EventArgs\ArenaDeckComlpeteEventArgs.cs" />
     <Compile Include="Util\EventArgs\GameStateChangedEventArgs.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\ChangeEntity.cs" />
-    <Compile Include="Hearthstone\GameStateModifiers\EntityModifier.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\FullEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\HideEntity.cs" />
     <Compile Include="Hearthstone\GameStateModifiers\IGameStateModifier.cs" />

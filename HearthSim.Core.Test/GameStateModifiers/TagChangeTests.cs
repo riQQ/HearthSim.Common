@@ -65,12 +65,14 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		[TestMethod]
 		public void Apply_CreationTagEntityId()
 		{
+			var entity = new FullEntity(new EntityData(1, "NAME", "CARD_ID", null), null);
 			var tc = new TagChange(new TagChangeData(GameTag.HEALTH, 5, true, null, null));
-			var game = new MockGameState {CurrentEntity = 1};
+			var game = new MockGameState();
 
 			Assert.IsNull(tc.EntityId);
+			entity.Apply(game);
 			tc.Apply(game);
-			Assert.AreEqual(game.CurrentEntity, tc.EntityId);
+			Assert.AreEqual(entity.Data.Id, tc.EntityId);
 		}
 
 		[TestMethod]

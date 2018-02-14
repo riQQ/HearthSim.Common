@@ -54,8 +54,6 @@ namespace HearthSim.Core.Hearthstone
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
 
-		//TODO move this into the parser
-		public int CurrentEntity { get; set; }
 
 		public Entity LastCardPlayed 
 			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;
