@@ -63,8 +63,12 @@ namespace HearthSim.Core.Hearthstone
 		internal override void OnGameStateChanged(GameStateChangedEventArgs args)
 		{
 			base.OnGameStateChanged(args);
-			if(args.Modifier is TagChange t && t.Tag == GameTag.STATE && t.Value == (int)State.COMPLETE)
-				InvokeGameEnd(args.State);
+			if(args.Modifier is TagChange t)
+			{
+				OnTagChange(t, args.State);
+				if(t.Tag == GameTag.STATE && t.Value == (int)State.COMPLETE)
+					InvokeGameEnd(args.State);
+			}
 		}
 
 		private void InvokeGameEnd(IGameState game)

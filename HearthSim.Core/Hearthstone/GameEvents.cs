@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.Hearthstone
 {
 	public class GameEvents
 	{
+		private readonly Dictionary<GameTagChange, Action<CommonGameEventArgs>> _actions;
+
 		protected GameEvents()
 		{
+			_actions = new Dictionary<GameTagChange, Action<CommonGameEventArgs>>
+			{
+			};
 		}
 
 		// Process
@@ -52,5 +59,11 @@ namespace HearthSim.Core.Hearthstone
 			DungeonRunDeckUpdated?.Invoke(args);
 		internal virtual void OnActivePlayerDeckChanged(ActivePlayerDeckChangedEventArgs args) =>
 			ActivePlayerDeckChanged?.Invoke(args);
+
+		internal void OnTagChange(TagChange t, IGameState state)
+		{
+			if(t.EntityId.HasValue && _actions.TryGetValue((t.Tag, t.PreviousValue ?? 0, t.Value), out var action))
+				action?.Invoke(new CommonGameEventArgs(t.EntityId.Value, state));
+		}
 	}
 }
