@@ -63,23 +63,10 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		}
 
 		[TestMethod]
-		public void Apply_CreationTagEntityId()
-		{
-			var entity = new FullEntity(new EntityData(1, "NAME", "CARD_ID", null), null);
-			var tc = new TagChange(new TagChangeData(GameTag.HEALTH, 5, true, null, null));
-			var game = new MockGameState();
-
-			Assert.IsNull(tc.EntityId);
-			entity.Apply(game);
-			tc.Apply(game);
-			Assert.AreEqual(entity.Data.Id, tc.EntityId);
-		}
-
-		[TestMethod]
 		public void Apply_ValidEntity()
 		{
 			var tc = new TagChange(new TagChangeData(GameTag.HEALTH, 5, false, 1, null));
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			game.Entities.Add(1, new Entity(1, "CARD_ID"));
 
 			tc.Apply(game);
@@ -108,7 +95,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		public void Apply_ValidEntity_ControllerChange()
 		{
 			var tc = new TagChange(new TagChangeData(GameTag.CONTROLLER, 1, false, 1, null));
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			game.Entities.Add(1, new Entity(1, "CARD_ID"));
 
 			tc.Apply(game);
@@ -123,7 +110,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		public void Apply_InvalidEntity()
 		{
 			var tc = new TagChange(new TagChangeData(GameTag.HEALTH, 5, false, 2, null));
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			var entity = new Entity(1, "CARD_ID");
 			game.Entities.Add(1, entity);
 

@@ -1,12 +1,14 @@
-﻿using HearthDb.Enums;
+﻿using System;
+using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.Enums;
+using HearthSim.Core.Hearthstone.Events;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Util.Logging;
 
 namespace HearthSim.Core.Hearthstone
 {
-	public class Game : GameEvents
+	public class Game : GlobalGameEvents
 	{
 		public IGameDataProvider GameDataProvider { get; }
 
@@ -17,6 +19,7 @@ namespace HearthSim.Core.Hearthstone
 			Account = new Account();
 			Arena = new Arena();
 			TavernBrawl = new TavernBrawl();
+			GameStateEvents = new GameStateEvents();
 		}
 
 		public GameState CurrentGame { get; private set; }
@@ -30,6 +33,7 @@ namespace HearthSim.Core.Hearthstone
 		public int? Build { get; internal set; }
 		public Deck SelectedDeck { get; private set; }
 		public BnetRegion Region { get; set; }
+		public GameStateEvents GameStateEvents { get; }
 
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
@@ -49,7 +53,7 @@ namespace HearthSim.Core.Hearthstone
 				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
 					InvokeGameEnd(CurrentGame);
 			}
-			CurrentGame = new GameState(GameDataProvider);
+			CurrentGame = new GameState(GameDataProvider, GameStateEvents);
 			CurrentGame.Modified += OnGameStateChanged;
 			CurrentGame.LocalPlayer.DeckChanged += OnActivePlayerDeckChanged;
 			CurrentGame.OpposingPlayer.DeckChanged += OnActivePlayerDeckChanged;
@@ -60,15 +64,10 @@ namespace HearthSim.Core.Hearthstone
 			base.OnCreateGame(new GameCreatedEventArgs(CurrentGame));
 		}
 
-		internal override void OnGameStateChanged(GameStateChangedEventArgs args)
+		internal void OnGameStateChanged(GameStateChangedEventArgs args)
 		{
-			base.OnGameStateChanged(args);
-			if(args.Modifier is TagChange t)
-			{
-				OnTagChange(t, args.State);
-				if(t.Tag == GameTag.STATE && t.Value == (int)State.COMPLETE)
-					InvokeGameEnd(args.State);
-			}
+			if(args.Modifier is TagChange t && (t.Tag == GameTag.STATE && t.Value == (int) State.COMPLETE))
+				InvokeGameEnd(args.State);
 		}
 
 		private void InvokeGameEnd(IGameState game)
@@ -131,11 +130,11 @@ namespace HearthSim.Core.Hearthstone
 			base.OnQueuedForGame(args);
 		}
 
-		internal override void OnSetupComplete()
+		internal void OnSetupComplete()
 		{
 			Log.Debug("Setup complete");
 			CurrentGame.SetupComplete = true;
-			base.OnSetupComplete();
+			GameStateEvents.OnSetupComplete();
 		}
 
 		internal override void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args)
@@ -160,6 +159,11 @@ namespace HearthSim.Core.Hearthstone
 			Log.Debug("Clearing selected deck");
 			SelectedDeck = null;
 			base.OnGameEnded(args);
+		}
+
+		internal void OnGameTimeChanged(DateTime time)
+		{
+			CurrentGame.GameTime.Time = time;
 		}
 	}
 }

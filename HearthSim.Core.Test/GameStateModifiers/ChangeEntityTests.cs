@@ -1,5 +1,4 @@
 ﻿using HearthDb.Enums;
-using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing.Parsers.Power;
@@ -22,7 +21,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		[TestMethod]
 		public void Apply_ValidEntity()
 		{
-			var gs = new GameState(new MockGameData());
+			var gs = new MockGameState();
 			gs.Entities.Add(1, new Entity(1, "CARD_ID"));
 			var mod = new ChangeEntity(new EntityData(1, "NAME", "CARD_ID2", Zone.DECK));
 			mod.Apply(gs);
@@ -31,7 +30,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 
 		public void Apply_InvalidEntity()
 		{
-			var gs = new GameState(new MockGameData());
+			var gs = new MockGameState();
 			gs.Entities.Add(1, new Entity(1, "CARD_ID"));
 			var mod = new ChangeEntity(new EntityData(2, "NAME", "CARD_ID2", Zone.DECK));
 			mod.Apply(gs);

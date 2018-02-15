@@ -219,7 +219,7 @@ namespace HearthSim.Core.Test.LogParsing
 		{
 			var blockEnd = false;
 			var parser = new PowerParser(new MockGameInfo());
-			parser.BlockEnd += () => blockEnd = true;
+			parser.BlockEnd += block => blockEnd = true;
 
 			parser.Parse(new Line("Power", "D 00:30:21.2050280 PowerTaskList.DebugPrintPower() - BLOCK_END"));
 			Assert.IsTrue(blockEnd);

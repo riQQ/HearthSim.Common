@@ -23,6 +23,8 @@ namespace HearthSim.Core.Hearthstone
 		IReadOnlyCollection<string> PowerLog { get; }
 		GameServerInfo ServerInfo { get; }
 		bool SetupComplete { get; }
+		GameTime GameTime { get; }
+		PlayerEntity CurrentPlayer { get; }
 
 		void AppendLog(LogEventArgs args);
 	}

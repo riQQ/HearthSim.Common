@@ -1,5 +1,4 @@
 ﻿using HearthDb.Enums;
-using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing.Parsers.Power;
@@ -26,7 +25,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		public void Apply_ValidEntity()
 		{
 			var entityData = new EntityData(1, "NAME", "CARD_ID", Zone.DECK);
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			var entity = new Entity(1, "");
 			entity.Info.Hidden = true;
 			game.Entities.Add(1, entity);
@@ -42,7 +41,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		public void Apply_ValidEntity_RevealCard()
 		{
 			var entity = new EntityData(1, "NAME", "CARD_ID", Zone.DECK);
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			game.Entities.Add(1, new Entity(1, ""));
 			var mod = new ShowEntity(entity, new MockBlockData {Type = BlockType.REVEAL_CARD});
 
@@ -54,7 +53,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 		public void Apply_InvalidEntity()
 		{
 			var entityData = new EntityData(2, "NAME", "CARD_ID", Zone.DECK);
-			var game = new GameState(new MockGameData());
+			var game = new MockGameState();
 			var entity = new Entity(1, "");
 			entity.Info.Hidden = true;
 			game.Entities.Add(1, entity);

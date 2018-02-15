@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HearthDb.Enums;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone.Entities;
+using HearthSim.Core.Hearthstone.Events;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
+using HearthSim.Core.Hearthstone.Secrets;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Util.Logging;
 
@@ -20,7 +23,7 @@ namespace HearthSim.Core.Hearthstone
 		private readonly List<string> _powerLog;
 		private GameServerInfo _serverInfo;
 
-		public GameState(IGameDataProvider gameDataProvider)
+		public GameState(IGameDataProvider gameDataProvider, GameStateEvents gameStateEvents)
 		{
 			gameDataProvider.Reset();
 			_gameDataProvider = gameDataProvider;
@@ -28,10 +31,13 @@ namespace HearthSim.Core.Hearthstone
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
 			_creationTags = new Queue<IGameStateModifier>();
-			LocalPlayer = new Player(this, true);
-			OpposingPlayer = new Player(this, false);
 			_powerLog = new List<string>();
 			CreatedAt = DateTime.Now;
+			Modified += gameStateEvents.OnGameStateChanged;
+			SecretsManager = new SecretsManager(this, gameStateEvents);
+			LocalPlayer = new Player(this, true);
+			OpposingPlayer = new Player(this, false);
+			GameTime = new GameTime();
 			Task.Run(async () =>
 			{
 				while(MatchInfo == null || ServerInfo == null)
@@ -50,10 +56,14 @@ namespace HearthSim.Core.Hearthstone
 
 		public PlayerEntity LocalPlayerEntity => TryGetPlayerEntity(MatchInfo?.LocalPlayer);
 		public PlayerEntity OpposingPlayerEntity => TryGetPlayerEntity(MatchInfo?.OpposingPlayer);
+		public PlayerEntity CurrentPlayer => PlayerEntities.Values.FirstOrDefault(x => x.HasTag(GameTag.CURRENT_PLAYER));
 
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
 
+		internal SecretsManager SecretsManager { get; }
+
+		public GameTime GameTime { get; }
 
 		public Entity LastCardPlayed 
 			=> Entities.TryGetValue(GameEntity.GetTag(GameTag.LAST_CARD_PLAYED), out var entity) ? entity : null;

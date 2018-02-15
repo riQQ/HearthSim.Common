@@ -54,11 +54,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hearthstone\CommonGameEventArgs.cs" />
+    <Compile Include="Hearthstone\Events\AttackGameEvent.cs" />
+    <Compile Include="Hearthstone\Events\BaseGameEvent.cs" />
+    <Compile Include="Hearthstone\Events\GameStateEvents.cs" />
     <Compile Include="Hearthstone\DungeonRunData.cs" />
     <Compile Include="Hearthstone\DungeonRun.cs" />
+    <Compile Include="Hearthstone\Events\BlockGameEvent.cs" />
+    <Compile Include="Hearthstone\Events\EntityGameEvent.cs" />
+    <Compile Include="Hearthstone\Events\TagChangeGameEvent.cs" />
     <Compile Include="Hearthstone\GameTagChange.cs" />
+    <Compile Include="Hearthstone\GameTime.cs" />
     <Compile Include="Hearthstone\IGameState.cs" />
+    <Compile Include="Hearthstone\Secrets\Secret.cs" />
+    <Compile Include="Hearthstone\Secrets\SecretList.cs" />
+    <Compile Include="Hearthstone\Secrets\SecretsManager.cs" />
+    <Compile Include="Hearthstone\Secrets\SecretSolver.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="EventManagers\GameEventManager.cs" />
     <Compile Include="Hearthstone\Account.cs" />
@@ -112,7 +122,7 @@
     <Compile Include="Hearthstone\Entities\Entity.cs" />
     <Compile Include="Hearthstone\Entities\Entity.TagHelpers.cs" />
     <Compile Include="Hearthstone\Entities\GameEntity.cs" />
-    <Compile Include="Hearthstone\GameEvents.cs" />
+    <Compile Include="Hearthstone\Events\GlobalGameEvents.cs" />
     <Compile Include="Hearthstone\GameStateChangeHelper.cs" />
     <Compile Include="Hearthstone\Entities\PlayerEntity.cs" />
     <Compile Include="Hearthstone\Game.cs" />

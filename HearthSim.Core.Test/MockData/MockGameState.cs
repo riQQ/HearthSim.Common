@@ -18,9 +18,12 @@ namespace HearthSim.Core.Test.MockData
 		public MatchInfo MatchInfo { get; set; }
 		public Player OpposingPlayer { get; set; }
 		public PlayerEntity OpposingPlayerEntity { get; set; }
-		public Dictionary<int, PlayerEntity> PlayerEntities { get; set; }
+		public Dictionary<int, PlayerEntity> PlayerEntities { get; set; } = new Dictionary<int, PlayerEntity>();
 		public IReadOnlyCollection<string> PowerLog { get; set; }
 		public GameServerInfo ServerInfo { get; set; }
+		public GameTime GameTime { get; set; }
+		public PlayerEntity CurrentPlayer { get; set; }
+
 		public void AppendLog(LogEventArgs args)
 		{
 		}

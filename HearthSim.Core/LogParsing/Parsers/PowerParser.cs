@@ -49,8 +49,8 @@ namespace HearthSim.Core.LogParsing.Parsers
 		internal event Action<LogEventArgs> GameStateLog;
 		internal event Action<LogEventArgs> PowerTaskListLog;
 		internal event Action CreateGame;
-		internal event Action<BlockData> BlockStart;
-		internal event Action BlockEnd;
+		internal event Action<IBlockData> BlockStart;
+		internal event Action<IBlockData> BlockEnd;
 		internal event Action SetupComplete;
 
 		public event Action<IGameStateModifier> GameStateChange;
@@ -96,7 +96,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 			{
 				var entityId = int.Parse(match.Groups["id"].Value);
 				var playerId = int.Parse(match.Groups["playerId"].Value);
-				_currentEntity = playerId;
+				_currentEntity = entityId;
 				GameStateChange?.Invoke(new FullEntity(new PlayerEntityData(entityId, playerId), null));
 				return;
 			}
@@ -179,8 +179,8 @@ namespace HearthSim.Core.LogParsing.Parsers
 
 			if(line.Text.Contains("BLOCK_END"))
 			{
+				BlockEnd?.Invoke(_currentBlock?.Data);
 				_currentBlock = _currentBlock?.Parent;
-				BlockEnd?.Invoke();
 			}
 		}
 

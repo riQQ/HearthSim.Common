@@ -56,6 +56,8 @@
     <Compile Include="GameStateModifiers\ChangeEntityTests.cs" />
     <Compile Include="GameStateModifiers\FullEntityTests.cs" />
     <Compile Include="GameStateModifiers\HideEntityTests.cs" />
+    <Compile Include="GameTimeTests.cs" />
+    <Compile Include="LogTests\SecretsTest.cs" />
     <Compile Include="MockData\MockGameState.cs" />
     <Compile Include="GameStateModifiers\ShowEntityTests.cs" />
     <Compile Include="GameStateModifiers\TagChangeTests.cs" />
@@ -77,6 +79,8 @@
     <Compile Include="LogParsing\BlockHelperTests.cs" />
     <Compile Include="DeckTests.cs" />
     <Compile Include="Watchers\ArenaWatcherTests.cs" />
+    <Compile Include="Secrets\EntityHelper.cs" />
+    <Compile Include="Secrets\SecretSolverTests.cs" />
     <Compile Include="Watchers\DungeonRunWatcherTests.cs" />
     <Compile Include="Watchers\WatcherTests.cs" />
   </ItemGroup>
@@ -84,7 +88,25 @@
     <Content Include="LogTests\TestData\LogFiles\Power_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="LogTests\TestData\LogFiles\Secrets_2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LogTests\TestData\LogFiles\Secrets_3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="LogTests\TestData\secrets_1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LogTests\TestData\data_1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="LogTests\TestData\LogFiles\Secrets_1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="LogTests\TestData\secrets_2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LogTests\TestData\secrets_3.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

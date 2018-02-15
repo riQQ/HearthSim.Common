@@ -42,7 +42,10 @@ namespace HearthSim.Core.EventManagers
 
 			var powerParser = new PowerParser(new DefaultGameInfoProvider(game));
 			powerParser.CreateGame += () => game.OnCreateGame(null);
+			powerParser.PowerTaskListLog += args => game.OnGameTimeChanged(args.Line.Time);
 			powerParser.GameStateChange += mod => game.CurrentGame?.Apply(mod);
+			powerParser.BlockStart += block => game.GameStateEvents.OnBlockStart(block, game.CurrentGame);
+			powerParser.BlockEnd += block => game.GameStateEvents.OnBlockEnd(block, game.CurrentGame);
 			powerParser.GameStateLog += args => game.CurrentGame?.AppendLog(args);
 			powerParser.SetupComplete += game.OnSetupComplete;
 			logParserManager.RegisterParser(powerParser);

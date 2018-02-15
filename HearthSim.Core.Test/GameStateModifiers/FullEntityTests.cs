@@ -1,5 +1,4 @@
 ﻿using HearthDb.Enums;
-using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.LogParsing.Parsers.Power;
@@ -11,12 +10,12 @@ namespace HearthSim.Core.Test.GameStateModifiers
 	[TestClass]
 	public class FullEntityTests
 	{
-		private GameState _game;
+		private MockGameState _game;
 
 		[TestInitialize]
 		public void Initialize()
 		{
-			_game = new GameState(new MockGameData());
+			_game = new MockGameState();
 		}
 
 		[TestMethod]

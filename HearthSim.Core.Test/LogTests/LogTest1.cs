@@ -33,7 +33,7 @@ namespace HearthSim.Core.Test.LogTests
 				events["created"] = true;
 				args.Game.LocalPlayer.Deck = new Hearthstone.Deck(HearthDb.Deckstrings.DeckSerializer.Deserialize(data.LocalPlayer.Deck));
 			};
-			game.GameStateChanged += args =>
+			game.GameStateEvents.GameStateChanged += args =>
 			{
 				if(args.Modifier is TagChange t)
 				{
