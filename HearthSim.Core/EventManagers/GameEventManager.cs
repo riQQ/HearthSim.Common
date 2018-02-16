@@ -100,12 +100,12 @@ namespace HearthSim.Core.EventManagers
 			if(args.CurrentMode == Mode.DRAFT)
 				_arenaWatcher.Run();
 			else
-				_arenaWatcher.Stop();
+				_arenaWatcher.Stop().Forget();
 
 			if(args.CurrentMode == Mode.PACKOPENING)
 				_packWatcher.Run();
 			else
-				_packWatcher.Stop();
+				_packWatcher.Stop().Forget();
 
 			if(args.CurrentMode == Mode.ADVENTURE || args.PreviousMode == Mode.ADVENTURE && args.CurrentMode == Mode.GAMEPLAY)
 				_dungeonRunWatcher.Run();
