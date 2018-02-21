@@ -18,12 +18,15 @@ namespace HearthSim.Core.HSReplay.Twitch
 		private bool _running;
 		private BoardState _currentBoardState;
 		private DateTime _currentBoardStateTime = DateTime.MinValue;
+		private bool _invokedGameStart;
 		public event Action<BoardState> OnNewBoardState;
+		public event Action<GameStart> OnGameStart;
 
 		public void Stop()
 		{
 			_update = false;
 			_currentBoardState = null;
+			_invokedGameStart = false;
 		}
 
 		public async void Start(IGameState game)
@@ -39,6 +42,11 @@ namespace HearthSim.Core.HSReplay.Twitch
 				var forceInvoke = delta > RepeatDelay && boardState != null && _currentBoardState != null;
 				if(forceInvoke || (!boardState?.Equals(_currentBoardState) ?? false))
 				{
+					if(!_invokedGameStart)
+					{
+						_invokedGameStart = true;
+						OnGameStart?.Invoke(GetGameStart(game, boardState));
+					}
 					OnNewBoardState?.Invoke(boardState);
 					_currentBoardState = boardState;
 					_currentBoardStateTime = DateTime.Now;
@@ -47,6 +55,23 @@ namespace HearthSim.Core.HSReplay.Twitch
 			}
 			_running = false;
 		}
+
+		private GameStart GetGameStart(IGameState game, BoardState boardState)
+		{
+			var format = (FormatType)game.MatchInfo.FormatType;
+			var gameType = Converters.GetBnetGameType((GameType)game.MatchInfo.GameType, format);
+			var player = game.MatchInfo?.LocalPlayer;
+			var rank = format == FormatType.FT_STANDARD ? player?.StandardRank : player?.WildRank;
+			var legendRank = format == FormatType.FT_STANDARD ? player?.StandardLegendRank : player?.WildLegendRank;
+			return new GameStart
+			{
+				Deck = boardState.Player.Deck,
+				GameType = gameType,
+				Rank = rank ?? 0,
+				LegendRank = legendRank ?? 0
+			};
+		}
+	
 
 		private BoardState GetBoardState(IGameState game)
 		{

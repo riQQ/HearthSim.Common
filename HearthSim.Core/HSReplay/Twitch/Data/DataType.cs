@@ -8,6 +8,9 @@ namespace HearthSim.Core.HSReplay.Twitch.Data
 		BoardState,
 
 		[EnumMember(Value = "game_end")]
-		GameEnd
+		GameEnd,
+
+		[EnumMember(Value = "game_start")]
+		GameStart
 	}
 }

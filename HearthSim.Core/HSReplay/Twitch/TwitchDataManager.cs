@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.HSReplay.Twitch.Data;
@@ -27,6 +26,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 		{
 			var boardStateWatcher = new BoardStateWatcher();
 			boardStateWatcher.OnNewBoardState += OnNewBoardState;
+			boardStateWatcher.OnGameStart += OnGameStart;
 			return boardStateWatcher;
 		}
 
@@ -72,9 +72,13 @@ namespace HearthSim.Core.HSReplay.Twitch
 				Log.Debug($"Skipped payload {hash} (type={payload.Type})");
 		}
 
+		private void OnGameStart(GameStart gameStart)
+		{
+			SendUpdate(Payload.GameStart(gameStart));
+		}
+
 		private void OnNewBoardState(BoardState boardState)
 		{
-			Log.Debug(string.Join(",", boardState.Player.Deck.Cards.Select(x => $"[{x[0]}, {x[1]}, {x[2]}]")));
 			SendUpdate(Payload.BoardState(boardState));
 		}
 	}

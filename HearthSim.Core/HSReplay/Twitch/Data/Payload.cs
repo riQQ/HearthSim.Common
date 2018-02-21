@@ -14,7 +14,7 @@ namespace HearthSim.Core.HSReplay.Twitch.Data
 		public object Data { get; set; }
 
 		[JsonProperty("version")]
-		public int Version => 2;
+		public int Version => 3;
 
 		public static Payload GameEnd()
 		{
@@ -31,6 +31,15 @@ namespace HearthSim.Core.HSReplay.Twitch.Data
 			{
 				Type = DataType.BoardState,
 				Data = boardState,
+			};
+		}
+
+		public static Payload GameStart(GameStart gameStart)
+		{
+			return new Payload
+			{
+				Type = DataType.GameStart,
+				Data = gameStart
 			};
 		}
 	}
