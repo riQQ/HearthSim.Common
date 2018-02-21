@@ -9,17 +9,17 @@ namespace HearthSim.Core.Test.MockData
 	[Serializable]
 	public class MockGameData : IGameDataProvider
 	{
-		private readonly MatchInfo _matchinfo;
-		private readonly GameServerInfo _serverInfo;
-		private readonly AccountId _accountId;
-		private readonly ArenaInfo _arenaInfo;
-		private readonly BattleTag _battleTag;
-		private readonly BrawlInfo _brawlInfo;
-		private readonly List<Card> _collection;
-		private readonly Card[] _draftChoices;
-		private readonly List<Card> _packCards;
-		private readonly int _packId;
-		private readonly DungeonInfo _dungeonInfo;
+		protected MatchInfo _matchinfo;
+		protected GameServerInfo _serverInfo;
+		protected AccountId _accountId;
+		protected ArenaInfo _arenaInfo;
+		protected BattleTag _battleTag;
+		protected BrawlInfo _brawlInfo;
+		protected List<Card> _collection;
+		protected Card[] _draftChoices;
+		protected List<Card> _packCards;
+		protected int _packId;
+		protected DungeonInfo _dungeonInfo;
 
 		public MockGameData(MatchInfo matchinfo = null, GameServerInfo serverInfo = null, AccountId accountId = null,
 			ArenaInfo arenaInfo = null, BattleTag battleTag = null, BrawlInfo brawlInfo = null,
