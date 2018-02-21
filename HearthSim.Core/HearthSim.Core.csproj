@@ -166,8 +166,8 @@
     <Compile Include="LogParsing\LogParserManager.cs" />
     <Compile Include="LogParsing\Parsers\PowerParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\Exceptions\HearthstoneNotFoundException.cs" />
-    <Compile Include="Util\HearthstoneProc.cs" />
+    <Compile Include="Util\Exceptions\ProcessNotFoundException.cs" />
+    <Compile Include="Util\ProcInfo.cs" />
     <Compile Include="Util\ISortableCard.cs" />
     <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Math.cs" />

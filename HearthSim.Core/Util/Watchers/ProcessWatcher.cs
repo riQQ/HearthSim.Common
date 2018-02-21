@@ -8,23 +8,29 @@ namespace HearthSim.Core.Util.Watchers
 	{
 		public Action<Process> OnStart;
 		public Action<Process> OnExit;
+		public ProcInfo ProcInfo { get; }
 		private Process _proc;
+
+		public ProcessWatcher(string procName)
+		{
+			ProcInfo = new ProcInfo(procName);
+		}
 
 		public override UpdateResult Update()
 		{
 			try
 			{
-				var proc = HearthstoneProc.GetProcess();
+				var proc = ProcInfo.GetProcess();
 				if(proc?.Id != _proc?.Id)
 				{
 					if(proc == null)
 					{
-						Log.Debug($"Hearthstone process {_proc.Id} exited");
+						Log.Debug($"{ProcInfo.Name} process {_proc.Id} exited");
 						OnExit?.Invoke(_proc);
 					}
 					else
 					{
-						Log.Debug($"Hearthstone process {proc.Id} started");
+						Log.Debug($"{ProcInfo.Name} process {proc.Id} started");
 						OnStart?.Invoke(proc);
 					}
 					_proc = proc;

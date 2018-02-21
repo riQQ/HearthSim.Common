@@ -46,7 +46,7 @@ namespace HearthSim.Core
 
 			_gameEventManager = new GameEventManager(Game, _logReader, gameDataProvider);
 
-			_procWatcher = new ProcessWatcher();
+			_procWatcher = new ProcessWatcher("Hearthstone");
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
 			_procWatcher.OnExit += ProcessWatcher_OnExit;
 
@@ -64,7 +64,7 @@ namespace HearthSim.Core
 		private void ProcessWatcher_OnStart(Process process)
 		{
 			Game.OnHearthstoneStarted();
-			Task.Run(async () => Game.Build = await HearthstoneProc.GetHearthstoneBuild());
+			Task.Run(async () => Game.Build = await _procWatcher.ProcInfo.GetBuildNumber());
 			StartLogReader(process);
 		}
 
