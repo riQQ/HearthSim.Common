@@ -48,36 +48,18 @@ namespace HearthSim.Core.HSReplay
 			return token;
 		}
 
-		public async Task<Response<string>> GetClaimAccountUrl()
-		{
-			try
-			{
-				var token = await GetUploadToken();
-				Log.Debug("Getting claim url...");
-				var url =  await _client.GetClaimAccountUrl(token);
-				return new Response<string>(url);
-			}
-			catch(Exception e)
-			{
-				Log.Error(e);
-				return new Response<string>(e);
-			}
-		}
-
-		public async Task<Response<Account>> UpdateAccountStatus()
+		public async Task<Response<TokenStatus>> GetTokenStatus()
 		{
 			Log.Debug("Checking account status...");
 			try
 			{
 				var token = await GetUploadToken();
 				var accountStatus = await _client.GetAccountStatus(token);
-				_account.Id = accountStatus?.User?.Id ?? 0;
-				_account.Username = accountStatus?.User?.Username;
-				_account.Status = accountStatus?.User != null ? AccountStatus.Registered : AccountStatus.Anonymous;
-				_account.LastUpdated = DateTime.Now;
+				_account.TokenStatus = accountStatus?.User != null;
 				_account.Save();
-				Log.Debug($"Id={_account.Id}, Username={_account.Username}, Status={_account.Status}");
-				return new Response<Account>(_account);
+				Log.Info($"Token is {(_account.TokenStatus == true ? "" : "not ")}claimed");
+				return new Response<TokenStatus>(_account.TokenStatus == true 
+					? TokenStatus.Claimed : TokenStatus.Unclaimed);
 			}
 			catch(WebException ex)
 			{
@@ -87,14 +69,14 @@ namespace HearthSim.Core.HSReplay
 				{
 					_requestedNewToken = true;
 					_account.UploadToken = string.Empty;
-					return await UpdateAccountStatus();
+					return await GetTokenStatus();
 				}
-				return new Response<Account>(ex);
+				return new Response<TokenStatus>(ex);
 			}
 			catch(Exception ex)
 			{
 				Log.Error(ex);
-				return new Response<Account>(ex);
+				return new Response<TokenStatus>(ex);
 			}
 		}
 

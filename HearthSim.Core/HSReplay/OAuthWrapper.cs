@@ -6,18 +6,23 @@ using System.Net;
 using System.Threading.Tasks;
 using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.HSReplay.Twitch.Data;
+using HearthSim.Core.Util.Exceptions;
 using HearthSim.Util.Logging;
 using HSReplay.OAuth;
 using HSReplay.OAuth.Data;
 using HSReplay.Responses;
 using Newtonsoft.Json.Linq;
 using static HearthSim.Core.Util.JsonHelper;
+using Account = HearthSim.Core.Hearthstone.Account;
 
 namespace HearthSim.Core.HSReplay
 {
 	public sealed class OAuthWrapper
 	{
 		private readonly HSReplayNetConfig _config;
+		private readonly Data.Account _account;
+		private readonly ApiWrapper _api;
+		private readonly UploadTokenHistory _uploadTokenHistory;
 		private Lazy<OAuthClient> _client;
 		private OAuthData _data;
 
@@ -27,10 +32,21 @@ namespace HearthSim.Core.HSReplay
 		private const string ErrorUrl = "https://hsdecktracker.net/hsreplaynet/oauth_error/";
 
 		public event Action<string> AuthenticationError;
+		public event Action CollectionUpdated;
+		public event Action Authenticated;
+		public event Action LoggedOut;
+		public event Action TwitchUsersUpdated;
+		public event Action AccountDataUpdated;
+		public event Action UploadTokenClaimed;
 
-		internal OAuthWrapper(HSReplayNetConfig config)
+		private readonly Scope[] _requiredScopes = { Scope.FullAccess };
+
+		internal OAuthWrapper(HSReplayNetConfig config, Data.Account account, ApiWrapper api)
 		{
 			_config = config;
+			_account = account;
+			_api = api;
+			_uploadTokenHistory = new UploadTokenHistory(config.DataDirectory);
 			Load();
 		}
 
@@ -45,13 +61,29 @@ namespace HearthSim.Core.HSReplay
 			return new OAuthClient(_config.OAuthKey, _config.UserAgent, _data.TokenData);
 		}
 
+		public bool IsFullyAuthenticated => IsAuthenticatedFor(_requiredScopes);
+
+		public bool IsAuthenticatedFor(params Scope[] scopes)
+		{
+			if(string.IsNullOrEmpty(_data.TokenData?.Scope))
+				return false;
+			var currentScopes = _data.TokenData.Scope.Split(' ');
+			if(currentScopes.Contains(Scope.FullAccess.Name))
+				return true;
+			return scopes.All(s => currentScopes.Contains(s.Name));
+		}
+
+		public bool IsAuthenticatedForAnything()
+			=> !string.IsNullOrEmpty(_data.TokenData?.Scope);
+
+
 		public async Task<bool> Authenticate(params Scope[] scopes)
 		{
 			Log.Debug("Authenticating with HSReplay.net...");
 			string url;
 			try
 			{
-				url = _client.Value.GetAuthenticationUrl(scopes, _ports);
+				url = _client.Value.GetAuthenticationUrl(_requiredScopes, _ports);
 			}
 			catch(Exception e)
 			{
@@ -71,7 +103,8 @@ namespace HearthSim.Core.HSReplay
 			catch(Exception ex)
 			{
 				Log.Error(ex);
-				AuthenticationError?.Invoke($"Could not open browser to complete authentication. Please go to '{url}' to continue authentication.");
+				AuthenticationError?.Invoke("Could not open your browser. "
+					+ "Please open the following url in your browser to continue:\n\n" + url);
 			}
 			Log.Debug("Waiting for callback...");
 			var data = await callbackTask;
@@ -82,9 +115,32 @@ namespace HearthSim.Core.HSReplay
 			}
 			_data.Code = data.Code;
 			_data.RedirectUrl = data.RedirectUrl;
+			_data.TokenData = null;
 			Log.Debug("Authentication complete");
-			_data.Save();
-			return await UpdateToken();
+			try
+			{
+				await UpdateToken();
+				Log.Debug("Claiming upload token if necessary");
+				if(_account.TokenStatus == TokenStatus.Unknown)
+				{
+					var status = await _api.GetTokenStatus();
+					if(status.Success)
+						_account.TokenStatus = status.Data;
+				}
+				if(_account.TokenStatus == TokenStatus.Unclaimed)
+					await ClaimUploadToken(_account.UploadToken);
+				return true;
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return false;
+			}
+			finally
+			{
+				Authenticated?.Invoke();
+			}
+
 		}
 
 		public void DeleteToken()
@@ -92,16 +148,37 @@ namespace HearthSim.Core.HSReplay
 			OAuthData.Serializer.Delete(_data);
 			Load();
 		}
+		
+		public async Task Logout()
+		{
+			OAuthData.Serializer.Delete(_data);
+			_data.Account = null;
+			_data.Code = null;
+			_data.RedirectUrl = null;
+			_data.TokenData = null;
+			_data.TokenDataCreatedAt = DateTime.MinValue;
+			_data.TwitchUsers = null;
+			OAuthData.Serializer.Save(_data);
+			_account.Reset();
+			_uploadTokenHistory.Write("Deleting token");
+			var status = await _api.GetTokenStatus();
+			if(status.Success)
+				_account.TokenStatus = status.Data;
+			LoggedOut?.Invoke();
+		}
 
-		public async Task<bool> UpdateToken(bool force = false)
+		/// <summary>
+		/// Ensure OAuth token is up-to-date.
+		/// Will refresh token when expired or forced
+		/// </summary>
+		/// <param name="force">Force update regardless expiration date</param>
+		/// <exception cref="TokenUpdateFailedException"></exception>
+		public async Task UpdateToken(bool force = false)
 		{
 			if(!force && _data.TokenData != null && (DateTime.Now - _data.TokenDataCreatedAt).TotalSeconds < _data.TokenData.ExpiresIn)
-				return true;
+				return;
 			if(string.IsNullOrEmpty(_data.Code) || string.IsNullOrEmpty(_data.RedirectUrl))
-			{
-				Log.Error("Could not update token, we don't have a code or redirect url.");
-				return false;
-			}
+				throw new TokenUpdateFailedException("Could not update token, we don't have a code or redirect url.");
 			if(!string.IsNullOrEmpty(_data.TokenData?.RefreshToken))
 			{
 				Log.Debug("Refreshing token data...");
@@ -111,7 +188,7 @@ namespace HearthSim.Core.HSReplay
 					if(tokenData != null)
 					{
 						SaveTokenData(tokenData);
-						return true;
+						return;
 					}
 				}
 				catch(WebException e)
@@ -130,17 +207,12 @@ namespace HearthSim.Core.HSReplay
 				Log.Debug("Fetching new token...");
 				var tokenData = await _client.Value.GetToken(_data.Code, _data.RedirectUrl);
 				if(tokenData == null)
-				{
-					Log.Error("We did not receive any token data.");
-					return false;
-				}
+					throw new TokenUpdateFailedException("We did not receive any token data.");
 				SaveTokenData(tokenData);
-				return true;
 			}
 			catch(Exception e)
 			{
-				Log.Error(e);
-				return false;
+				throw new TokenUpdateFailedException("Fetching a new token failed.", e);
 			}
 		}
 
@@ -149,15 +221,12 @@ namespace HearthSim.Core.HSReplay
 			Log.Debug("Fetching twitch accounts...");
 			try
 			{
-				if(!await UpdateToken())
-				{
-					Log.Error("Could not update token data");
-					return false;
-				}
+				await UpdateToken();
 				var twitchAccounts = await _client.Value.GetTwitchAccounts();
 				_data.TwitchUsers = twitchAccounts;
 				_data.Save();
 				Log.Debug($"Saved {twitchAccounts.Count} account(s): {string.Join(", ", twitchAccounts.Select(x => x.Username))}");
+				TwitchUsersUpdated?.Invoke();
 				return twitchAccounts.Count != 0;
 			}
 			catch(Exception e)
@@ -172,16 +241,16 @@ namespace HearthSim.Core.HSReplay
 			Log.Debug("Updating account data...");
 			try
 			{
-				if(!await UpdateToken())
-				{
-					Log.Error("Could not update token data");
-					return false;
-				}
+				await UpdateToken();
 				var account = await _client.Value.GetHSReplayNetAccount();
 				_data.Account = account;
 				_data.Save();
 				Log.Debug($"Found account: {account?.Username ?? "None"}");
-				return account != null;
+				AccountDataUpdated?.Invoke();
+				if(account == null)
+					return false;
+				_account.Update(account.Id, account.Username);
+				return true;
 			}
 			catch(Exception e)
 			{
@@ -208,11 +277,7 @@ namespace HearthSim.Core.HSReplay
 		{
 			try
 			{
-				if(!await UpdateToken())
-				{
-					Log.Error("Could not update token data");
-					return;
-				}
+				await UpdateToken();
 				var response = await _client.Value.SendTwitchUpdate(twitchUserId, TwitchExtensionId, payload);
 				Log.Debug(response);
 			}
@@ -227,11 +292,7 @@ namespace HearthSim.Core.HSReplay
 			Log.Debug("Fetching archetype matchups");
 			try
 			{
-				if(!await UpdateToken())
-				{
-					Log.Error("Could not update token data");
-					return new Response<ArchetypeMatchupsData>(new Exception("Could not update token"));
-				}
+				await UpdateToken();
 				var data = await _client.Value.GetArchetypeMatchups(rankRange);
 				var matchups = GetChildren(data.Data["data"]);
 				var dict = matchups.ToDictionary(
@@ -263,11 +324,7 @@ namespace HearthSim.Core.HSReplay
 			Log.Debug("Fetching archetype mulligan");
 			try
 			{
-				if(!await UpdateToken())
-				{
-					Log.Error("Could not update token data");
-					return new Response<ArchetypeMulliganData>(new Exception("Could not update token"));
-				}
+				await UpdateToken();
 				var data = await _client.Value.GetArchetypeMulligan(archetypeId, rankRange);
 				var archetypes = data.Data.SelectToken("data.ALL").Children();
 				return new Response<ArchetypeMulliganData>(
@@ -283,6 +340,62 @@ namespace HearthSim.Core.HSReplay
 			{
 				Log.Error(e);
 				return new Response<ArchetypeMulliganData>(e);
+			}
+		}
+		
+		public async Task<bool> UpdateCollection(CollectionData collection, Account account)
+		{
+			try
+			{
+				await UpdateToken();
+				var response = await _client.Value.UploadCollection(collection, account.AccountHi, account.AccountLo);
+				Log.Debug(response);
+				CollectionUpdated?.Invoke();
+				return true;
+			}
+			catch(Exception e)
+			{
+				Log.Error(e);
+				return false;
+			}
+		}
+
+		internal async Task<bool> ClaimUploadToken(string token)
+		{
+			_uploadTokenHistory.Write("Trying to claim " + token);
+			try
+			{
+				await UpdateToken();
+				var response = await _client.Value.ClaimUploadToken(token);
+				_uploadTokenHistory.Write($"Claimed {token}: {response}");
+				Log.Debug(response);
+				_account.TokenStatus = TokenStatus.Claimed;
+				_account.Save();
+				UploadTokenClaimed?.Invoke();
+				return true;
+			}
+			catch(Exception e)
+			{
+				_uploadTokenHistory.Write($"Error claming {token}\n" + e);
+				Log.Error(e);
+				return false;
+			}
+		}
+
+		internal async Task<bool> ClaimBlizzardAccount(ulong accountHi, ulong accountLo, string battleTag)
+		{
+			var account = $"hi={accountHi}, lo={accountLo}, battleTag={battleTag}";
+			try
+			{
+				await UpdateToken();
+				var response = await _client.Value.ClaimBlizzardAccount(accountHi, accountLo, battleTag);
+				Log.Debug($"Claimed {account}: {response}");
+				return true;
+			}
+			catch(Exception e)
+			{
+				Log.Error($"Error claming {account}\n" + e);
+				return false;
 			}
 		}
 	}

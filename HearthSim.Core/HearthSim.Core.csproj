@@ -69,6 +69,10 @@
     <Compile Include="Hearthstone\Secrets\SecretList.cs" />
     <Compile Include="Hearthstone\Secrets\SecretsManager.cs" />
     <Compile Include="Hearthstone\Secrets\SecretSolver.cs" />
+    <Compile Include="HSReplay\Data\CollectionData.cs" />
+    <Compile Include="HSReplay\TokenStatus.cs" />
+    <Compile Include="Util\Exceptions\TokenUpdateFailedException.cs" />
+    <Compile Include="HSReplay\UploadTokenHistory.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="EventManagers\GameEventManager.cs" />
     <Compile Include="Hearthstone\Account.cs" />

@@ -10,7 +10,7 @@ namespace HearthSim.Core.HSReplay
 			Config = config;
 			Account = Account.Serializer.Load(config.DataDirectory);
 			Api = new ApiWrapper(config, Account);
-			OAuth = new OAuthWrapper(config);
+			OAuth = new OAuthWrapper(config, Account, Api);
 			LogUploader = new LogUploader(Api);
 			PackUploader = new PackUploader(Api);
 			Twitch = new TwitchDataManager(OAuth, config);
