@@ -11,7 +11,7 @@ namespace HearthSim.Core.Hearthstone
 		HearthMirror.Objects.Card[] GetDraftChoices();
 		List<HearthMirror.Objects.Card> GetPackCards();
 		int GetPackId();
-		List<HearthMirror.Objects.Card> GetCollection();
+		HearthMirror.Objects.Collection GetFullCollection();
 		AccountId GetAccountId();
 		BattleTag GetBattleTag();
 		BrawlInfo GetBrawlInfo();

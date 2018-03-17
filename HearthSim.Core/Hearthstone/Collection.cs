@@ -8,26 +8,62 @@ namespace HearthSim.Core.Hearthstone
 	public class Collection
 	{
 		private readonly List<Deck> _decks;
-		private List<CollectionCard> _collectionCards;
+		private List<CollectionCard> _cards;
+		private List<CollectionCard> _favoriteHeroes;
+		private List<int> _cardBacks;
+		private int _dust;
+		private int _gold;
+		private int _favoriteCardBack;
 
 		public Collection()
 		{
-			_collectionCards = new List<CollectionCard>();
+			_cards = new List<CollectionCard>();
+			_favoriteHeroes = new List<CollectionCard>();
+			_cardBacks = new List<int>();
 			_decks = new List<Deck>();
 		}
 
-		public IReadOnlyCollection<CollectionCard> CollectionCards => _collectionCards.AsReadOnly();
-		public IReadOnlyCollection<Deck> Decks => _decks.AsReadOnly();
+		public IEnumerable<CollectionCard> Cards => _cards;
+		public IEnumerable<Deck> Decks => _decks;
+		public IEnumerable<CollectionCard> FavoriteHeroes => _favoriteHeroes;
+		public IEnumerable<int> CardBacks => _cardBacks;
 
-		public event Action<CollectionDecksLoadedEventArgs> DecksLoaded;
-		public event Action<CollectionDeckChangedEventArgs> DeckAdded;
-		public event Action<CollectionDeckChangedEventArgs> DeckRemoved;
-		public event Action<CollectionDeckChangedEventArgs> DeckEdited;
+		public int FavoriteCardBack
+		{
+			get => _favoriteCardBack;
+			private set => UpdateIfChanged(ref _favoriteCardBack, value, FavoriteCardBackChanged);
+		}
 
-		public event Action<CollectionCardsLoadedEventArgs> CardsLoaded;
-		public event Action<CollectionCardChangedEventArgs> CardsAdded;
-		public event Action<CollectionCardChangedEventArgs> CardsRemoved;
+		public int Dust
+		{
+			get => _dust;
+			private set => UpdateIfChanged(ref _dust, value, DustChanged);
+		}
 
+		public int Gold
+		{
+			get => _gold;
+			private set => UpdateIfChanged(ref _gold, value, GoldChanged);
+		}
+
+		private static void UpdateIfChanged<T>(ref T currentValue, T newValue,
+			Action<ValueChangedEventArgs<T>> onChanged = null)
+		{
+			if(currentValue?.Equals(newValue) ?? false)
+				return;
+			var oldValue = currentValue;
+			currentValue = newValue;
+			onChanged?.Invoke(new ValueChangedEventArgs<T>(oldValue, newValue));
+		}
+
+		public event Action<CollectionChangedEventArgs<Deck>> DecksChanged;
+		public event Action<CollectionChangedEventArgs<CollectionCard>> CardsChanged;
+		public event Action<CollectionChangedEventArgs<CollectionCard>> FavoriteHeroesChanged;
+		public event Action<CollectionChangedEventArgs<int>> CardBacksChanged;
+		public event Action<ValueChangedEventArgs<int>> FavoriteCardBackChanged;
+		public event Action<ValueChangedEventArgs<int>> DustChanged;
+		public event Action<ValueChangedEventArgs<int>> GoldChanged;
+		public event Action Changed;
 
 		internal void OnDeckEdited(DeckEditedEventArgs args)
 		{
@@ -35,19 +71,21 @@ namespace HearthSim.Core.Hearthstone
 			if(index != -1)
 			{
 				_decks[index] = new Deck(args.Deck);
-				DeckEdited?.Invoke(new CollectionDeckChangedEventArgs(_decks[index]));
+				DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks, edited: new [] {_decks[index]}));
 			}
 			else
 			{
 				var deck = new Deck(args.Deck);
 				_decks.Add(deck);
-				DeckAdded?.Invoke(new CollectionDeckChangedEventArgs(deck));
+				DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks, new [] {deck}));
 			}
 		}
 
 		internal void OnDecksLoaded(ConstructedDeckFoundEventArgs args)
 		{
-			DecksLoaded?.Invoke(new CollectionDecksLoadedEventArgs(args.Decks.Select(x => new Deck(x))));
+			var decks = args.Decks.Select(x => new Deck(x));
+			_decks.AddRange(decks);
+			DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks));
 		}
 
 		internal void OnDeckDeleted(DeckDeletedEventArgs args)
@@ -56,50 +94,131 @@ namespace HearthSim.Core.Hearthstone
 			if(deck == null)
 				return;
 			_decks.Remove(deck);
-			DeckRemoved?.Invoke(new CollectionDeckChangedEventArgs(deck));
-		}
-
-		internal void UpdateCards(IList<CollectionCard> cards)
-		{
-			if(_collectionCards.Count == 0)
-			{
-				_collectionCards = cards.ToList();
-				CardsLoaded?.Invoke(new CollectionCardsLoadedEventArgs(CollectionCards));
-			}
-			else
-			{
-				var newCards = cards.ToList();
-				var addedCards = new List<CollectionCard>();
-				var removedCards = new List<CollectionCard>();
-				foreach(var card in _collectionCards)
-				{
-					var newCard = newCards.FirstOrDefault(x => x.Id == card.Id);
-					if(newCard != null)
-					{
-						var newNormal = newCard.Normal - card.Normal;
-						var newGolden = newCard.Golden - card.Golden;
-						if(newNormal > 0 || newGolden > 0)
-							addedCards.Add(new CollectionCard(card.Id, Math.Max(0, newNormal), Math.Max(0, newGolden)));
-						else if (newNormal < 0 || newGolden < 0)
-							removedCards.Add(new CollectionCard(card.Id, Math.Max(0, Math.Abs(newNormal)), Math.Max(0, Math.Abs(newGolden))));
-						newCards.Remove(newCard);
-					}
-					else
-						removedCards.Add(card);
-				}
-				addedCards.AddRange(newCards);
-				_collectionCards = cards.ToList();
-				if(addedCards.Count > 0)
-					CardsAdded?.Invoke(new CollectionCardChangedEventArgs(addedCards));
-				if(removedCards.Count > 0)
-					CardsRemoved?.Invoke(new CollectionCardChangedEventArgs(removedCards));
-			}
+			DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks, removed: new [] {deck}));
 		}
 
 		internal void Unload()
 		{
-			_collectionCards.Clear();
+			_cards.Clear();
 			_decks.Clear();
+			_favoriteHeroes.Clear();
+			_cardBacks.Clear();
+			FavoriteCardBack = 0;
+			Gold = 0;
+			Dust = 0;
+		}
+
+		private static (List<CollectionCard> added, List<CollectionCard> removed)
+			Diff(IEnumerable<CollectionCard> oldCards, ICollection<CollectionCard> newCards)
+		{
+			var added = new List<CollectionCard>();
+			var removed = new List<CollectionCard>();
+			foreach(var card in oldCards)
+			{
+				var newCard = newCards.FirstOrDefault(x => x.Id == card.Id);
+				if(newCard != null)
+				{
+					var newNormal = newCard.Normal - card.Normal;
+					var newGolden = newCard.Golden - card.Golden;
+					if(newNormal > 0 || newGolden > 0)
+						added.Add(new CollectionCard(card.Id, Math.Max(0, newNormal), Math.Max(0, newGolden)));
+					if (newNormal < 0 || newGolden < 0)
+						removed.Add(new CollectionCard(card.Id, Math.Max(0, -newNormal), Math.Max(0, -newGolden)));
+					newCards.Remove(newCard);
+				}
+				else
+					removed.Add(card);
+			}
+			added.AddRange(newCards);
+			return (added, removed);
+		}
+
+		public void Update(IList<CollectionCard> cards, IList<int> cardBacks,
+			IList<CollectionCard> favoriteHeroes, int favoriteCardBack, int dust, int gold)
+		{
+			var updatedCards = UpdateCards(cards);
+			var updatedCardBacks = UpdateCardBacks(cardBacks);
+			var updatedHeroes = UpdateFavoriteHeroes(favoriteHeroes);
+			var updatedFavoriteCardBack = UpdateFavoriteCardBack(favoriteCardBack);
+			var updatedDust = UpdateDust(dust);
+			var updatedGold = UpdateGold(gold);
+			if(updatedCards || updatedCardBacks || updatedHeroes || updatedFavoriteCardBack
+				|| updatedDust || updatedGold)
+				Changed?.Invoke();
+		}
+
+		public bool UpdateFavoriteCardBack(int favoriteCardBack)
+		{
+			if(favoriteCardBack == FavoriteCardBack)
+				return false;
+			FavoriteCardBack = favoriteCardBack;
+			return true;
+		}
+
+		public bool UpdateDust(int dust)
+		{
+			if(dust == Dust)
+				return false;
+			Dust = dust;
+			return true;
+		}
+
+		public bool UpdateGold(int gold)
+		{
+			if(gold == Gold)
+				return false;
+			Gold = gold;
+			return true;
+		}
+
+		private bool UpdateFavoriteHeroes(IList<CollectionCard> favoriteHeroes)
+		{
+			if(_favoriteHeroes.Count == 0)
+			{
+				_favoriteHeroes = favoriteHeroes.ToList();
+				FavoriteHeroesChanged?.Invoke(new CollectionChangedEventArgs<CollectionCard>(_favoriteHeroes));
+				return true;
+			}
+			var (added, removed) = Diff(_favoriteHeroes, favoriteHeroes.ToList());
+			if(!added.Any() && !removed.Any())
+				return false;
+			_favoriteHeroes = favoriteHeroes.ToList();
+			FavoriteHeroesChanged?.Invoke(new CollectionChangedEventArgs<CollectionCard>(_favoriteHeroes, added, removed));
+			return true;
+		}
+
+		private bool UpdateCardBacks(IEnumerable<int> cardBacks)
+		{
+			if(_cardBacks.Count == 0)
+			{
+				_cardBacks = cardBacks.ToList();
+				CardBacksChanged?.Invoke(new CollectionChangedEventArgs<int>(_cardBacks));
+				return true;
+			}
+			var newCardBacks = cardBacks.ToList();
+			var added = newCardBacks.Where(x => !_cardBacks.Contains(x)).ToList();
+			var removed = _cardBacks.Where(x => !newCardBacks.Contains(x)).ToList();
+			if(!added.Any() && !removed.Any())
+				return false;
+			_cardBacks = newCardBacks;
+			CardBacksChanged?.Invoke(new CollectionChangedEventArgs<int>(_cardBacks, added, removed));
+			return true;
+		}
+
+		private bool UpdateCards(IList<CollectionCard> cards)
+		{
+			if(_cards.Count == 0)
+			{
+				_cards = cards.ToList();
+				CardsChanged?.Invoke(new CollectionChangedEventArgs<CollectionCard>(_cards));
+				return true;
+			}
+			var (added, removed) = Diff(_cards, cards.ToList());
+			if(!added.Any() && !removed.Any())
+				return false;
+			_cards = cards.ToList();
+			CardsChanged?.Invoke(new CollectionChangedEventArgs<CollectionCard>(_cards, added, removed));
+			return true;
 		}
 	}
 }

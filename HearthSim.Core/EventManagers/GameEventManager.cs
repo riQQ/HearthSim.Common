@@ -75,17 +75,23 @@ namespace HearthSim.Core.EventManagers
 
 		private void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)
 		{
-			if(ShouldUpdateCollection(args.PreviousMode))
+			if(ShouldUpdateCollection(args.PreviousMode, args.PreviousMode))
 			{
-				var cards = _gameData.GetCollection()
-					?.GroupBy(x => x.Id)
-					.Select(g => new CollectionCard(
-						g.Key,
-						g.FirstOrDefault(x => !x.Premium)?.Count ?? 0,
-						g.FirstOrDefault(x => x.Premium)?.Count ?? 0
-					)).ToList();
-				if(cards?.Count > 0)
-					_game.Collection.UpdateCards(cards);
+				var collection = _gameData.GetFullCollection();
+				if(collection != null)
+				{
+					var cards = collection.Cards
+						.GroupBy(x => x.Id)
+						.Select(g => new CollectionCard(g.Key,
+							g.FirstOrDefault(x => !x.Premium)?.Count ?? 0,
+							g.FirstOrDefault(x => x.Premium)?.Count ?? 0
+						)).ToList();
+					var favoriteHeroes = collection.FavoriteHeroes.Values.Select(x =>
+						new CollectionCard(x.Id, x.Premium ? 0 : 1, x.Premium ? 1 : 0))
+						.ToList();
+					_game.Collection.Update(cards, collection.CardBacks, favoriteHeroes,
+						collection.FavoriteCardBack, collection.Dust, collection.Gold);
+				}
 			}
 
 			if(args.PreviousMode >= Mode.LOGIN && !_game.Account.IsLoaded)
@@ -126,9 +132,10 @@ namespace HearthSim.Core.EventManagers
 				_game.OnHearthstoneExited();
 		}
 
-		private static bool ShouldUpdateCollection(Mode previousMode)
+		private static bool ShouldUpdateCollection(Mode previousMode, Mode currentMode)
 		{
 			return previousMode == Mode.COLLECTIONMANAGER
+					|| currentMode == Mode.COLLECTIONMANAGER
 					|| previousMode == Mode.PACKOPENING
 					|| previousMode == Mode.LOGIN;
 		}

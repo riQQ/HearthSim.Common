@@ -87,6 +87,7 @@
     <Compile Include="LogParsing\Parsers\Power\IBlockData.cs" />
     <Compile Include="LogParsing\Parsers\Power\IGameInfoProvider.cs" />
     <Compile Include="Util\EventArgs\ActivePlayerDeckChangedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\ValueChangedEventArgs.cs" />
     <Compile Include="Util\JsonHelper.cs" />
     <Compile Include="HSReplay\Response.cs" />
     <Compile Include="Util\CardSorting.cs" />
@@ -115,10 +116,7 @@
     <Compile Include="HSReplay\UploadMetaDataGenerator.cs" />
     <Compile Include="Util\EventArgs\ArenaCardPickedEventArgs.cs" />
     <Compile Include="Util\EventArgs\ArenaChoicesChangedEventArgs.cs" />
-    <Compile Include="Util\EventArgs\CollectionCardChangedEventArgs.cs" />
-    <Compile Include="Util\EventArgs\CollectionCardsLoadedEventArgs.cs" />
-    <Compile Include="Util\EventArgs\CollectionDeckChangedEventArgs.cs" />
-    <Compile Include="Util\EventArgs\CollectionDecksLoadedEventArgs.cs" />
+    <Compile Include="Util\EventArgs\CollectionChangedEventArgs.cs" />
     <Compile Include="Hearthstone\Entities\Entity.cs" />
     <Compile Include="Hearthstone\Entities\Entity.TagHelpers.cs" />
     <Compile Include="Hearthstone\Entities\GameEntity.cs" />

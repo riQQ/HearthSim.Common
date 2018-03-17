@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone;
 using Card = HearthMirror.Objects.Card;
+using Collection = HearthMirror.Objects.Collection;
 
 namespace HearthSim.Core.Test.MockData
 {
@@ -15,7 +16,7 @@ namespace HearthSim.Core.Test.MockData
 		protected ArenaInfo _arenaInfo;
 		protected BattleTag _battleTag;
 		protected BrawlInfo _brawlInfo;
-		protected List<Card> _collection;
+		protected Collection _collection;
 		protected Card[] _draftChoices;
 		protected List<Card> _packCards;
 		protected int _packId;
@@ -23,7 +24,7 @@ namespace HearthSim.Core.Test.MockData
 
 		public MockGameData(MatchInfo matchinfo = null, GameServerInfo serverInfo = null, AccountId accountId = null,
 			ArenaInfo arenaInfo = null, BattleTag battleTag = null, BrawlInfo brawlInfo = null,
-			List<Card> collection = null, Card[] draftChoices = null,
+			Collection collection = null, Card[] draftChoices = null,
 			List<Card> packCards = null, int packId = 0, DungeonInfo dungeonInfo = null)
 		{
 			_matchinfo = matchinfo;
@@ -45,7 +46,7 @@ namespace HearthSim.Core.Test.MockData
 		public ArenaInfo GetArenaInfo() => _arenaInfo;
 		public BattleTag GetBattleTag() => _battleTag;
 		public BrawlInfo GetBrawlInfo() => _brawlInfo;
-		public List<Card> GetCollection() => _collection;
+		public Collection GetFullCollection() => _collection;
 		public Card[] GetDraftChoices() => _draftChoices;
 		public List<Card> GetPackCards() => _packCards;
 		public int GetPackId() => _packId;

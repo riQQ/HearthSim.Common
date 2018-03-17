@@ -13,7 +13,7 @@ namespace HearthSim.Core.Hearthstone
 		public HearthMirror.Objects.Card[] GetDraftChoices() => Reflection.GetArenaDraftChoices()?.ToArray();
 		public List<HearthMirror.Objects.Card> GetPackCards() => Reflection.GetPackCards();
 		public int GetPackId() => Reflection.GetLastOpenedBoosterId();
-		public List<HearthMirror.Objects.Card> GetCollection() => Reflection.GetCollection();
+		public HearthMirror.Objects.Collection GetFullCollection() => Reflection.GetFullCollection();
 		public AccountId GetAccountId() => Reflection.GetAccountId();
 		public BattleTag GetBattleTag() => Reflection.GetBattleTag();
 		public BrawlInfo GetBrawlInfo() => Reflection.GetBrawlInfo();

@@ -78,6 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LogParsing\BlockHelperTests.cs" />
     <Compile Include="DeckTests.cs" />
+    <Compile Include="CollectionTests.cs" />
     <Compile Include="Watchers\ArenaWatcherTests.cs" />
     <Compile Include="Secrets\EntityHelper.cs" />
     <Compile Include="Secrets\SecretSolverTests.cs" />
