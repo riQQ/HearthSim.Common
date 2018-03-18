@@ -9,7 +9,6 @@ using HearthSim.Core.HSReplay;
 using HearthSim.Core.LogReading;
 using HearthSim.Core.LogReading.Data;
 using HearthSim.Core.LogReading.LogConfig;
-using HearthSim.Core.Util;
 using HearthSim.Core.Util.Watchers;
 using HearthSim.Util.Extensions;
 using HearthSim.Util.Logging;

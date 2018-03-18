@@ -22,6 +22,7 @@ namespace HearthSim.Core.HSReplay
 		public string UserAgent { get; }
 		public IEnumerable<BnetGameType> UploadGameTypes { get; set; }
 		public bool UploadPacks { get; set; }
+		public bool UploadCollection { get; set; } = true;
 		public int TwitchUpdatesUserId { get; set; }
 	}
 }

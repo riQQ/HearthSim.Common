@@ -70,6 +70,7 @@
     <Compile Include="Hearthstone\Secrets\SecretsManager.cs" />
     <Compile Include="Hearthstone\Secrets\SecretSolver.cs" />
     <Compile Include="HSReplay\Data\CollectionData.cs" />
+    <Compile Include="HSReplay\HSReplayNetEvents.cs" />
     <Compile Include="HSReplay\TokenStatus.cs" />
     <Compile Include="Util\Exceptions\TokenUpdateFailedException.cs" />
     <Compile Include="HSReplay\UploadTokenHistory.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Util\ISortableCard.cs" />
     <Compile Include="Util\JsonSerializer.cs" />
     <Compile Include="Util\Math.cs" />
+    <Compile Include="Util\RateLimiter.cs" />
     <Compile Include="Util\Watchers\ArenaWatcher.cs" />
     <Compile Include="Util\EventArgs\DungeonRunDeckUpdatedEventArgs.cs" />
     <Compile Include="Util\EventArgs\DungeonRunMatchStartedEventArgs.cs" />
