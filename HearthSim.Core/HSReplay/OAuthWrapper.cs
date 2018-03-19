@@ -160,6 +160,7 @@ namespace HearthSim.Core.HSReplay
 			OAuthData.Serializer.Save(_data);
 			_account.Reset();
 			_uploadTokenHistory.Write("Deleting token");
+			Load();
 			await _api.UpdateTokenStatus();
 			LoggedOut?.Invoke();
 		}
