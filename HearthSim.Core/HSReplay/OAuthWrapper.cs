@@ -108,6 +108,12 @@ namespace HearthSim.Core.HSReplay
 					await _api.UpdateTokenStatus();
 				if(_account.TokenStatus == TokenStatus.Unclaimed)
 					await ClaimUploadToken(_account.UploadToken);
+				Log.Debug("Updating account data");
+				if(!await UpdateAccountData())
+				{
+					AuthenticationError?.Invoke("Could not load HSReplay.net account status. "
+												+ "Please try again later.");
+				}
 			}
 			catch(Exception e)
 			{
