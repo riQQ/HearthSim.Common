@@ -38,6 +38,7 @@ namespace HearthSim.Core.HSReplay
 		public event Action TwitchUsersUpdated;
 		public event Action AccountDataUpdated;
 		public event Action UploadTokenClaimed;
+		public event Action<bool> Authenticating;
 
 		private readonly Scope[] _requiredScopes = { Scope.FullAccess };
 
@@ -77,24 +78,55 @@ namespace HearthSim.Core.HSReplay
 			=> !string.IsNullOrEmpty(_data.TokenData?.Scope);
 
 
-		public async Task<bool> Authenticate(params Scope[] scopes)
+		public async Task Authenticate(params Scope[] scopes)
 		{
 			Log.Debug("Authenticating with HSReplay.net...");
-			string url;
+			Authenticating?.Invoke(true);
 			try
 			{
-				url = _client.Value.GetAuthenticationUrl(_requiredScopes, _ports);
+				var data = await GetAuthData();
+				if(data == null)
+				{
+					Log.Error("Authentication failed, received no data");
+					return;
+				}
+				_data.Code = data.Code;
+				_data.RedirectUrl = data.RedirectUrl;
+				_data.TokenData = null;
 			}
 			catch(Exception e)
 			{
 				Log.Error(e);
-				return false;
+				return;
 			}
-			if(string.IsNullOrEmpty(url))
+			Log.Debug("Authentication complete");
+			try
 			{
-				Log.Error("Authentication failed, could not create callback listener");
-				return false;
+				await UpdateToken();
+				Log.Debug("Claiming upload token if necessary");
+				if(_account.TokenStatus == TokenStatus.Unknown)
+					await _api.UpdateTokenStatus();
+				if(_account.TokenStatus == TokenStatus.Unclaimed)
+					await ClaimUploadToken(_account.UploadToken);
 			}
+			catch(Exception e)
+			{
+				AuthenticationError?.Invoke("Could not authenticate with HSReplay.net.");
+				Log.Error(e);
+			}
+			finally
+			{
+				Authenticating?.Invoke(false);
+				Authenticated?.Invoke();
+			}
+
+		}
+
+		private async Task<AuthData> GetAuthData()
+		{
+			var url = _client.Value.GetAuthenticationUrl(_requiredScopes, _ports);
+			if(string.IsNullOrEmpty(url))
+				throw new Exception("Authentication failed, could not create callback listener");
 			var callbackTask = _client.Value.ReceiveAuthenticationCallback(SuccessUrl, ErrorUrl);
 			try
 			{
@@ -107,36 +139,7 @@ namespace HearthSim.Core.HSReplay
 					+ "Please open the following url in your browser to continue:\n\n" + url);
 			}
 			Log.Debug("Waiting for callback...");
-			var data = await callbackTask;
-			if(data == null)
-			{
-				Log.Error("Authentication failed, received no data");
-				return false;
-			}
-			_data.Code = data.Code;
-			_data.RedirectUrl = data.RedirectUrl;
-			_data.TokenData = null;
-			Log.Debug("Authentication complete");
-			try
-			{
-				await UpdateToken();
-				Log.Debug("Claiming upload token if necessary");
-				if(_account.TokenStatus == TokenStatus.Unknown)
-					await _api.UpdateTokenStatus();
-				if(_account.TokenStatus == TokenStatus.Unclaimed)
-					await ClaimUploadToken(_account.UploadToken);
-				return true;
-			}
-			catch(Exception e)
-			{
-				Log.Error(e);
-				return false;
-			}
-			finally
-			{
-				Authenticated?.Invoke();
-			}
-
+			return await callbackTask;
 		}
 
 		public void DeleteToken()
