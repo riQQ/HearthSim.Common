@@ -147,12 +147,6 @@ namespace HearthSim.Core.HSReplay
 			Log.Debug("Waiting for callback...");
 			return await callbackTask;
 		}
-
-		public void DeleteToken()
-		{
-			OAuthData.Serializer.Delete(_data);
-			Load();
-		}
 		
 		public async Task Logout()
 		{
