@@ -75,6 +75,18 @@ namespace HearthSim.Core.EventManagers
 
 		private void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)
 		{
+			if(args.PreviousMode >= Mode.LOGIN && !_game.Account.IsLoaded)
+			{
+				_game.OnHearthstoneLoaded();
+				var battleTag = _gameData.GetBattleTag();
+				var account = _gameData.GetAccountId();
+				if(battleTag != null && account != null)
+				{
+					_game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
+					_game.Region = (BnetRegion)((account.Hi >> 32) & 0xFF);
+				}
+			}
+
 			if(ShouldUpdateCollection(args.PreviousMode, args.PreviousMode))
 			{
 				var collection = _gameData.GetFullCollection();
@@ -91,18 +103,6 @@ namespace HearthSim.Core.EventManagers
 						.ToList();
 					_game.Collection.Update(cards, collection.CardBacks, favoriteHeroes,
 						collection.FavoriteCardBack, collection.Dust, collection.Gold);
-				}
-			}
-
-			if(args.PreviousMode >= Mode.LOGIN && !_game.Account.IsLoaded)
-			{
-				_game.OnHearthstoneLoaded();
-				var battleTag = _gameData.GetBattleTag();
-				var account = _gameData.GetAccountId();
-				if(battleTag != null && account != null)
-				{
-					_game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
-					_game.Region = (BnetRegion)((account.Hi >> 32) & 0xFF);
 				}
 			}
 
@@ -136,8 +136,7 @@ namespace HearthSim.Core.EventManagers
 		{
 			return previousMode == Mode.COLLECTIONMANAGER
 					|| currentMode == Mode.COLLECTIONMANAGER
-					|| previousMode == Mode.PACKOPENING
-					|| previousMode == Mode.LOGIN;
+					|| previousMode == Mode.PACKOPENING;
 		}
 	}
 }
