@@ -34,7 +34,7 @@ namespace HearthSim.Core.EventManagers
 
 		private CollectionData GetCollection()
 		{
-			if(_hsReplayNet?.Config.UploadCollection ?? true)
+			if(!_hsReplayNet?.Config.UploadCollection ?? true)
 				return null;
 			if(!_game.Collection.Cards.Any() || !_game.Account.IsLoaded)
 				return null;
@@ -49,14 +49,6 @@ namespace HearthSim.Core.EventManagers
 				.ToDictionary(x => (int)x.Key, x => x.First().Count);
 			var collection = new CollectionData(cards, heroes, _game.Collection.CardBacks,
 				_game.Collection.FavoriteCardBack , _game.Collection.Dust);
-			if(_hsReplayNet.Account.CollectionState.TryGetValue(Account, out var state)
-				&& state.Hash == collection.GetHashCode())
-			{
-				Log.Debug("Collection already up to date.");
-				state.Date = DateTime.Now;
-				_hsReplayNet.Account.Save();
-				_hsReplayNet.Events.OnCollectionAlreadyUpToDate();
-			}
 			return collection;
 		}
 
@@ -66,6 +58,15 @@ namespace HearthSim.Core.EventManagers
 			if(collection == null)
 			{
 				_hsReplayNet.Events.OnCollectionUploadError("Could not find collection. Please try again later.");
+				return;
+			}
+			if(_hsReplayNet.Account.CollectionState.TryGetValue(Account, out var state)
+				&& state.Hash == collection.GetHashCode())
+			{
+				Log.Debug("Collection already up to date.");
+				state.Date = DateTime.Now;
+				_hsReplayNet.Account.Save();
+				_hsReplayNet.Events.OnCollectionAlreadyUpToDate();
 				return;
 			}
 			await _collectionSyncLimiter.Run(async () =>
