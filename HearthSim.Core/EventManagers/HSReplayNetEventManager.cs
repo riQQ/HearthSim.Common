@@ -27,6 +27,7 @@ namespace HearthSim.Core.EventManagers
 			game.GameCreated += Game_GameCreated;
 			game.GameEnded += Game_OnGameEnd;
 			game.Collection.Changed += UploadCollection;
+			hsReplayNet.OAuth.Authenticated += UploadCollection;
 		}
 
 		private string Account => _game.Account.AccountHi + "-" + _game.Account.AccountLo;
