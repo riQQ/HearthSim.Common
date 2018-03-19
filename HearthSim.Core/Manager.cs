@@ -57,6 +57,7 @@ namespace HearthSim.Core
 			{
 				HSReplayNet = new HSReplayNet(config);
 				_hsReplayNetEventManager = new HSReplayNetEventManager(HSReplayNet, Game);
+				HSReplayNet.UpdateAccount().Forget();
 			}
 		}
 

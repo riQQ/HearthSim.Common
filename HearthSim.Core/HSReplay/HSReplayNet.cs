@@ -1,4 +1,5 @@
-﻿using HearthSim.Core.HSReplay.Data;
+﻿using System.Threading.Tasks;
+using HearthSim.Core.HSReplay.Data;
 using HearthSim.Core.HSReplay.Twitch;
 
 namespace HearthSim.Core.HSReplay
@@ -25,5 +26,23 @@ namespace HearthSim.Core.HSReplay
 		public PackUploader PackUploader { get; }
 		public TwitchDataManager Twitch { get; }
 		public HSReplayNetEvents Events { get; }
+
+		internal async Task UpdateAccount()
+		{
+			if(OAuth.IsAuthenticatedForAnything())
+			{
+				await OAuth.UpdateAccountData();
+				var token = Account.UploadToken;
+				if(string.IsNullOrEmpty(token) || Account.TokenStatus == TokenStatus.Unknown
+					|| (!OAuth.AccountData?.UploadTokens.Contains(token) ?? false))
+					await Api.UpdateTokenStatus();
+				token = Account.UploadToken;
+				if(Account.TokenStatus == TokenStatus.Unclaimed
+					&& !string.IsNullOrEmpty(token))
+					await OAuth.ClaimUploadToken(token);
+			}
+			else
+				await Api.UpdateTokenStatus();
+		}
 	}
 }
