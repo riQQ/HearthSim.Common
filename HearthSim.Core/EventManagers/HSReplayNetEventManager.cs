@@ -26,15 +26,17 @@ namespace HearthSim.Core.EventManagers
 			game.PackOpened += Game_OnPackOpened;
 			game.GameCreated += Game_GameCreated;
 			game.GameEnded += Game_OnGameEnd;
-			game.Collection.Changed += Collection_Changed;
+			game.Collection.Changed += UploadCollection;
 		}
 
-		private async void Collection_Changed()
+		private string Account => _game.Account.AccountHi + "-" + _game.Account.AccountLo;
+
+		private CollectionData GetCollection()
 		{
 			if(_hsReplayNet?.Config.UploadCollection ?? true)
-				return;
+				return null;
 			if(!_game.Collection.Cards.Any() || !_game.Account.IsLoaded)
-				return;
+				return null;
 			var cards = _game.Collection.Cards
 				.Select(x => new {x.Normal, x.Golden, x.ToCard()?.Data.DbfId})
 				.Where(x => x.DbfId != null)
@@ -46,39 +48,50 @@ namespace HearthSim.Core.EventManagers
 				.ToDictionary(x => (int)x.Key, x => x.First().Count);
 			var collection = new CollectionData(cards, heroes, _game.Collection.CardBacks,
 				_game.Collection.FavoriteCardBack , _game.Collection.Dust);
-			var hash = collection.GetHashCode();
-			var hi = _game.Account.AccountHi;
-			var lo = _game.Account.AccountLo;
-			var account = hi + "-" + lo;
-			if(_hsReplayNet.Account.CollectionState.TryGetValue(account, out var state) && state.Hash == hash)
+			if(_hsReplayNet.Account.CollectionState.TryGetValue(Account, out var state)
+				&& state.Hash == collection.GetHashCode())
 			{
 				Log.Debug("Collection already up to date.");
 				state.Date = DateTime.Now;
 				_hsReplayNet.Account.Save();
 				_hsReplayNet.Events.OnCollectionAlreadyUpToDate();
 			}
+			return collection;
+		}
+
+		private async void UploadCollection()
+		{
+			var collection = GetCollection();
+			if(collection == null)
+			{
+				_hsReplayNet.Events.OnCollectionUploadError("Could not find collection. Please try again later.");
+				return;
+			}
 			await _collectionSyncLimiter.Run(async () =>
 			{
-				if(!_hsReplayNet.OAuth.AccountData?.BlizzardAccounts?.Any(x => x.AccountHi == hi && x.AccountLo == lo) ?? true)
+				if(!_hsReplayNet.OAuth.AccountData?.BlizzardAccounts?.Any(x 
+						=> x.AccountHi ==  _game.Account.AccountHi && x.AccountLo == _game.Account.AccountLo) ?? true)
 				{
-					var claimed = await _hsReplayNet.OAuth.ClaimBlizzardAccount(hi, lo, _game.Account.BattleTag);
+					var claimed = await _hsReplayNet.OAuth.ClaimBlizzardAccount(_game.Account.AccountHi,
+						_game.Account.AccountLo, _game.Account.BattleTag);
 					if(claimed)
 						_hsReplayNet.OAuth.UpdateAccountData().Forget();
 					else
 					{
-						_hsReplayNet.Events.OnCollectionUploadError($"Could not register your Blizzard account ({account}). Please try again later.");
+						_hsReplayNet.Events.OnCollectionUploadError($"Could not register Blizzard account ({Account})."
+																	+ "Please try again later.");
 						return;
 					}
 				}
 				if(await _hsReplayNet.OAuth.UpdateCollection(collection, _game.Account))
 				{
-					_hsReplayNet.Account.CollectionState[account] = new Account.SyncState(hash);
+					_hsReplayNet.Account.CollectionState[Account] = new Account.SyncState(collection.GetHashCode());
 					_hsReplayNet.Account.Save();
 					Log.Debug("Collection synced");
 					_hsReplayNet.Events.OnCollectionUploaded();
 				}
 				else
-					_hsReplayNet.Events.OnCollectionUploadError("Could not update your collection. Please try again later.");
+					_hsReplayNet.Events.OnCollectionUploadError("Could not update collection. Please try again later.");
 			}, () =>
 			{
 				Log.Debug("Waiting for rate limit...");
