@@ -48,18 +48,17 @@ namespace HearthSim.Core.HSReplay
 			return token;
 		}
 
-		public async Task<Response<TokenStatus>> GetTokenStatus()
+		public async Task<Response<TokenStatus>> UpdateTokenStatus()
 		{
 			Log.Debug("Checking account status...");
 			try
 			{
 				var token = await GetUploadToken();
 				var accountStatus = await _client.GetAccountStatus(token);
-				_account.TokenStatus = accountStatus?.User != null;
+				_account.TokenStatus = accountStatus?.User != null ? TokenStatus.Claimed : TokenStatus.Unclaimed;
 				_account.Save();
-				Log.Info($"Token is {(_account.TokenStatus == true ? "" : "not ")}claimed");
-				return new Response<TokenStatus>(_account.TokenStatus == true 
-					? TokenStatus.Claimed : TokenStatus.Unclaimed);
+				Log.Info($"Token is {_account.TokenStatus}");
+				return new Response<TokenStatus>(_account.TokenStatus);
 			}
 			catch(WebException ex)
 			{
@@ -69,7 +68,7 @@ namespace HearthSim.Core.HSReplay
 				{
 					_requestedNewToken = true;
 					_account.UploadToken = string.Empty;
-					return await GetTokenStatus();
+					return await UpdateTokenStatus();
 				}
 				return new Response<TokenStatus>(ex);
 			}

@@ -122,11 +122,7 @@ namespace HearthSim.Core.HSReplay
 				await UpdateToken();
 				Log.Debug("Claiming upload token if necessary");
 				if(_account.TokenStatus == TokenStatus.Unknown)
-				{
-					var status = await _api.GetTokenStatus();
-					if(status.Success)
-						_account.TokenStatus = status.Data;
-				}
+					await _api.UpdateTokenStatus();
 				if(_account.TokenStatus == TokenStatus.Unclaimed)
 					await ClaimUploadToken(_account.UploadToken);
 				return true;
@@ -161,9 +157,7 @@ namespace HearthSim.Core.HSReplay
 			OAuthData.Serializer.Save(_data);
 			_account.Reset();
 			_uploadTokenHistory.Write("Deleting token");
-			var status = await _api.GetTokenStatus();
-			if(status.Success)
-				_account.TokenStatus = status.Data;
+			await _api.UpdateTokenStatus();
 			LoggedOut?.Invoke();
 		}
 
