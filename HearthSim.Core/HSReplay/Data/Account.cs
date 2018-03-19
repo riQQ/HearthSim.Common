@@ -51,6 +51,7 @@ namespace HearthSim.Core.HSReplay.Data
 		internal void Reset()
 		{
 			UploadToken = string.Empty;
+			TokenStatus = TokenStatus.Unclaimed;
 			CollectionState.Clear();
 			Update(0, null);
 		}
