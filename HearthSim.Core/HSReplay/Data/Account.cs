@@ -42,10 +42,13 @@ namespace HearthSim.Core.HSReplay.Data
 
 		internal void Update(int id, string username)
 		{
+			var prev = Status;
 			Id = id;
 			Username = username;
 			LastUpdated = DateTime.Now;
 			Save();
+			if(Status != prev)
+				StatusChanged?.Invoke(new ValueChangedEventArgs<AccountStatus>(prev, Status));
 		}
 
 		internal void Reset()
@@ -57,6 +60,7 @@ namespace HearthSim.Core.HSReplay.Data
 		}
 
 		public event Action<ValueChangedEventArgs<TokenStatus>> TokenStatusChanged;
+		public event Action<ValueChangedEventArgs<AccountStatus>> StatusChanged;
 
 		public class SyncState
 		{
