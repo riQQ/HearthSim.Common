@@ -127,7 +127,10 @@ namespace HearthSim.Core.Hearthstone
 				return false;
 
 			bool IsPlayer(MatchInfo.Player player)
-				=> player.BattleTag?.Name == name || player.Name == name;
+				=> player.BattleTag != null
+					&& ($"{player.BattleTag.Name}#{player.BattleTag.Number}" == name
+						|| player.BattleTag.Name == name)
+					|| player.Name == name;
 
 			if(IsPlayer(matchInfo.LocalPlayer))
 			{
