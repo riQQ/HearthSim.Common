@@ -358,7 +358,7 @@ namespace HearthSim.Core.HSReplay
 			}
 		}
 
-		internal async Task<bool> ClaimUploadToken(string token)
+		public async Task<bool> ClaimUploadToken(string token)
 		{
 			_uploadTokenHistory.Write("Trying to claim " + token);
 			try
