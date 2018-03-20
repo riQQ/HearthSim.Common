@@ -30,7 +30,7 @@ namespace HearthSim.Core.HSReplay.Twitch
 			return boardStateWatcher;
 		}
 
-		internal async void WatchBoardState(IGameState game)
+		public async void WatchBoardState(IGameState game)
 		{
 			if(_running)
 				return;
