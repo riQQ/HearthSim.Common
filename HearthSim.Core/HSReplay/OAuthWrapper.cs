@@ -77,14 +77,16 @@ namespace HearthSim.Core.HSReplay
 		public bool IsAuthenticatedForAnything()
 			=> !string.IsNullOrEmpty(_data.TokenData?.Scope);
 
-
 		public async Task Authenticate(params Scope[] scopes)
+			=> await Authenticate(null, null, scopes);
+
+		public async Task Authenticate(string successUrl = null, string errorUrl = null, params Scope[] scopes)
 		{
 			Log.Debug("Authenticating with HSReplay.net...");
 			Authenticating?.Invoke(true);
 			try
 			{
-				var data = await GetAuthData();
+				var data = await GetAuthData(successUrl ?? SuccessUrl, errorUrl ?? ErrorUrl);
 				if(data == null)
 				{
 					Log.Error("Authentication failed, received no data");
@@ -128,12 +130,12 @@ namespace HearthSim.Core.HSReplay
 
 		}
 
-		private async Task<AuthData> GetAuthData()
+		private async Task<AuthData> GetAuthData(string successUrl, string errorUrl)
 		{
 			var url = _client.Value.GetAuthenticationUrl(_requiredScopes, _ports);
 			if(string.IsNullOrEmpty(url))
 				throw new Exception("Authentication failed, could not create callback listener");
-			var callbackTask = _client.Value.ReceiveAuthenticationCallback(SuccessUrl, ErrorUrl);
+			var callbackTask = _client.Value.ReceiveAuthenticationCallback(successUrl, errorUrl);
 			try
 			{
 				Process.Start(url);
