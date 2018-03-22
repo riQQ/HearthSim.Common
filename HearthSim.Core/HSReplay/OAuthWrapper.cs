@@ -33,7 +33,8 @@ namespace HearthSim.Core.HSReplay
 		private const string SuccessUrl = "https://hsdecktracker.net/hsreplaynet/oauth_success/";
 		private const string ErrorUrl = "https://hsdecktracker.net/hsreplaynet/oauth_error/";
 
-		public event Action<string> AuthenticationError;
+		public event Action<AuthenticationErrorType> AuthenticationError;
+		public event Action<string> AuthenticationBrowserError;
 		public event Action CollectionUpdated;
 		public event Action Authenticated;
 		public event Action LoggedOut;
@@ -92,6 +93,7 @@ namespace HearthSim.Core.HSReplay
 				if(data == null)
 				{
 					Log.Error("Authentication failed, received no data");
+					AuthenticationError?.Invoke(AuthenticationErrorType.Unknown);
 					return;
 				}
 				_data.Code = data.Code;
@@ -101,6 +103,7 @@ namespace HearthSim.Core.HSReplay
 			catch(Exception e)
 			{
 				Log.Error(e);
+				AuthenticationError?.Invoke(AuthenticationErrorType.Unknown);
 				return;
 			}
 			Log.Debug("Authentication complete");
@@ -114,14 +117,11 @@ namespace HearthSim.Core.HSReplay
 					await ClaimUploadToken(_account.UploadToken);
 				Log.Debug("Updating account data");
 				if(!await UpdateAccountData())
-				{
-					AuthenticationError?.Invoke("Could not load HSReplay.net account status. "
-												+ "Please try again later.");
-				}
+					AuthenticationError?.Invoke(AuthenticationErrorType.AccountData);
 			}
 			catch(Exception e)
 			{
-				AuthenticationError?.Invoke("Could not authenticate with HSReplay.net.");
+				AuthenticationError?.Invoke(AuthenticationErrorType.Unknown);
 				Log.Error(e);
 			}
 			finally
@@ -145,8 +145,7 @@ namespace HearthSim.Core.HSReplay
 			catch(Exception ex)
 			{
 				Log.Error(ex);
-				AuthenticationError?.Invoke("Could not open your browser. "
-					+ "Please open the following url in your browser to continue:\n\n" + url);
+				AuthenticationBrowserError?.Invoke(url);
 			}
 			Log.Debug("Waiting for callback...");
 			return await callbackTask;

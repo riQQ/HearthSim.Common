@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventManagers\CollectionUploadError.cs" />
     <Compile Include="Hearthstone\Events\AttackGameEvent.cs" />
     <Compile Include="Hearthstone\Events\BaseGameEvent.cs" />
     <Compile Include="Hearthstone\Events\GameStateEvents.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Hearthstone\Secrets\SecretList.cs" />
     <Compile Include="Hearthstone\Secrets\SecretsManager.cs" />
     <Compile Include="Hearthstone\Secrets\SecretSolver.cs" />
+    <Compile Include="HSReplay\AuthenticationErrorType.cs" />
     <Compile Include="HSReplay\EventArgs\BlizzardAccountClaimEventArgs.cs" />
     <Compile Include="HSReplay\ClaimError.cs" />
     <Compile Include="HSReplay\Data\CollectionData.cs" />

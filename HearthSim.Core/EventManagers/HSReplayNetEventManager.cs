@@ -57,7 +57,7 @@ namespace HearthSim.Core.EventManagers
 			var collection = GetCollection();
 			if(collection == null)
 			{
-				_hsReplayNet.Events.OnCollectionUploadError("Could not find collection. Please try again later.");
+				_hsReplayNet.Events.OnCollectionUploadError(CollectionUploadError.CollectionNotFound);
 				return;
 			}
 			if(_hsReplayNet.Account.CollectionState.TryGetValue(Account, out var state)
@@ -94,7 +94,7 @@ namespace HearthSim.Core.EventManagers
 					_hsReplayNet.Events.OnCollectionUploaded();
 				}
 				else
-					_hsReplayNet.Events.OnCollectionUploadError("Could not update collection. Please try again later.");
+					_hsReplayNet.Events.OnCollectionUploadError(CollectionUploadError.Unknown);
 			}, () =>
 			{
 				Log.Debug("Waiting for rate limit...");
