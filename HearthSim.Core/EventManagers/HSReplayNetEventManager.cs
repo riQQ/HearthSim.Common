@@ -71,20 +71,21 @@ namespace HearthSim.Core.EventManagers
 			}
 			await _collectionSyncLimiter.Run(async () =>
 			{
-				if(!_hsReplayNet.OAuth.AccountData?.BlizzardAccounts?.Any(x 
-						=> x.AccountHi ==  _game.Account.AccountHi && x.AccountLo == _game.Account.AccountLo) ?? true)
+				var hi = _game.Account.AccountHi;
+				var lo = _game.Account.AccountLo;
+				var battleTag = _game.Account.BattleTag;
+				if(!_hsReplayNet.OAuth.AccountData?.BlizzardAccounts?.Any(x => x.AccountHi == hi && x.AccountLo == lo) ?? true)
 				{
-					var claimed = await _hsReplayNet.OAuth.ClaimBlizzardAccount(_game.Account.AccountHi,
-						_game.Account.AccountLo, _game.Account.BattleTag);
-					if(claimed)
-						_hsReplayNet.OAuth.UpdateAccountData().Forget();
-					else
+					var error = await _hsReplayNet.OAuth.ClaimBlizzardAccount(hi, lo, battleTag);
+					if(error != ClaimError.None)
 					{
-						_hsReplayNet.Events.OnCollectionUploadError($"Could not register Blizzard account ({Account})."
-																	+ "Please try again later.");
+						_hsReplayNet.Events.OnBlizzardAccountClaimError(error, hi, lo, battleTag);
 						return;
 					}
+					_hsReplayNet.Events.OnBlizzardAccountClaimed(hi, lo, battleTag);
+					_hsReplayNet.OAuth.UpdateAccountData().Forget();
 				}
+
 				if(await _hsReplayNet.OAuth.UpdateCollection(collection, _game.Account))
 				{
 					_hsReplayNet.Account.CollectionState[Account] = new Account.SyncState(collection.GetHashCode());

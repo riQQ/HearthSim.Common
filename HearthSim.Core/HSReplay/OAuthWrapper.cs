@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using HearthSim.Util.Logging;
 using HSReplay.OAuth;
 using HSReplay.OAuth.Data;
 using HSReplay.Responses;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static HearthSim.Core.Util.JsonHelper;
 using Account = HearthSim.Core.Hearthstone.Account;
@@ -382,7 +384,7 @@ namespace HearthSim.Core.HSReplay
 			}
 		}
 
-		internal async Task<bool> ClaimBlizzardAccount(ulong accountHi, ulong accountLo, string battleTag)
+		internal async Task<ClaimError> ClaimBlizzardAccount(ulong accountHi, ulong accountLo, string battleTag)
 		{
 			var account = $"hi={accountHi}, lo={accountLo}, battleTag={battleTag}";
 			try
@@ -390,12 +392,30 @@ namespace HearthSim.Core.HSReplay
 				await UpdateToken();
 				var response = await _client.Value.ClaimBlizzardAccount(accountHi, accountLo, battleTag);
 				Log.Debug($"Claimed {account}: {response}");
-				return true;
+				return ClaimError.None;
+			}
+			catch(WebException e)
+			{
+				Log.Error(e);
+				try
+				{
+					using(var stream = e.Response.GetResponseStream())
+					using(var reader = new StreamReader(stream))
+					{
+						var response = JsonConvert.DeserializeObject<dynamic>(reader.ReadToEnd());
+						if(response?.error == "account_already_claimed")
+							return ClaimError.AlreadyClaimed;
+					}
+				}
+				catch
+				{
+				}
+				return ClaimError.Unknown;
 			}
 			catch(Exception e)
 			{
 				Log.Error($"Error claming {account}\n" + e);
-				return false;
+				return ClaimError.Unknown;
 			}
 		}
 	}

@@ -71,6 +71,8 @@
     <Compile Include="Hearthstone\Secrets\SecretList.cs" />
     <Compile Include="Hearthstone\Secrets\SecretsManager.cs" />
     <Compile Include="Hearthstone\Secrets\SecretSolver.cs" />
+    <Compile Include="HSReplay\EventArgs\BlizzardAccountClaimEventArgs.cs" />
+    <Compile Include="HSReplay\ClaimError.cs" />
     <Compile Include="HSReplay\Data\CollectionData.cs" />
     <Compile Include="HSReplay\HSReplayNetEvents.cs" />
     <Compile Include="HSReplay\TokenStatus.cs" />
