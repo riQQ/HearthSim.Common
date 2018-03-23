@@ -42,6 +42,7 @@ namespace HearthSim.Core.HSReplay
 		public event Action AccountDataUpdated;
 		public event Action UploadTokenClaimed;
 		public event Action<bool> Authenticating;
+		public event Action ReauthorizationRequired;
 
 		private readonly Scope[] _requiredScopes = { Scope.FullAccess };
 
@@ -195,7 +196,7 @@ namespace HearthSim.Core.HSReplay
 				catch(WebException e)
 				{
 					Log.Error(e);
-					if(e.Response is HttpWebResponse response && response.StatusCode == HttpStatusCode.Unauthorized)
+					if(IsUnauthorized(e))
 						SaveTokenData(null);
 				}
 				catch(Exception e)
@@ -211,11 +212,20 @@ namespace HearthSim.Core.HSReplay
 					throw new TokenUpdateFailedException("We did not receive any token data.");
 				SaveTokenData(tokenData);
 			}
+			catch(WebException e)
+			{
+				if(IsUnauthorized(e))
+					ReauthorizationRequired?.Invoke();
+				throw new TokenUpdateFailedException("Fetching a new token failed.", e);
+			}
 			catch(Exception e)
 			{
 				throw new TokenUpdateFailedException("Fetching a new token failed.", e);
 			}
 		}
+
+		private static bool IsUnauthorized(WebException e) => e.Response is HttpWebResponse r
+															&& r.StatusCode == HttpStatusCode.Unauthorized;
 
 		public async Task<bool> UpdateTwitchUsers()
 		{
