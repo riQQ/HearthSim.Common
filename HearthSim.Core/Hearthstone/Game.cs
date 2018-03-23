@@ -163,7 +163,8 @@ namespace HearthSim.Core.Hearthstone
 
 		internal void OnGameTimeChanged(DateTime time)
 		{
-			CurrentGame.GameTime.Time = time;
+			if(CurrentGame != null)
+				CurrentGame.GameTime.Time = time;
 		}
 	}
 }
