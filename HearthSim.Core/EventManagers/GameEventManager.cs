@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Enums;
@@ -73,13 +75,13 @@ namespace HearthSim.Core.EventManagers
 			logInput.NewLines += eventArgs => logParserManager.Parse(eventArgs.Lines);
 		}
 
-		private void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)
+		private async void LoadingScreenParser_OnModeChanged(ModeChangedEventArgs args)
 		{
 			if(args.PreviousMode >= Mode.LOGIN && !_game.Account.IsLoaded)
 			{
 				_game.OnHearthstoneLoaded();
-				var battleTag = _gameData.GetBattleTag();
-				var account = _gameData.GetAccountId();
+				var battleTag = await Retry(_gameData.GetBattleTag);
+				var account = await Retry(_gameData.GetAccountId);
 				if(battleTag != null && account != null)
 				{
 					_game.Account.Update(account.Hi, account.Lo, battleTag.Name, battleTag.Number);
@@ -89,7 +91,7 @@ namespace HearthSim.Core.EventManagers
 
 			if(ShouldUpdateCollection(args.PreviousMode, args.PreviousMode))
 			{
-				var collection = _gameData.GetFullCollection();
+				var collection = await Retry(_gameData.GetFullCollection);
 				if(collection != null)
 				{
 					var cards = collection.Cards
@@ -137,6 +139,15 @@ namespace HearthSim.Core.EventManagers
 			return previousMode == Mode.COLLECTIONMANAGER
 					|| currentMode == Mode.COLLECTIONMANAGER
 					|| previousMode == Mode.PACKOPENING;
+		}
+
+		private static async Task<T> Retry<T>(Func<T> func, int delay = 2000)
+		{
+			var value = func();
+			if(value != null)
+				return value;
+			await Task.Delay(delay);
+			return func();
 		}
 	}
 }
