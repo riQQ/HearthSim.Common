@@ -17,5 +17,6 @@ namespace HearthSim.Core.Hearthstone
 		BrawlInfo GetBrawlInfo();
 		DungeonInfo GetDungeonInfo();
 		void Reset();
+		bool FriendlyChallengeDialogVisible();
 	}
 }

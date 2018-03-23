@@ -21,6 +21,7 @@ namespace HearthSim.Core.EventManagers
 		private readonly ArenaWatcher _arenaWatcher;
 		private readonly PackWatcher _packWatcher;
 		private readonly DungeonRunWatcher _dungeonRunWatcher;
+		private readonly FriendlyChallengeWatcher _friendlyChallengeWatcher;
 
 		public GameEventManager(Game game, ILogInput logInput, IGameDataProvider gameData)
 		{
@@ -39,6 +40,9 @@ namespace HearthSim.Core.EventManagers
 			_dungeonRunWatcher = new DungeonRunWatcher(new DungeonRunData(game, gameData));
 			_dungeonRunWatcher.DungeonRunMatchStarted += game.OnDungeonRunMatchStarted;
 			_dungeonRunWatcher.DungeonRunDeckUpdated += game.OnDungeonRunDeckUpdated;
+
+			_friendlyChallengeWatcher = new FriendlyChallengeWatcher(gameData);
+			_friendlyChallengeWatcher.FriendlyChallenge += game.OnFriendlyChallenge;
 
 			var logParserManager = new LogParserManager();
 
