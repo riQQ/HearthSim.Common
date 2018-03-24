@@ -18,7 +18,7 @@ namespace HearthSim.Core.Hearthstone
 		}
 
 		public bool InAiMatch => _game.CurrentMode == Mode.GAMEPLAY
-								&& _game.CurrentGame.MatchInfo?.GameType == (int)GameType.GT_VS_AI;
+								&& _game.CurrentGame?.MatchInfo?.GameType == (int)GameType.GT_VS_AI;
 
 		public bool InAdventureScreen => _game.CurrentMode == Mode.ADVENTURE;
 		public string OpponentHeroId => _game.CurrentGame?.OpposingPlayer.InPlay.FirstOrDefault(x => x.IsHero)?.CardId;
