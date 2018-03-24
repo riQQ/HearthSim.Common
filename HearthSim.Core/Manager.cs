@@ -19,19 +19,19 @@ namespace HearthSim.Core
 	{
 		public HSReplayNet HSReplayNet { get; }
 		public Game Game { get; }
+		public LogReader LogReader { get; }
 
 		private readonly HSReplayNetEventManager _hsReplayNetEventManager;
 		private readonly GameEventManager _gameEventManager;
 		private readonly ProcessWatcher _procWatcher;
 		private string _directory;
 		private bool _running;
-		private readonly LogReader _logReader;
 
 		public Manager(HSReplayNetConfig config = null, IGameDataProvider gameDataProvider = null)
 		{
 			gameDataProvider = gameDataProvider ?? new HearthMirrorDataProvider();
 
-			_logReader = new LogReader(new List<LogWatcherData>
+			LogReader = new LogReader(new List<LogWatcherData>
 			{
 				LogWatcherConfigs.Power,
 				LogWatcherConfigs.LoadingScreen,
@@ -41,9 +41,9 @@ namespace HearthSim.Core
 			});
 
 			Game = new Game(gameDataProvider);
-			Game.HearthstoneExited += () => _logReader.Stop().Forget();
+			Game.HearthstoneExited += () => LogReader.Stop().Forget();
 
-			_gameEventManager = new GameEventManager(Game, _logReader, gameDataProvider);
+			_gameEventManager = new GameEventManager(Game, LogReader, gameDataProvider);
 
 			_procWatcher = new ProcessWatcher("Hearthstone");
 			_procWatcher.OnStart += ProcessWatcher_OnStart;
@@ -70,7 +70,7 @@ namespace HearthSim.Core
 
 		private void ProcessWatcher_OnExit(Process process)
 		{
-			_logReader.Stop().Forget();
+			LogReader.Stop().Forget();
 			Game.OnHearthstoneExited();
 		}
 
@@ -99,10 +99,10 @@ namespace HearthSim.Core
 				}
 			}
 			await UpdateLogConfig();
-			_logReader.Start(_directory);
+			LogReader.Start(_directory);
 		}
 
-		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(_logReader.Logs);
+		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(LogReader.Logs);
 
 		public void Start(string directory = null)
 		{
@@ -116,7 +116,7 @@ namespace HearthSim.Core
 		public async Task Stop()
 		{
 			await _procWatcher.Stop();
-			await _logReader.Stop();
+			await LogReader.Stop();
 			Game.Reset();
 			_running = false;
 		}

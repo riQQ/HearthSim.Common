@@ -15,7 +15,7 @@ namespace HearthSim.Core.LogReading
 		event Action<NewLinesEventArgs> NewLines;
 	}
 
-	internal class LogReader : ILogInput
+	public class LogReader : ILogInput
 	{
 		internal const int UpdateDelay = 100;
 		private readonly List<LogWatcher> _watchers = new List<LogWatcher>();
@@ -31,7 +31,7 @@ namespace HearthSim.Core.LogReading
 
 		public event Action<NewLinesEventArgs> NewLines;
 
-		public async void Start(string hearthstoneDirectory)
+		internal async void Start(string hearthstoneDirectory)
 		{
 			if(_running)
 				return;
@@ -74,7 +74,7 @@ namespace HearthSim.Core.LogReading
 			return new StartingPoint(power, decks, loadingScreen);
 		}
 
-		public async Task Stop()
+		internal async Task Stop()
 		{
 			if(!_running)
 				return;
