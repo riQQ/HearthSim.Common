@@ -35,16 +35,16 @@ namespace HearthSim.Core.LogReading
 		public event Action Starting;
 		public event Action Stopping;
 
-		internal async void Start(string hearthstoneDirectory)
+		internal async void Start(string hearthstonePath, string logDirectory = "Logs")
 		{
 			if(_running)
 				return;
-			var logDirectory = Path.Combine(hearthstoneDirectory, "Logs");
-			var startingPoint = GetStartingPoint(logDirectory);
-			Log.Debug($"Starting log readers at [{startingPoint}]");
 			Starting?.Invoke();
+			var fullPath = Path.Combine(hearthstonePath, "Logs");
+			var startingPoint = GetStartingPoint(fullPath);
+			Log.Debug($"Starting log readers in \"{fullPath}\", at [{startingPoint}]");
 			foreach(var logReader in _watchers)
-				logReader.Start(logDirectory, logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
+				logReader.Start(fullPath, logReader.Info.Name == "Decks" ? startingPoint.Decks : startingPoint.Default);
 			_running = true;
 			_stop = false;
 			var newLines = new SortedList<DateTime, List<Line>>();

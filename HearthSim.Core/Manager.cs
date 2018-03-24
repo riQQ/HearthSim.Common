@@ -24,7 +24,8 @@ namespace HearthSim.Core
 		private readonly HSReplayNetEventManager _hsReplayNetEventManager;
 		private readonly GameEventManager _gameEventManager;
 		private readonly ProcessWatcher _procWatcher;
-		private string _directory;
+		private string _hearthstonePath;
+		private string _logDirectory;
 		private bool _running;
 
 		public Manager(HSReplayNetConfig config = null, IGameDataProvider gameDataProvider = null)
@@ -76,15 +77,15 @@ namespace HearthSim.Core
 
 		private async void StartLogReader(Process process)
 		{
-			if(_directory == null)
+			if(_hearthstonePath == null)
 			{
 				for(var i = 1; i < 10; i++)
 				{
 					await Task.Delay(1000 * i);
 					try
 					{
-						_directory = new FileInfo(process.MainModule.FileName).Directory?.FullName;
-						Log.Debug($"Found Hearthstone installation at \"{_directory}\"");
+						_hearthstonePath = new FileInfo(process.MainModule.FileName).Directory?.FullName;
+						Log.Debug($"Found Hearthstone installation at \"{_hearthstonePath}\"");
 						break;
 					}
 					catch(Exception e)
@@ -92,24 +93,25 @@ namespace HearthSim.Core
 						Log.Error(e);
 					}
 				}
-				if(_directory == null)
+				if(_hearthstonePath == null)
 				{
 					Log.Error("Could not find Hearthstone installation");
 					return;
 				}
 			}
 			await UpdateLogConfig();
-			LogReader.Start(_directory);
+			LogReader.Start(_hearthstonePath, _logDirectory);
 		}
 
 		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(LogReader.Logs);
 
-		public void Start(string directory = null)
+		public void Start(string hearthstonePath = null, string logDirectory = "Logs")
 		{
 			if(_running)
 				return;
 			_running = true;
-			_directory = directory;
+			_hearthstonePath = hearthstonePath;
+			_logDirectory = logDirectory;
 			_procWatcher.Run();
 		}
 
