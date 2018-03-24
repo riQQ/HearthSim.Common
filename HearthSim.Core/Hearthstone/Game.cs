@@ -125,8 +125,8 @@ namespace HearthSim.Core.Hearthstone
 
 		internal override void OnQueuedForGame(QueuedForGameEventArgs args)
 		{
-			Log.Debug("Settings SelectedDeck=" + args.Deck);
 			SelectedDeck = args.Deck != null ? new Deck(args.Deck) : null;
+			Log.Debug("Set SelectedDeck=" + SelectedDeck);
 			base.OnQueuedForGame(args);
 		}
 
@@ -141,16 +141,16 @@ namespace HearthSim.Core.Hearthstone
 		{
 			if(args.IsNew && args.Deck != null)
 			{
-				Log.Debug("Settings SelectedDeck=" + args.Deck);
 				SelectedDeck = args.Deck;
+				Log.Debug("Set SelectedDeck=" + SelectedDeck);
 			}
 			base.OnDungeonRunMatchStarted(args);
 		}
 
 		internal override void OnDungeonRunDeckUpdated(DungeonRunDeckUpdatedEventArgs args)
 		{
-			Log.Debug("Settings SelectedDeck=" + args.Deck);
 			SelectedDeck = args.Deck;
+			Log.Debug("Set SelectedDeck=" + SelectedDeck);
 			base.OnDungeonRunDeckUpdated(args);
 		}
 
