@@ -96,6 +96,7 @@ namespace HearthSim.Core
 				if(_hearthstonePath == null)
 				{
 					Log.Error("Could not find Hearthstone installation");
+					Game.OnHearthstoneInstallationNotFound();
 					return;
 				}
 			}

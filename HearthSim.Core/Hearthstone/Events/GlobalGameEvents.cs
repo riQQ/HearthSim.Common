@@ -14,6 +14,7 @@ namespace HearthSim.Core.Hearthstone.Events
 		public event Action HearthstoneExited;
 		public event Action HearthstoneLoaded;
 		public event Action HearthstoneRestartRequired;
+		public event Action HearthstoneInstallationNotFound;
 		public event Action<LogConfigErrorEventArgs> LogConfigError;
 
 		// Menu
@@ -42,6 +43,7 @@ namespace HearthSim.Core.Hearthstone.Events
 		internal virtual void OnHearthstoneStarted() => HearthstoneStarted?.Invoke();
 		internal virtual void OnHearthstoneLoaded() => HearthstoneLoaded?.Invoke();
 		internal virtual void OnHearthstoneExited() => HearthstoneExited?.Invoke();
+		internal virtual void OnHearthstoneInstallationNotFound() => HearthstoneInstallationNotFound?.Invoke();
 		internal virtual void OnPackOpened(PackOpenedEventArgs args) => PackOpened?.Invoke(args);
 		internal virtual void OnDungeonRunMatchStarted(DungeonRunMatchStartedEventArgs args) =>
 			DungeonRunMatchStarted?.Invoke(args);
