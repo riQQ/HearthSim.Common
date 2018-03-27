@@ -9,6 +9,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public int Health => GetTag(GameTag.HEALTH) - GetTag(GameTag.DAMAGE);
 		public int Cost => HasTag(GameTag.COST) ? GetTag(GameTag.COST) : Card?.Data?.Cost ?? 0;
 		public bool IsActiveDeathrattle => GetTag(GameTag.DEATHRATTLE) == 1;
+		public CardClass Class => (CardClass)GetTag(GameTag.CLASS);
 
 		// Zone
 		public bool IsInZone(Zone zone) => GetTag(GameTag.ZONE) == (int)zone;
