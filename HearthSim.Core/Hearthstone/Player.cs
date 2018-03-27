@@ -44,6 +44,8 @@ namespace HearthSim.Core.Hearthstone
 
 		public IEnumerable<Entity> InQuest => Entities.Where(x => x.IsInSecret && x.IsQuest);
 
+		public Entity CurrentHero => InPlay.FirstOrDefault(x => x.IsHero);
+
 		public Deck Deck
 		{
 			get => _deck;
