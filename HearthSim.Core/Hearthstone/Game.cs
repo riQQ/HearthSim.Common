@@ -35,6 +35,9 @@ namespace HearthSim.Core.Hearthstone
 		public BnetRegion Region { get; set; }
 		public GameStateEvents GameStateEvents { get; }
 
+		public bool IsInMenu => CurrentMode > Mode.LOGIN && CurrentMode != Mode.FATAL_ERROR
+														&& CurrentMode != Mode.GAMEPLAY;
+
 		internal override void OnModeChanged(ModeChangedEventArgs args)
 		{
 			CurrentMode = args.CurrentMode;
