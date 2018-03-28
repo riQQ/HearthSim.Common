@@ -83,7 +83,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 
 			tc.Apply(game);
 			Assert.AreEqual((Zone?)tc.Value, game.Entities[tc.EntityId.Value].Info.OriginalZone);
-			Assert.AreEqual(0, game.Entities[tc.EntityId.Value].Info.PreviousZone);
+			Assert.AreEqual(Zone.INVALID, game.Entities[tc.EntityId.Value].Info.PreviousZone);
 			Assert.AreEqual(1, game.Entities[tc.EntityId.Value].Info.LastZoneChange);
 
 			var tc2 = new TagChange(new TagChangeData(GameTag.ZONE, (int)Zone.HAND, false, 1, null));

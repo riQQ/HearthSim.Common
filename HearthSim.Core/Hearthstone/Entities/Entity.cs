@@ -56,22 +56,22 @@ namespace HearthSim.Core.Hearthstone.Entities
 			_entity = entity;
 		}
 
-		//public bool Discarded { get; set; }
-		//public bool Returned { get; set; }
+		public bool Discarded => _entity.IsInGraveyard && PreviousZone == Zone.HAND || PreviousZone == Zone.DECK;
+		public bool ReturnedToHand => _entity.IsInHand && PreviousZone == Zone.PLAY;
+		public bool ReturnedToDeck => _entity.IsInDeck && PreviousZone == Zone.PLAY;
 		public bool Mulliganed { get; internal set; }
 		public bool Stolen => OriginalController > 0 && OriginalController != _entity.GetTag(GameTag.CONTROLLER);
-		//public bool HasOutstandingTagChanges { get; set; }
-		public int OriginalController { get; set; }
-		public bool Hidden { get; set; }
-		public int CostReduction { get; set; }
-		public Zone? OriginalZone { get; set; }
+		public int OriginalController { get; internal set; }
+		public bool Hidden { get; internal set; }
+		public int CostReduction { get; internal set; }
+		public Zone? OriginalZone { get; internal set; }
 		public string OriginalCardId { get; internal set; }
-		//public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);
+		public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);
 		public bool CreatedInDeck => OriginalZone == Zone.DECK;
 		public bool CreatedInHand => OriginalZone == Zone.HAND;
-		public bool JoustReveal { get; set; }
-		public bool IsCreated { get; set; }
-		public int LastZoneChange { get; set; }
-		public int PreviousZone { get; set; }
+		public bool JoustReveal { get; internal set; }
+		internal bool IsCreated { get; set; }
+		public int LastZoneChange { get; internal set; }
+		public Zone PreviousZone { get; internal set; }
 	}
 }
