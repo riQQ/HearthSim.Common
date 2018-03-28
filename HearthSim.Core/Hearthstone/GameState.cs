@@ -60,7 +60,10 @@ namespace HearthSim.Core.Hearthstone
 
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
-		public Player CurrentPlayer => OpposingPlayer.PlayerEntity.HasTag(GameTag.CURRENT_PLAYER) ? OpposingPlayer : LocalPlayer;
+		public Player CurrentPlayer => GetPlayer(CurrentPlayerEntity?.PlayerId ?? 0);
+
+		public Player GetPlayer(int playerId) =>
+			new[] { LocalPlayer, OpposingPlayer }.FirstOrDefault(x => x.PlayerId == playerId);
 
 		internal SecretsManager SecretsManager { get; }
 
@@ -108,6 +111,17 @@ namespace HearthSim.Core.Hearthstone
 
 			modifier.Apply(this);
 			_modifiers.Add(modifier);
+
+			if(tagChange?.Tag == GameTag.ZONE && tagChange.EntityId.HasValue
+				&& Entities.TryGetValue(tagChange.EntityId.Value, out var entity))
+			{
+				if(entity.IsSpell && tagChange.Value == (int)Zone.PLAY && tagChange.PreviousValue == (int)Zone.HAND)
+				{
+					var controller = GetPlayer(entity.Controller);
+					if(controller != null)
+						controller.SpellsPlayed++;
+				}
+			}
 
 			if(!isCreationTag)
 				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));

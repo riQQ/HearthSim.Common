@@ -46,6 +46,8 @@ namespace HearthSim.Core.Hearthstone
 
 		public Entity CurrentHero => InPlay.FirstOrDefault(x => x.IsHero);
 
+		public int SpellsPlayed { get; internal set; }
+
 		public Deck Deck
 		{
 			get => _deck;
