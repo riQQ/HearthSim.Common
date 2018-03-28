@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HearthDb;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.Util.EventArgs;
@@ -47,6 +48,8 @@ namespace HearthSim.Core.Hearthstone
 		public Entity CurrentHero => InPlay.FirstOrDefault(x => x.IsHero);
 
 		public int SpellsPlayed { get; internal set; }
+
+		public bool HasTheCoin => InHand.Any(x => x.CardId == CardIds.NonCollectible.Neutral.TheCoin);
 
 		public Deck Deck
 		{
