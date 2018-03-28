@@ -23,6 +23,8 @@ namespace HearthSim.Core.Hearthstone
 			_decks = new List<Deck>();
 		}
 
+		public bool IsLoaded { get; private set; }
+
 		public IEnumerable<CollectionCard> Cards => _cards;
 		public IEnumerable<Deck> Decks => _decks;
 		public IEnumerable<CollectionCard> FavoriteHeroes => _favoriteHeroes;
@@ -106,6 +108,7 @@ namespace HearthSim.Core.Hearthstone
 			FavoriteCardBack = 0;
 			Gold = 0;
 			Dust = 0;
+			IsLoaded = false;
 		}
 
 		private static (List<CollectionCard> added, List<CollectionCard> removed)
@@ -144,7 +147,10 @@ namespace HearthSim.Core.Hearthstone
 			var updatedGold = UpdateGold(gold);
 			if(updatedCards || updatedCardBacks || updatedHeroes || updatedFavoriteCardBack
 				|| updatedDust || updatedGold)
+			{
 				Changed?.Invoke();
+				IsLoaded = true;
+			}
 		}
 
 		public bool UpdateFavoriteCardBack(int favoriteCardBack)
