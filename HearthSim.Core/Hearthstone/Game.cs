@@ -1,4 +1,5 @@
 ﻿using System;
+using HearthDb;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.Hearthstone.Events;
@@ -20,6 +21,7 @@ namespace HearthSim.Core.Hearthstone
 			Arena = new Arena();
 			TavernBrawl = new TavernBrawl();
 			GameStateEvents = new GameStateEvents();
+			GameStateEvents.BlockStart += OnBlockStart;
 		}
 
 		public GameState CurrentGame { get; private set; }
@@ -168,6 +170,15 @@ namespace HearthSim.Core.Hearthstone
 		{
 			if(CurrentGame != null)
 				CurrentGame.GameTime.Time = time;
+		}
+
+		private void OnBlockStart(BlockGameEvent e)
+		{
+			if(e.Data.Type == BlockType.TRIGGER && e.Data.CardId == CardIds.Collectible.Neutral.EmperorThaurissan)
+			{
+				foreach(var entity in e.GameState.CurrentPlayer.InHand)
+					entity.Info.CostReduction++;
+			}
 		}
 	}
 }

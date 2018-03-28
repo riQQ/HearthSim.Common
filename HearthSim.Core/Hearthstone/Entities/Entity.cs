@@ -63,7 +63,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		//public bool HasOutstandingTagChanges { get; set; }
 		public int OriginalController { get; set; }
 		public bool Hidden { get; set; }
-		//public int CostReduction { get; set; }
+		public int CostReduction { get; set; }
 		public Zone? OriginalZone { get; set; }
 		public string OriginalCardId { get; internal set; }
 		//public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);

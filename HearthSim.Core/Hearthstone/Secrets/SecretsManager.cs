@@ -50,7 +50,7 @@ namespace HearthSim.Core.Hearthstone.Secrets
 				return;
 			if(!e.GameState.Entities.TryGetValue(e.Data.Defender, out var defender))
 				return;
-			if(!attacker.IsControlledBy(e.GameState.CurrentPlayer?.PlayerId ?? 0))
+			if(!attacker.IsControlledBy(e.GameState.CurrentPlayerEntity?.PlayerId ?? 0))
 				return;
 			if(attacker.GetTag(GameTag.CONTROLLER) == defender.GetTag(GameTag.CONTROLLER))
 				return;
@@ -63,7 +63,7 @@ namespace HearthSim.Core.Hearthstone.Secrets
 		{
 			if(!e.GameState.Entities.TryGetValue(e.Data, out var entity))
 				return;
-			if(!entity.IsControlledBy(e.GameState.CurrentPlayer?.PlayerId ?? 0))
+			if(!entity.IsControlledBy(e.GameState.CurrentPlayerEntity?.PlayerId ?? 0))
 				return;
 			if(!TryGetSecrets(entity, out var secrets))
 				return;
@@ -76,9 +76,9 @@ namespace HearthSim.Core.Hearthstone.Secrets
 				return;
 			if(!entity.IsMinion)
 				return;
-			if(entity.IsControlledBy(e.GameState.CurrentPlayer?.PlayerId ?? 0))
+			if(entity.IsControlledBy(e.GameState.CurrentPlayerEntity?.PlayerId ?? 0))
 				return;
-			if(!TryGetSecrets(e.GameState.CurrentPlayer, out var secrets))
+			if(!TryGetSecrets(e.GameState.CurrentPlayerEntity, out var secrets))
 				return;
 			var solved = _secretSolver.SolveMinionDeath(entity).ToList();
 			if(entity.IsActiveDeathrattle)
@@ -95,7 +95,7 @@ namespace HearthSim.Core.Hearthstone.Secrets
 			{
 				if(e.Data.Tag == GameTag.TURN && e.Data.Value > 0)
 				{
-					var currentPlayer = e.GameState.CurrentPlayer;
+					var currentPlayer = e.GameState.CurrentPlayerEntity;
 					var s = _secrets.Where(x => x.Entity.IsControlledBy(currentPlayer.PlayerId)).ToList();
 					Resolve(_secretSolver.SolveTurnStart(), s);
 				}
@@ -107,7 +107,7 @@ namespace HearthSim.Core.Hearthstone.Secrets
 				if(e.Data.PreviousValue == (int)Zone.SECRET && e.Data.Value != (int)Zone.SECRET)
 					OnSecretRemoved(entity);
 			}
-			if(!entity.IsControlledBy(e.GameState.CurrentPlayer?.PlayerId ?? 0))
+			if(!entity.IsControlledBy(e.GameState.CurrentPlayerEntity?.PlayerId ?? 0))
 				return;
 			if(!TryGetSecrets(entity, out var secrets))
 				return;

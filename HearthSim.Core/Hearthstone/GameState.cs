@@ -56,10 +56,11 @@ namespace HearthSim.Core.Hearthstone
 
 		public PlayerEntity LocalPlayerEntity => TryGetPlayerEntity(MatchInfo?.LocalPlayer);
 		public PlayerEntity OpposingPlayerEntity => TryGetPlayerEntity(MatchInfo?.OpposingPlayer);
-		public PlayerEntity CurrentPlayer => PlayerEntities.Values.FirstOrDefault(x => x.HasTag(GameTag.CURRENT_PLAYER));
+		public PlayerEntity CurrentPlayerEntity => PlayerEntities.Values.FirstOrDefault(x => x.HasTag(GameTag.CURRENT_PLAYER));
 
 		public Player LocalPlayer { get; }
 		public Player OpposingPlayer { get; }
+		public Player CurrentPlayer => OpposingPlayer.PlayerEntity.HasTag(GameTag.CURRENT_PLAYER) ? OpposingPlayer : LocalPlayer;
 
 		internal SecretsManager SecretsManager { get; }
 
