@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using HearthDb.Enums;
 using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Hearthstone.Entities;
@@ -22,7 +24,10 @@ namespace HearthSim.Core.Test.MockData
 		public IReadOnlyCollection<string> PowerLog { get; set; }
 		public GameServerInfo ServerInfo { get; set; }
 		public GameTime GameTime { get; set; }
-		public PlayerEntity CurrentPlayer { get; set; }
+		public PlayerEntity CurrentPlayerEntity => PlayerEntities.Values.FirstOrDefault(x => x.HasTag(GameTag.CURRENT_PLAYER));
+		public Player CurrentPlayer => GetPlayer(CurrentPlayerEntity?.PlayerId ?? 0);
+		public Player GetPlayer(int playerId) =>
+			new[] { LocalPlayer, OpposingPlayer }.FirstOrDefault(x => x.PlayerId == playerId);
 
 		public void AppendLog(LogEventArgs args)
 		{

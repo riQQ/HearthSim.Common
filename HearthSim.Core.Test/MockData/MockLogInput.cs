@@ -19,5 +19,7 @@ namespace HearthSim.Core.Test.MockData
 		}
 
 		public event Action<NewLinesEventArgs> NewLines;
+		public event Action Starting;
+		public event Action Stopping;
 	}
 }
