@@ -1,23 +1,10 @@
 ﻿using HearthDb;
-using HearthDb.Enums;
-using System.Linq;
 using HearthSim.Core.Util;
 
 namespace HearthSim.Core.Hearthstone
 {
 	public class Card : ISortableCard
 	{
-		public static CardSet[] WildSets =
-		{
-			CardSet.PROMO,
-			CardSet.HOF,
-			CardSet.NAXX,
-			CardSet.GVG,
-			CardSet.BRM,
-			CardSet.LOE,
-			CardSet.TGT
-		};
-
 		private HearthDb.Card _card;
 
 		public Card(string id, int count = 1)
@@ -55,7 +42,7 @@ namespace HearthSim.Core.Hearthstone
 		public bool Created { get; set; }
 
 		public HearthDb.Card Data => _card ?? (_card = Cards.All.TryGetValue(Id, out var card) ? card : null);
-		public bool IsWild => WildSets.Contains(Data?.Set ?? CardSet.INVALID);
+		public bool IsWild => Data?.IsWild ?? false;
 
 		public int Cost => Data?.Cost ?? 0;
 
