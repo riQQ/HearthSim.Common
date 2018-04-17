@@ -126,6 +126,15 @@ namespace HearthSim.Core.Hearthstone.Secrets
 			var freeSpaceOnBoard = opponent.InPlay.Count(x => x.IsMinion) < 7;
 			var freeSpaceInHand = opponent.InHand.Count() < 10;
 
+			if(entity.IsPlayableCard)
+			{
+				var numCardsPlayed = player.PlayerEntity?.GetTag(GameTag.NUM_CARDS_PLAYED_THIS_TURN);
+				if(freeSpaceOnBoard && numCardsPlayed >= 3)
+					yield return Hunter.RatTrap;
+				if(freeSpaceInHand && numCardsPlayed >= 3)
+					yield return Paladin.HiddenWisdom;
+			}
+
 			if(entity.IsSpell)
 			{
 				yield return Mage.Counterspell;
