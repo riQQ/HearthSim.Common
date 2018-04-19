@@ -10,12 +10,15 @@ using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Hearthstone.Secrets;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Util.Logging;
+using static HearthDb.CardIds;
+using static HearthDb.CardIds.Collectible;
 
 namespace HearthSim.Core.Hearthstone
 {
 	public class GameState : IGameState
 	{
 		private readonly IGameDataProvider _gameDataProvider;
+		private readonly GameStateEvents _gameStateEvents;
 		private readonly Queue<IGameStateModifier> _creationTags;
 		private readonly Queue<IGameStateModifier> _initialQueue;
 		private readonly List<IGameStateModifier> _modifiers;
@@ -28,6 +31,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			gameDataProvider.Reset();
 			_gameDataProvider = gameDataProvider;
+			_gameStateEvents = gameStateEvents;
 			Entities = new Dictionary<int, Entity>();
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
@@ -150,6 +154,24 @@ namespace HearthSim.Core.Hearthstone
 				GetPlayer(entity.Id)?.PredictedCardIds.Remove(showEntity.CardId);
 			if(modifier is FullEntity fullEntity && Entities.TryGetValue(fullEntity.Data.Id, out entity))
 				GetPlayer(entity.Id)?.PredictedCardIds.Remove(fullEntity.Data.CardId);
+
+			if(modifier is ChangeEntity changeEntity && Entities.TryGetValue(changeEntity.EntityId, out entity))
+			{
+				const int ChameleosDbfId = 46706;
+				if(entity.GetTag(GameTag.TRANSFORMED_FROM_CARD) == ChameleosDbfId)
+				{
+					void HandleChameleosReveal(BlockGameEvent e)
+					{
+						_gameStateEvents.BlockEnd -= HandleChameleosReveal;
+						if(e.Data.Type == BlockType.TRIGGER && entity.HasTag(GameTag.SHIFTING) && (e.Data.CardId == Priest.Chameleos ||
+							e.Data.CardId == NonCollectible.Neutral.Chameleos_ShiftingEnchantment))
+						{
+							GetPlayer(entity.Controller)?.PredictedCardIds.Add(changeEntity.CardId);
+						}
+					}
+					_gameStateEvents.BlockEnd += HandleChameleosReveal;
+				}
+			}
 
 			if(isReady && !isCreationTag)
 				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));
