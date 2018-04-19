@@ -20,6 +20,7 @@ namespace HearthSim.Core.Hearthstone.Events
 		// Menu
 		public event Action<ModeChangedEventArgs> ModeChanged;
 		public event Action<GameCreatedEventArgs> GameCreated;
+		public event Action<GameCreatedEventArgs> GameStarted;
 		public event Action<GameEndEventArgs> GameEnded;
 		public event Action<GoldProgessWinsEventArgs> GoldProgressWins;
 		public event Action<PackOpenedEventArgs> PackOpened;
@@ -52,5 +53,6 @@ namespace HearthSim.Core.Hearthstone.Events
 		internal virtual void OnActivePlayerDeckChanged(ActivePlayerDeckChangedEventArgs args) =>
 			ActivePlayerDeckChanged?.Invoke(args);
 		internal virtual void OnFriendlyChallenge() => FriendlyChallenge?.Invoke();
+		internal virtual void OnGameStarted(GameCreatedEventArgs args) => GameStarted?.Invoke(args);
 	}
 }

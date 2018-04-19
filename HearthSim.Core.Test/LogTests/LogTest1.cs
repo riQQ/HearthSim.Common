@@ -23,7 +23,7 @@ namespace HearthSim.Core.Test.LogTests
 			{
 				LocalPlayer = data.LocalPlayer.ToMatchInfoPlayer(),
 				OpposingPlayer = data.OpposingPlayer.ToMatchInfoPlayer()
-			});
+			}, new GameServerInfo());
 			var logInput = new MockLogInput();
 			var game = new Game(gameData);
 			var mgr = new GameEventManager(game, logInput, gameData);
@@ -50,12 +50,14 @@ namespace HearthSim.Core.Test.LogTests
 					}
 				}
 			};
+			game.GameStarted += args => events["started"] = true;
 
 			//TODO move test data to separate repo
 
 			logInput.Read(data.LogFile);
 
 			Assert.AreEqual(true, events["created"]);
+			Assert.AreEqual(true, events["started"]);
 
 			var localHand = events["t0_local_hand"] as List<string>;
 			Assert.IsNotNull(localHand);

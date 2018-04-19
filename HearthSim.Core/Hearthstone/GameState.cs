@@ -17,6 +17,7 @@ namespace HearthSim.Core.Hearthstone
 	{
 		private readonly IGameDataProvider _gameDataProvider;
 		private readonly Queue<IGameStateModifier> _creationTags;
+		private readonly Queue<IGameStateModifier> _initialQueue;
 		private readonly List<IGameStateModifier> _modifiers;
 
 		private MatchInfo _matchInfo;
@@ -31,6 +32,7 @@ namespace HearthSim.Core.Hearthstone
 			PlayerEntities = new Dictionary<int, PlayerEntity>();
 			_modifiers = new List<IGameStateModifier>();
 			_creationTags = new Queue<IGameStateModifier>();
+			_initialQueue = new Queue<IGameStateModifier>();
 			_powerLog = new List<string>();
 			CreatedAt = DateTime.Now;
 			Modified += gameStateEvents.OnGameStateChanged;
@@ -43,6 +45,12 @@ namespace HearthSim.Core.Hearthstone
 				while(MatchInfo == null || ServerInfo == null)
 					await Task.Delay(500);
 			});
+		}
+
+		public bool IsReady()
+		{
+			return MatchInfo != null && ServerInfo != null && LocalPlayerEntity != null &&
+				OpposingPlayerEntity != null && LocalPlayer != null && OpposingPlayer != null;
 		}
 
 		public IReadOnlyCollection<string> PowerLog => _powerLog.AsReadOnly();
@@ -75,6 +83,7 @@ namespace HearthSim.Core.Hearthstone
 		public DateTime CreatedAt { get; }
 
 		internal event Action<GameStateChangedEventArgs> Modified;
+		internal event Action<GameCreatedEventArgs> Ready;
 
 		private PlayerEntity TryGetPlayerEntity(MatchInfo.Player player)
 			=> player != null && PlayerEntities.TryGetValue(player.Id, out var playerEntity) ? playerEntity : null;
@@ -100,14 +109,28 @@ namespace HearthSim.Core.Hearthstone
 
 			var isCreationTag = tagChange?.CreationTag == true;
 
-			// Wait for all creation tags to be applied before invoking Modified
-			if(isCreationTag)
-				_creationTags.Enqueue(tagChange);
-			else
+			var isReady = IsReady();
+			if(isReady)
 			{
-				while(_creationTags.Count > 0)
-					Modified?.Invoke(new GameStateChangedEventArgs(_creationTags.Dequeue(), this));
+				if(_initialQueue.Any())
+				{
+					if(_initialQueue.Any())
+						Ready?.Invoke(new GameCreatedEventArgs(this));
+					while(_initialQueue.Count > 0)
+						Modified?.Invoke(new GameStateChangedEventArgs(_initialQueue.Dequeue(), this));
+				}
+
+				// Wait for all creation tags to be applied before invoking Modified
+				if(isCreationTag)
+					_creationTags.Enqueue(tagChange);
+				else
+				{
+					while(_creationTags.Count > 0)
+						Modified?.Invoke(new GameStateChangedEventArgs(_creationTags.Dequeue(), this));
+				}
 			}
+			else
+				_initialQueue.Enqueue(modifier);
 
 			modifier.Apply(this);
 			_modifiers.Add(modifier);
@@ -123,7 +146,7 @@ namespace HearthSim.Core.Hearthstone
 				}
 			}
 
-			if(!isCreationTag)
+			if(isReady && !isCreationTag)
 				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));
 		}
 

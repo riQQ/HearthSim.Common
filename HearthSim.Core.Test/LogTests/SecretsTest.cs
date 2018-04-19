@@ -24,7 +24,7 @@ namespace HearthSim.Core.Test.LogTests
 			{
 				LocalPlayer = data.LocalPlayer.ToMatchInfoPlayer(),
 				OpposingPlayer = data.OpposingPlayer.ToMatchInfoPlayer()
-			});
+			}, new GameServerInfo());
 			var logInput = new MockLogInput();
 			var game = new Game(gameData);
 			var mgr = new GameEventManager(game, logInput, gameData);
@@ -251,7 +251,7 @@ namespace HearthSim.Core.Test.LogTests
 			{
 				LocalPlayer = data.LocalPlayer.ToMatchInfoPlayer(),
 				OpposingPlayer = data.OpposingPlayer.ToMatchInfoPlayer()
-			});
+			}, new GameServerInfo());
 			var logInput = new MockLogInput();
 			var game = new Game(gameData);
 			var mgr = new GameEventManager(game, logInput, gameData);
@@ -315,7 +315,7 @@ namespace HearthSim.Core.Test.LogTests
 			{
 				LocalPlayer = data.LocalPlayer.ToMatchInfoPlayer(),
 				OpposingPlayer = data.OpposingPlayer.ToMatchInfoPlayer()
-			});
+			}, new GameServerInfo());
 			var logInput = new MockLogInput();
 			var game = new Game(gameData);
 			var mgr = new GameEventManager(game, logInput, gameData);

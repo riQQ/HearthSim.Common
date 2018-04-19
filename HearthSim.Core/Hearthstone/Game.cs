@@ -55,6 +55,7 @@ namespace HearthSim.Core.Hearthstone
 				CurrentGame.Modified -= OnGameStateChanged;
 				CurrentGame.LocalPlayer.DeckChanged -= OnActivePlayerDeckChanged;
 				CurrentGame.OpposingPlayer.DeckChanged -= OnActivePlayerDeckChanged;
+				CurrentGame.Ready -= OnGameStarted;
 				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
 					InvokeGameEnd(CurrentGame);
 			}
@@ -62,6 +63,7 @@ namespace HearthSim.Core.Hearthstone
 			CurrentGame.Modified += OnGameStateChanged;
 			CurrentGame.LocalPlayer.DeckChanged += OnActivePlayerDeckChanged;
 			CurrentGame.OpposingPlayer.DeckChanged += OnActivePlayerDeckChanged;
+			CurrentGame.Ready += OnGameStarted;
 			Log.Debug($"{CurrentGame.MatchInfo?.LocalPlayer.Name ?? "unknown"} "
 					+ $"vs {CurrentGame.MatchInfo?.OpposingPlayer.Name ?? "unknown"} "
 					+ $"GameType={(GameType)(CurrentGame.MatchInfo?.GameType ?? 0)} "
