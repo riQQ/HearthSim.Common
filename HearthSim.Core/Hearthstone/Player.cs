@@ -21,6 +21,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			_gameState = gameState;
 			_isLocalPlayer = isLocalPlayer;
+			PredictedCardIds = new HashSet<string>();
 		}
 
 		public PlayerEntity PlayerEntity => _isLocalPlayer ? _gameState.LocalPlayerEntity : _gameState.OpposingPlayerEntity;
@@ -48,6 +49,8 @@ namespace HearthSim.Core.Hearthstone
 		public Entity CurrentHero => InPlay.FirstOrDefault(x => x.IsHero);
 
 		public int SpellsPlayed { get; internal set; }
+
+		public HashSet<string> PredictedCardIds { get; }
 
 		public bool HasTheCoin => InHand.Any(x => x.CardId == CardIds.NonCollectible.Neutral.TheCoin);
 
@@ -91,6 +94,8 @@ namespace HearthSim.Core.Hearthstone
 				else
 					cards.Add(new Card(entity.Key, entity.Count()));
 			}
+			foreach(var card in PredictedCardIds.GroupBy(x => x))
+				cards.Add(new Card(card.Key, -card.Count()));
 			return cards;
 		}
 	}

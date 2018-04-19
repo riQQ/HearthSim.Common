@@ -146,6 +146,11 @@ namespace HearthSim.Core.Hearthstone
 				}
 			}
 
+			if(modifier is ShowEntity showEntity && Entities.TryGetValue(showEntity.EntityId, out entity))
+				GetPlayer(entity.Id)?.PredictedCardIds.Remove(showEntity.CardId);
+			if(modifier is FullEntity fullEntity && Entities.TryGetValue(fullEntity.Data.Id, out entity))
+				GetPlayer(entity.Id)?.PredictedCardIds.Remove(fullEntity.Data.CardId);
+
 			if(isReady && !isCreationTag)
 				Modified?.Invoke(new GameStateChangedEventArgs(modifier, this));
 		}
