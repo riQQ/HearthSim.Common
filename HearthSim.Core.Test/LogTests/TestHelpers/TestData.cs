@@ -26,6 +26,9 @@ namespace HearthSim.Core.Test.LogTests.TestHelpers
 			[JsonProperty("deck")]
 			public string Deck { get; set; }
 
+			[JsonProperty("deck_cards")]
+			public string[] DeckCards { get; set; }
+
 			public MatchInfo.Player ToMatchInfoPlayer()
 				=> new MatchInfo.Player(Id, Name, 0, 0, 0, 0, 0, 0, 0, null, null);
 		}

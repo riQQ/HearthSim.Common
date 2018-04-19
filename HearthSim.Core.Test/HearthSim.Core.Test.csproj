@@ -58,6 +58,7 @@
     <Compile Include="GameStateModifiers\HideEntityTests.cs" />
     <Compile Include="GameTimeTests.cs" />
     <Compile Include="LogTests\SecretsTest.cs" />
+    <Compile Include="LogTests\DungeonRunTest.cs" />
     <Compile Include="MockData\MockGameState.cs" />
     <Compile Include="GameStateModifiers\ShowEntityTests.cs" />
     <Compile Include="GameStateModifiers\TagChangeTests.cs" />
@@ -93,6 +94,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LogTests\TestData\LogFiles\Secrets_3.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="LogTests\TestData\dungeonrun_1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="LogTests\TestData\LogFiles\DungeonRun_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="LogTests\TestData\secrets_1.json">

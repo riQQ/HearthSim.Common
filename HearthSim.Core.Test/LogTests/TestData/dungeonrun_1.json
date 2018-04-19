@@ -1,0 +1,13 @@
+{
+	"file": "LogTests/TestData/LogFiles/DungeonRun_1.txt",
+	"replay": "https://hsreplay.net/replay/GHe5f98DaQy6ooqnjizvmU",
+	"local_player": {
+		"name": "Epix#2966",
+		"id": 1,
+		"deck_cards": ["CS1_112", "CS2_234", "CS1_130", "CS2_235", "NEW1_023", "DS1_233", "CFM_603", "EX1_591", "FP1_023", "EX1_335", "ICC_830", "UNG_963", "UNG_029", "LOOTA_832"]
+	},
+	"opposing_player": {
+		"name": "The Innkeeper",
+		"id": 2
+	}
+}
