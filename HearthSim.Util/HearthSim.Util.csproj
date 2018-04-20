@@ -53,6 +53,7 @@
     <Compile Include="Analytics\UdpInfluxClient.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="HearthstoneRunner.cs" />
     <Compile Include="HearthstoneWindow.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogType.cs" />
