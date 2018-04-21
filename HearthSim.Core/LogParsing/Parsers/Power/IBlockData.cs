@@ -10,5 +10,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		string CardId { get; }
 		BlockType? Type { get; }
 		int Id { get; }
+		string EffectCardId { get; }
+		int EffectIndex { get; }
 	}
 }

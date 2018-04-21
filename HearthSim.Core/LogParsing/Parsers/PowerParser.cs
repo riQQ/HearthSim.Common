@@ -12,7 +12,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 	public class PowerParser : ILogParser
 	{
 		private readonly BlockHelper _blockHelper;
-		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)) Entity=(?<entity>(.+)) EffectCardId=.* EffectIndex=.+ Target=(?<target>(.+)) SubOption=(?<subOption>(.+))( TriggerKeyWord=\d+)?");
+		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)) Entity=(?<entity>(.+)) EffectCardId=(?<effectCardId>(.*)) EffectIndex=(?<effectIndex>(.+)) Target=(?<target>(.+)) SubOption=(?<subOption>(.+))( TriggerKeyWord=\d+)?");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _hideEntityRegex = new Regex(@"HIDE_ENTITY - .* (id=(?<id>\d+))");
 		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
@@ -162,7 +162,9 @@ namespace HearthSim.Core.LogParsing.Parsers
 				var type = match.Groups["type"].Value;
 				var entity = ParseEntity(match.Groups["entity"].Value.Trim());
 				var target = ParseEntity(match.Groups["target"].Value.Trim());
-				var blockData = new BlockData(type, entity.Id, entity.CardId, target);
+				var effectCardId = match.Groups["effectCardId"].Value;
+				var effectIndex = int.Parse(match.Groups["effectIndex"].Value);
+				var blockData = new BlockData(type, entity.Id, entity.CardId, effectCardId, effectIndex, target);
 				_currentBlock = _currentBlock?.CreateChild(blockData) ?? new Block(null, blockData);
 				foreach(var card in _blockHelper.GetCreatedCards(blockData))
 					blockData.PredictedCards.Add(card);

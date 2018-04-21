@@ -6,11 +6,13 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 {
 	public class BlockData : IBlockData
 	{
-		public BlockData(string type, int id, string cardId, EntityData target = null)
+		public BlockData(string type, int id, string cardId, string effectCardId = null, int effectIndex = 0, EntityData target = null)
 		{
 			Type = Enum.TryParse(type, out BlockType block) ? (BlockType?)block : null;
 			Id = id;
 			CardId = cardId;
+			EffectCardId = effectCardId;
+			EffectIndex = effectIndex;
 			Target = target;
 			PredictedCards = new List<string>();
 		}
@@ -18,6 +20,8 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		public EntityData Target { get; }
 		public BlockType? Type { get; }
 		public int Id { get; }
+		public string EffectCardId { get; }
+		public int EffectIndex { get; }
 		public string CardId { get; }
 		public List<string> PredictedCards { get; }
 
