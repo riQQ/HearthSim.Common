@@ -7,6 +7,7 @@ using HearthMirror.Objects;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Util.EventArgs;
 using Deck = HearthSim.Core.Hearthstone.Deck;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Util.Watchers
 {
@@ -93,7 +94,7 @@ namespace HearthSim.Core.Util.Watchers
 			}
 			if(info.PlayerChosenTreasure > 0)
 				allCards.Add(info.Treasure[info.PlayerChosenTreasure - 1]);
-			return new Deck("Dungeon Run", (CardClass)info.HeroCardClass, allCards);
+			return new Deck(DeckType.DungeonRun, "Dungeon Run", (CardClass)info.HeroCardClass, allCards);
 		}
 
 		public interface IDungeonRunDataProvider

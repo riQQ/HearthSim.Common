@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HearthMirror.Objects;
+using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.Hearthstone
@@ -36,7 +37,7 @@ namespace HearthSim.Core.Hearthstone
 
 		private void Update(ArenaInfo info)
 		{
-			Deck = new Deck(info.Deck);
+			Deck = new Deck(DeckType.Arena, info.Deck);
 			Slot = info.CurrentSlot;
 			Losses = info.Losses;
 			Wins = info.Wins;

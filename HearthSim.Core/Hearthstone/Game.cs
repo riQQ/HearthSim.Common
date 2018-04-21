@@ -6,6 +6,7 @@ using HearthSim.Core.Hearthstone.Events;
 using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Util.EventArgs;
 using HearthSim.Util.Logging;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Hearthstone
 {
@@ -132,7 +133,7 @@ namespace HearthSim.Core.Hearthstone
 
 		internal override void OnQueuedForGame(QueuedForGameEventArgs args)
 		{
-			SelectedDeck = args.Deck != null ? new Deck(args.Deck) : null;
+			SelectedDeck = args.Deck != null ? new Deck(DeckType.Constructed, args.Deck) : null;
 			Log.Debug("Set SelectedDeck=" + SelectedDeck);
 			base.OnQueuedForGame(args);
 		}

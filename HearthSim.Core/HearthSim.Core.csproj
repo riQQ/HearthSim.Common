@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventManagers\CollectionUploadError.cs" />
+    <Compile Include="Hearthstone\Enums\DeckType.cs" />
     <Compile Include="Hearthstone\Events\AttackGameEvent.cs" />
     <Compile Include="Hearthstone\Events\BaseGameEvent.cs" />
     <Compile Include="Hearthstone\Events\GameStateEvents.cs" />

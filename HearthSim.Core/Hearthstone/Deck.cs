@@ -2,39 +2,45 @@
 using System.Linq;
 using HearthDb.Enums;
 using HearthSim.Core.Util;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Hearthstone
 {
 	public class Deck
 	{
+		public DeckType Type { get; }
 		private FormatType? _format;
 		private string _deckstring;
 
-		public Deck(HearthMirror.Objects.Deck deck)
+		public Deck(DeckType type, HearthMirror.Objects.Deck deck)
 		{
+			Type = type;
 			Name = deck.Name;
 			DeckId = deck.Id;
 			Cards = CardSorting.Sort(deck.Cards.Select(x => new Card(x)));
 			Class = HearthDb.Cards.All.TryGetValue(deck.Hero, out var hero) ? hero.Class : CardClass.INVALID;
 		}
 
-		public Deck(HearthDb.Deckstrings.Deck deck)
+		public Deck(DeckType type, HearthDb.Deckstrings.Deck deck)
 		{
+			Type = type;
 			Name = deck.Name;
 			DeckId = deck.DeckId;
 			Cards = CardSorting.Sort(deck.GetCards().Select(card => new Card(card.Key, card.Value)));
 			Class = deck.GetHero().Class;
 		}
 
-		public Deck(string name, CardClass cardClass, IEnumerable<string> cards)
+		public Deck(DeckType type, string name, CardClass cardClass, IEnumerable<string> cards)
 		{
+			Type = type;
 			Name = name;
 			Class = cardClass;
 			Cards = CardSorting.Sort(cards.GroupBy(x => x).Select(x => new Card(x.Key, x.Count())));
 		}
 
-		public Deck(string name, CardClass cardClass, IEnumerable<int> cards)
+		public Deck(DeckType type, string name, CardClass cardClass, IEnumerable<int> cards)
 		{
+			Type = type;
 			Name = name;
 			Class = cardClass;
 			Cards = CardSorting.Sort(cards.GroupBy(x => x).Select(x => new Card(x.Key, x.Count())));

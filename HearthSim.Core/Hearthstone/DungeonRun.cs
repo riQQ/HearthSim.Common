@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using HearthDb.Enums;
 using static HearthDb.CardIds;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Hearthstone
 {
@@ -10,7 +11,7 @@ namespace HearthSim.Core.Hearthstone
 		{
 			if(!DefaultDecks.TryGetValue(cardClass, out var cards))
 				return null;
-			return new Deck("Dungeon Run", cardClass, cards);
+			return new Deck(DeckType.DungeonRun, "Dungeon Run", cardClass, cards);
 		}
 
 		public static bool IsDungeonBoss(string cardId) => cardId != null && cardId.Contains("LOOT") && cardId.Contains("BOSS");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HearthSim.Core.Hearthstone.Enums;
 using HearthSim.Core.Util.EventArgs;
 
 namespace HearthSim.Core.Hearthstone
@@ -72,12 +73,12 @@ namespace HearthSim.Core.Hearthstone
 			var index = _decks.FindIndex(x => x.DeckId == args.Deck.DeckId);
 			if(index != -1)
 			{
-				_decks[index] = new Deck(args.Deck);
+				_decks[index] = new Deck(DeckType.Constructed, args.Deck);
 				DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks, edited: new [] {_decks[index]}));
 			}
 			else
 			{
-				var deck = new Deck(args.Deck);
+				var deck = new Deck(DeckType.Constructed, args.Deck);
 				_decks.Add(deck);
 				DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks, new [] {deck}));
 			}
@@ -85,7 +86,7 @@ namespace HearthSim.Core.Hearthstone
 
 		internal void OnDecksLoaded(ConstructedDeckFoundEventArgs args)
 		{
-			var decks = args.Decks.Select(x => new Deck(x));
+			var decks = args.Decks.Select(x => new Deck(DeckType.Constructed, x));
 			_decks.AddRange(decks);
 			DecksChanged?.Invoke(new CollectionChangedEventArgs<Deck>(Decks));
 		}
