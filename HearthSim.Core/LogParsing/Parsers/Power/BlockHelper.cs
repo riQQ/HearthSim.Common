@@ -74,6 +74,7 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 			switch(block.CardId)
 			{
 				case Rogue.GangUp:
+				case Hunter.DireFrenzy:
 					return Repeat(block.Target?.CardId, 3);
 				case Rogue.BeneathTheGrounds:
 					return Repeat(NonCollectible.Rogue.BeneaththeGrounds_NerubianAmbushToken, 3);
@@ -82,6 +83,9 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 				case Druid.Recycle:
 				case Mage.ManicSoulcaster:
 				case Neutral.ZolaTheGorgon:
+				case Druid.Splintergraft:
+				case Neutral.BalefulBanker:
+				case Neutral.DollmasterDorian:
 					return new[] {block.Target?.CardId};
 				case Mage.ForgottenTorch:
 					return new[] {NonCollectible.Mage.ForgottenTorch_RoaringTorchToken};
