@@ -37,7 +37,11 @@ namespace HearthSim.Core.Hearthstone.Entities
 
 		public bool HasCardId => !string.IsNullOrEmpty(CardId);
 
-		public int GetTag(GameTag tag) => Tags.TryGetValue(tag, out var value) ? value : 0;
+		public int GetTag(GameTag tag)
+		{
+			return Tags.TryGetValue(tag, out var value) ? value : (Card?.Data?.Entity.GetTag(tag) ?? 0);
+		}
+
 		public bool HasTag(GameTag tag) => GetTag(tag) > 0;
 		public void SetTag(GameTag tag, int value) => Tags[tag] = value;
 
