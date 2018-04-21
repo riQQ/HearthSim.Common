@@ -29,12 +29,17 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 			}
 		}
 
+		private string GetSourceCardId(IBlockData block)
+		{
+			return string.IsNullOrEmpty(block.EffectCardId) ? block.CardId : block.EffectCardId;
+		}
+
 		/// <summary>
 		/// Cards created by triggers, deathrattles, secrets, etc
 		/// </summary>
 		private string[] Trigger(IBlockData block)
 		{
-			switch(block.CardId)
+			switch(GetSourceCardId(block))
 			{
 				case Rogue.TradePrinceGallywix:
 					return new[]
@@ -69,9 +74,9 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		/// <summary>
 		/// Cards created by Battlecries and spells
 		/// </summary>
-		public string[] Power(IBlockData block)
+		private string[] Power(IBlockData block)
 		{
-			switch(block.CardId)
+			switch(GetSourceCardId(block))
 			{
 				case Rogue.GangUp:
 				case Hunter.DireFrenzy:
