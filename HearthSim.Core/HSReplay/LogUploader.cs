@@ -35,7 +35,7 @@ namespace HearthSim.Core.HSReplay
 			var result = LogValidator.Validate(logLines);
 			if(!result.IsValid)
 			{
-				UploadError?.Invoke(new UploadErrorEventArgs(result.Reason));
+				UploadError?.Invoke(new UploadErrorEventArgs(data, result.Reason));
 				return new UploadStatus(new InvalidLogException(result.Reason));
 			}
 
