@@ -1,4 +1,5 @@
 ﻿using HearthDb.Enums;
+using HearthSim.Core.Hearthstone.Entities;
 using HearthSim.Core.LogParsing.Parsers.Power;
 using Entity = HearthSim.Core.Hearthstone.Entities.Entity;
 
@@ -47,6 +48,11 @@ namespace HearthSim.Core.Hearthstone.GameStateModifiers
 			}
 			if(Tag == GameTag.CONTROLLER && PreviousValue == 0)
 				entity.Info.OriginalController = Value;
+			if(entity is PlayerEntity pEntity)
+			{
+				if(Tag == GameTag.PLAYSTATE && (PlayState)Value == PlayState.CONCEDED)
+					pEntity.Conceded = true;
+			}
 		}
 
 		public bool CanApply => CreationTag || EntityId.HasValue;
