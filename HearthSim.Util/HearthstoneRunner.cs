@@ -29,14 +29,15 @@ namespace HearthSim.Util
 		{
 			if(_starting || HearthstoneWindow.Get() != IntPtr.Zero)
 				return;
-			var foundDuration = 0;
 			_starting = true;
+			var result = State.Error;
 			StartingHearthstone?.Invoke(State.Starting);
 			try
 			{
 				var bnetProc = GetProcess();
 				if(bnetProc == null)
 				{
+					var foundDuration = 0;
 					Process.Start("battlenet://");
 					for(var i = 0; i < StartBnetTries; i++)
 					{
@@ -52,6 +53,7 @@ namespace HearthSim.Util
 				}
 
 				Process.Start("battlenet://WTCG");
+				result = State.Success;
 			}
 			catch(Exception ex)
 			{
@@ -61,7 +63,7 @@ namespace HearthSim.Util
 			{
 				_starting = false;
 				await Task.Delay(EventDelay);
-				StartingHearthstone?.Invoke(foundDuration == 0 ? State.Error : State.Success);
+				StartingHearthstone?.Invoke(result);
 			}
 		}
 
