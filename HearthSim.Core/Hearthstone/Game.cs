@@ -101,7 +101,7 @@ namespace HearthSim.Core.Hearthstone
 					+ $"vs {matchInfo?.OpposingPlayer.Name ?? "unknown"} "
 					+ $"ended ({(PlayState)CurrentGame.LocalPlayerEntity.GetTag(GameTag.PLAYSTATE)})");
 
-			OnGameEnded(new GameEndEventArgs(Build, CurrentGame, wins, losses));
+			OnGameEnded(new GameEndEventArgs(Build, Region, CurrentGame, wins, losses));
 		}
 
 		internal void Reset()

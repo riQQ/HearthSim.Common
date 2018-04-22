@@ -1,12 +1,14 @@
-﻿using HearthSim.Core.Hearthstone;
+﻿using HearthDb.Enums;
+using HearthSim.Core.Hearthstone;
 
 namespace HearthSim.Core.Util.EventArgs
 {
 	public class GameEndEventArgs : System.EventArgs
 	{
-		public GameEndEventArgs(int? build, IGameState gameState, int wins, int losses)
+		public GameEndEventArgs(int? build, BnetRegion region, IGameState gameState, int wins, int losses)
 		{
 			Build = build;
+			Region = region;
 			GameState = gameState;
 			Wins = wins;
 			Losses = losses;
@@ -16,5 +18,6 @@ namespace HearthSim.Core.Util.EventArgs
 		public IGameState GameState { get; }
 		public int Wins { get; }
 		public int Losses { get; }
+		public BnetRegion Region { get; }
 	}
 }
