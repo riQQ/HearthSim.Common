@@ -119,6 +119,8 @@ namespace HearthSim.Core.EventManagers
 				: BnetGameType.BGT_UNKNOWN;
 			if(!_hsReplayNet.Config.UploadGameTypes.Contains(gameType))
 				return;
+			if(matchInfo != null && matchInfo.Spectator && !_hsReplayNet.Config.UploadSpectated)
+				return;
 			var data = UploadMetaDataGenerator.Generate(args.Build, args.GameState, args.Wins, args.Losses);
 			_hsReplayNet.LogUploader.Upload(args.GameState.PowerLog.ToArray(), data).Forget();
 		}

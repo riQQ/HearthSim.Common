@@ -5,13 +5,15 @@ namespace HearthSim.Core.HSReplay
 {
 	public class HSReplayNetConfig
 	{
-		public HSReplayNetConfig(string dataDirectory, string apiKey, string oAuthKey, string userAgent, IEnumerable<BnetGameType> uploadGameTypes, bool uploadPacks, int twitchUpdatesUserId)
+		public HSReplayNetConfig(string dataDirectory, string apiKey, string oAuthKey, string userAgent,
+			IEnumerable<BnetGameType> uploadGameTypes, bool uploadSpectated, bool uploadPacks, int twitchUpdatesUserId)
 		{
 			DataDirectory = dataDirectory;
 			ApiKey = apiKey;
 			OAuthKey = oAuthKey;
 			UserAgent = userAgent;
 			UploadGameTypes = uploadGameTypes;
+			UploadSpectated = uploadSpectated;
 			UploadPacks = uploadPacks;
 			TwitchUpdatesUserId = twitchUpdatesUserId;
 		}
@@ -21,6 +23,7 @@ namespace HearthSim.Core.HSReplay
 		public string ApiKey { get; }
 		public string UserAgent { get; }
 		public IEnumerable<BnetGameType> UploadGameTypes { get; set; }
+		public bool UploadSpectated { get; set; }
 		public bool UploadPacks { get; set; }
 		public bool UploadCollection { get; set; } = true;
 		public int TwitchUpdatesUserId { get; set; }
