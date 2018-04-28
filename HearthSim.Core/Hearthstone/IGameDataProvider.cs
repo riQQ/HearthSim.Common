@@ -15,7 +15,7 @@ namespace HearthSim.Core.Hearthstone
 		AccountId GetAccountId();
 		BattleTag GetBattleTag();
 		BrawlInfo GetBrawlInfo();
-		DungeonInfo GetDungeonInfo();
+		DungeonInfo[] GetDungeonInfo();
 		void Reset();
 		bool FriendlyChallengeDialogVisible();
 	}

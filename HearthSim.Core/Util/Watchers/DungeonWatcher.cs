@@ -19,12 +19,16 @@ namespace HearthSim.Core.Util.Watchers
 		{
 			CardIds.NonCollectible.Rogue.BinkTheBurglarHeroic,
 			CardIds.NonCollectible.Hunter.GiantRatHeroic,
-			CardIds.NonCollectible.Hunter.WeeWhelpHeroic
+			CardIds.NonCollectible.Hunter.WeeWhelpHeroic,
+
+			CardIds.NonCollectible.Druid.AMangyWolfHeroic,
+			CardIds.NonCollectible.Hunter.GobblesHeroic,
+			CardIds.NonCollectible.Druid.RottoothHeroic,
 		};
 
-		private List<int> _prevCards;
-		private int _prevLootChoice;
-		private int _prevTreasureChoice;
+		private List<int>[] _prevCards;
+		private int[] _prevLootChoice;
+		private int[] _prevTreasureChoice;
 
 		public DungeonRunWatcher(IDungeonRunDataProvider dataProvider, int updateDelay = 500) : base(updateDelay)
 		{
@@ -36,9 +40,9 @@ namespace HearthSim.Core.Util.Watchers
 
 		protected override void Reset()
 		{
-			_prevCards = null;
-			_prevLootChoice = 0;
-			_prevTreasureChoice = 0;
+			_prevCards = new List<int>[] { null, null };
+			_prevLootChoice = new[] { 0, 0 };
+			_prevTreasureChoice = new[] { 0, 0 };
 		}
 
 		public override UpdateResult Update()
@@ -46,33 +50,40 @@ namespace HearthSim.Core.Util.Watchers
 			if(_dataProvider.InAdventureScreen)
 			{
 				var dungeonInfo = _dataProvider.GetDungeonInfo();
-				if(dungeonInfo?.RunActive ?? false)
+				if(dungeonInfo != null)
 				{
-					if(_prevCards == null || !dungeonInfo.DbfIds.SequenceEqual(_prevCards)
-										|| _prevLootChoice != dungeonInfo.PlayerChosenLoot
-										|| _prevTreasureChoice != dungeonInfo.PlayerChosenTreasure)
+					for(var i = 0; i < dungeonInfo.Length; i++)
 					{
-						_prevCards = dungeonInfo.DbfIds.ToList();
-						_prevLootChoice = dungeonInfo.PlayerChosenLoot;
-						_prevTreasureChoice = dungeonInfo.PlayerChosenTreasure;
-						if(_prevLootChoice > 0 && (_prevTreasureChoice > 0 || dungeonInfo.Treasure == null))
+						if(dungeonInfo[i]?.RunActive ?? false)
 						{
-							DungeonRunDeckUpdated?.Invoke(new DungeonRunDeckUpdatedEventArgs(BuildDeck(dungeonInfo)));
-							return UpdateResult.Break;
+							if(_prevCards[i] == null || !dungeonInfo[i].DbfIds.SequenceEqual(_prevCards[i])
+													 || _prevLootChoice[i] != dungeonInfo[i].PlayerChosenLoot
+													 || _prevTreasureChoice[i] != dungeonInfo[i].PlayerChosenTreasure)
+							{
+								_prevCards[i] = dungeonInfo[i].DbfIds.ToList();
+								_prevLootChoice[i] = dungeonInfo[i].PlayerChosenLoot;
+								_prevTreasureChoice[i] = dungeonInfo[i].PlayerChosenTreasure;
+								DungeonRunDeckUpdated?.Invoke(new DungeonRunDeckUpdatedEventArgs(BuildDeck(dungeonInfo[i])));
+							}
 						}
+						else
+							_prevCards[i] = null;
 					}
+
+					if(_prevLootChoice.All(x => x > 0) && _prevTreasureChoice.All(x => x > 0))
+						return UpdateResult.Break;
 				}
 				else
-					_prevCards = null;
+					_prevCards = new List<int>[] { null, null };
 			}
 			else if(_dataProvider.InAiMatch && !string.IsNullOrEmpty(_dataProvider.OpponentHeroId))
 			{
 				if(Cards.All.TryGetValue(_dataProvider.OpponentHeroId, out var card))
 				{
-					if(card.Set == CardSet.LOOTAPALOOZA && card.Id.Contains("BOSS"))
+					if(DungeonRun.IsDungeonBoss(card))
 					{
 						var newRun = _initialOpponents.Contains(_dataProvider.OpponentHeroId);
-						var deck = newRun ? DungeonRun.GetDefaultDeck(_dataProvider.LocalPlayerClass) : null;
+						var deck = newRun ? DungeonRun.GetDefaultDeck(_dataProvider.LocalPlayerClass, card.Set) : null;
 						DungeonRunMatchStarted?.Invoke(new DungeonRunMatchStartedEventArgs(newRun, deck));
 						return UpdateResult.Break;
 					}
@@ -103,7 +114,7 @@ namespace HearthSim.Core.Util.Watchers
 			bool InAdventureScreen { get; }
 			string OpponentHeroId { get; }
 			CardClass LocalPlayerClass { get; }
-			DungeonInfo GetDungeonInfo();
+			DungeonInfo[] GetDungeonInfo();
 		}
 	}
 }

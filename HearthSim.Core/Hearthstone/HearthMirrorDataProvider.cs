@@ -17,7 +17,7 @@ namespace HearthSim.Core.Hearthstone
 		public AccountId GetAccountId() => Reflection.GetAccountId();
 		public BattleTag GetBattleTag() => Reflection.GetBattleTag();
 		public BrawlInfo GetBrawlInfo() => Reflection.GetBrawlInfo();
-		public DungeonInfo GetDungeonInfo() => Reflection.GetDungeonInfo();
+		public DungeonInfo[] GetDungeonInfo() => Reflection.GetDungeonInfo();
 		public bool FriendlyChallengeDialogVisible() => Reflection.IsFriendlyChallengeDialogVisible();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HearthDb;
 using HearthDb.Enums;
 using static HearthDb.CardIds;
 using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
@@ -7,16 +8,91 @@ namespace HearthSim.Core.Hearthstone
 {
 	public class DungeonRun
 	{
-		public static Deck GetDefaultDeck(CardClass cardClass)
+		public static Deck GetDefaultDeck(CardClass cardClass, CardSet set)
 		{
-			if(!DefaultDecks.TryGetValue(cardClass, out var cards))
+			var decks = GetClassDecks(set);
+			if(decks == null || !decks.TryGetValue(cardClass, out var cards))
 				return null;
 			return new Deck(DeckType.DungeonRun, "Dungeon Run", cardClass, cards);
 		}
 
-		public static bool IsDungeonBoss(string cardId) => cardId != null && cardId.Contains("LOOT") && cardId.Contains("BOSS");
+		private static readonly List<CardSet> DungeonRunSets = new List<CardSet> { CardSet.LOOTAPALOOZA, CardSet.GILNEAS };
 
-		private static readonly Dictionary<CardClass, List<string>> DefaultDecks = new Dictionary<CardClass, List<string>>
+		public static bool IsDungeonBoss(string cardId) =>
+			cardId != null && Cards.All.TryGetValue(cardId, out var card) && IsDungeonBoss(card);
+
+		public static bool IsDungeonBoss(HearthDb.Card card) =>
+			card != null && card.Id.Contains("BOSS") && DungeonRunSets.Contains(card.Set);
+
+		private static Dictionary<CardClass, List<string>> GetClassDecks(CardSet set)
+		{
+			switch(set)
+			{
+				case CardSet.LOOTAPALOOZA:
+					return DefaultLootDecks;
+				case CardSet.GILNEAS:
+					return DefaultGilneasDecks;
+			}
+			return null;
+		}
+
+		private static readonly Dictionary<CardClass, List<string>> DefaultGilneasDecks = new Dictionary<CardClass, List<string>>
+		{
+			[CardClass.ROGUE] = new List<string>
+			{
+				Collectible.Neutral.ElvenArcher,
+				Collectible.Rogue.SinisterStrike,
+				Collectible.Neutral.WorgenInfiltrator,
+				Collectible.Neutral.BloodsailRaider,
+				Collectible.Hunter.Glaivezooka,
+				Collectible.Hunter.SnakeTrap,
+				Collectible.Rogue.BlinkFox,
+				Collectible.Rogue.FanOfKnives,
+				Collectible.Neutral.HiredGun,
+				Collectible.Rogue.Si7Agent
+			},
+			[CardClass.WARRIOR] = new List<string>
+			{
+				Collectible.Neutral.AbusiveSergeant,
+				NonCollectible.Neutral.ExtraPowder,
+				Collectible.Neutral.LowlySquire,
+				Collectible.Neutral.AmaniBerserker,
+				Collectible.Warrior.CruelTaskmaster,
+				Collectible.Warrior.RedbandWasp,
+				Collectible.Warrior.Bash,
+				Collectible.Warrior.FierceMonkey,
+				Collectible.Warrior.KingsDefender,
+				Collectible.Warrior.BloodhoofBrave
+			},
+			[CardClass.HUNTER] = new List<string>
+			{
+				Collectible.Hunter.FieryBat,
+				Collectible.Hunter.OnTheHunt,
+				Collectible.Neutral.SwampLeech,
+				Collectible.Hunter.CracklingRazormaw,
+				Collectible.Hunter.HuntingMastiff,
+				Collectible.Hunter.ForlornStalker,
+				Collectible.Hunter.KillCommand,
+				Collectible.Hunter.UnleashTheHounds,
+				Collectible.Hunter.Houndmaster,
+				Collectible.Neutral.SwiftMessenger
+			},
+			[CardClass.MAGE] = new List<string>
+			{
+				Collectible.Mage.ArcaneMissiles,
+				Collectible.Mage.ManaWyrm,
+				Collectible.Neutral.MadBomber,
+				Collectible.Mage.PrimordialGlyph,
+				Collectible.Mage.ShimmeringTempest,
+				Collectible.Mage.UnstablePortal,
+				Collectible.Mage.Spellslinger,
+				Collectible.Neutral.TinkmasterOverspark,
+				Collectible.Mage.WaterElemental,
+				Collectible.Neutral.Blingtron3000
+			},
+		};
+
+		private static readonly Dictionary<CardClass, List<string>> DefaultLootDecks = new Dictionary<CardClass, List<string>>
 		{
 			[CardClass.ROGUE] = new List<string>
 			{

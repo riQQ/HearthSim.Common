@@ -26,6 +26,6 @@ namespace HearthSim.Core.Hearthstone
 		public CardClass LocalPlayerClass =>
 			_game.CurrentGame?.LocalPlayer.InPlay.FirstOrDefault(x => x.IsHero)?.Card?.Data?.Class ?? CardClass.INVALID;
 
-		public DungeonInfo GetDungeonInfo() => _gameData.GetDungeonInfo();
+		public DungeonInfo[] GetDungeonInfo() => _gameData.GetDungeonInfo();
 	}
 }
