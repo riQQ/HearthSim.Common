@@ -3,15 +3,14 @@ using HSReplay;
 
 namespace HearthSim.Core.Util.EventArgs
 {
-	public class UploadCompleteEventArgs : System.EventArgs
+	public class UploadCompleteEventArgs : UploadStatusChangedEventArgs
 	{
-		public UploadCompleteEventArgs(UploadMetaData data, LogUploader.UploadStatus status)
+		public UploadCompleteEventArgs(int uploadId, UploadMetaData data, LogUploader.UploadStatus status)
+			: base(uploadId, data)
 		{
-			Data = data;
 			Status = status;
 		}
 
-		public UploadMetaData Data { get; }
 		public LogUploader.UploadStatus Status { get; }
 	}
 }

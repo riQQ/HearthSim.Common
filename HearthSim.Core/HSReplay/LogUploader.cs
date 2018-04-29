@@ -27,6 +27,7 @@ namespace HearthSim.Core.HSReplay
 
 		private readonly List<UploaderItem> _inProgress = new List<UploaderItem>();
 
+		public event Action<UploadStatusChangedEventArgs> UploadInitiated;
 		public event Action<UploadCompleteEventArgs> UploadComplete;
 		public event Action<UploadErrorEventArgs> UploadError;
 
@@ -35,7 +36,7 @@ namespace HearthSim.Core.HSReplay
 			var result = LogValidator.Validate(logLines);
 			if(!result.IsValid)
 			{
-				UploadError?.Invoke(new UploadErrorEventArgs(data, result.Reason));
+				UploadError?.Invoke(new UploadErrorEventArgs(0, data, result.Reason));
 				return new UploadStatus(new InvalidLogException(result.Reason));
 			}
 
@@ -50,6 +51,7 @@ namespace HearthSim.Core.HSReplay
 			_inProgress.Add(item);
 			Log.Debug($"Uploading {item.Hash}...");
 			UploadStatus status;
+			UploadInitiated?.Invoke(new UploadStatusChangedEventArgs(item.Hash, data));
 			try
 			{
 				status = await TryUpload(logLines, data);
@@ -60,7 +62,7 @@ namespace HearthSim.Core.HSReplay
 				status = new UploadStatus(ex);
 			}
 			Log.Debug($"{item.Hash} complete. Success={status.Success}");
-			UploadComplete?.Invoke(new UploadCompleteEventArgs(data, status));
+			UploadComplete?.Invoke(new UploadCompleteEventArgs(item.Hash, data, status));
 			foreach(var waiting in _inProgress.Where(x => x.Hash == item.Hash))
 				waiting.Complete(status);
 			_inProgress.RemoveAll(x => x.Hash == item.Hash);

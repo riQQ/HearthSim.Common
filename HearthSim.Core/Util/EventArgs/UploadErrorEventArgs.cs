@@ -2,14 +2,13 @@
 
 namespace HearthSim.Core.Util.EventArgs
 {
-	public class UploadErrorEventArgs : System.EventArgs
+	public class UploadErrorEventArgs : UploadStatusChangedEventArgs
 	{
-		public UploadMetaData Data { get; }
 		public string Reason { get; }
 
-		public UploadErrorEventArgs(UploadMetaData data, string reason)
+		public UploadErrorEventArgs(int uploadId ,UploadMetaData data, string reason)
+			:base(uploadId, data)
 		{
-			Data = data;
 			Reason = reason;
 		}
 	}
