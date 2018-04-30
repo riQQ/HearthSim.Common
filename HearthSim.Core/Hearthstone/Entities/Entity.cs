@@ -22,7 +22,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 
 		public string CardId
 		{
-			get => _cardId;
+			get => Info.Hidden ? null : _cardId;
 			set
 			{
 				_cardId = value;
