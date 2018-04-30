@@ -104,8 +104,22 @@ namespace HearthSim.Core
 			LogReader.Start(_hearthstonePath, _logDirectory);
 		}
 
+		/// <summary>
+		/// Update the log.config file for all the required logs.
+		/// </summary>
 		public async Task UpdateLogConfig() => await LogConfigUpdater.Run(LogReader.Logs);
 
+		/// <summary>
+		/// Starts the Hearthstone log and process monitoring.
+		/// </summary>
+		/// <param name="hearthstonePath">
+		/// Optional path for the Hearthstone directory.
+		/// Automatically determine from the process if not provided.
+		/// </param>
+		/// <param name="logDirectory">
+		/// Optional subdirectory to look for the log files in.
+		/// This can be used when e.g. monitoring multiple instances of Hearthstone.
+		/// </param>
 		public void Start(string hearthstonePath = null, string logDirectory = "Logs")
 		{
 			if(_running)
@@ -116,6 +130,9 @@ namespace HearthSim.Core
 			_procWatcher.Run();
 		}
 
+		/// <summary>
+		/// Stops the Hearthstone log and process monitoring.
+		/// </summary>
 		public async Task Stop()
 		{
 			await _procWatcher.Stop();
