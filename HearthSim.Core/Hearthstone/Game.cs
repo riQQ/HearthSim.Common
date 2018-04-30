@@ -46,7 +46,7 @@ namespace HearthSim.Core.Hearthstone
 			CurrentMode = args.CurrentMode;
 			PreviousMode = args.PreviousMode;
 			Log.Debug($"{PreviousMode} => {CurrentMode}");
-			if(PreviousMode == Mode.GAMEPLAY)
+			if(PreviousMode == Mode.GAMEPLAY && CurrentGame != null)
 			{
 				CurrentGame.Modified -= OnGameStateChanged;
 				CurrentGame.LocalPlayer.DeckChanged -= OnActivePlayerDeckChanged;
