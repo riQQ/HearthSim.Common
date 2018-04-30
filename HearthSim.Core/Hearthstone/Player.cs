@@ -70,29 +70,34 @@ namespace HearthSim.Core.Hearthstone
 
 		public IReadOnlyCollection<Card> GetRemainingCards()
 		{
+			var cards = new List<Card>();
 			if(Deck == null)
 			{
-				return RevealedCards.Where(x => x.Info.OriginalZone == Zone.HAND || x.Info.OriginalZone == Zone.DECK)
-					.GroupBy(x => new {x.CardId, x.IsInDeck, x.IsCreated})
-					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count()) {Created = x.Key.IsCreated}).ToList();
+				cards.AddRange(RevealedCards.Where(x => x.Info.OriginalZone == Zone.HAND || x.Info.OriginalZone == Zone.DECK)
+					.GroupBy(x => new { x.CardId, x.IsInDeck, x.IsCreated })
+					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count()) { Created = x.Key.IsCreated })
+					.ToList());
 			}
-			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
-			foreach(var entity in RevealedCards.Where(x => !(x.IsInDeck && x.IsControlledBy(PlayerId)) && !x.IsCreated))
+			else
 			{
-				var card = cards.FirstOrDefault(c => c.Id == entity.Info.OriginalCardId);
-				if(card != null)
-					card.Count--;
-			}
-			var inDeck = InDeck.Where(x => x.HasCardId).ToList();
-			foreach(var entity in inDeck.Where(x => x.IsCreated).GroupBy(x => x.CardId))
-				cards.Add(new Card(entity.Key, entity.Count()) {Created = true});
-			foreach(var entity in inDeck.Where(x => x.Info.Stolen && !x.IsCreated).GroupBy(x => x.CardId))
-			{
-				var card = cards.FirstOrDefault(c => c.Id == entity.Key);
-				if(card != null)
-					card.Count++;
-				else
-					cards.Add(new Card(entity.Key, entity.Count()));
+				cards.AddRange(Deck.Cards.Select(x => x.Clone()).ToList());
+				foreach(var entity in RevealedCards.Where(x => !(x.IsInDeck && x.IsControlledBy(PlayerId)) && !x.IsCreated))
+				{
+					var card = cards.FirstOrDefault(c => c.Id == entity.Info.OriginalCardId);
+					if(card != null)
+						card.Count--;
+				}
+				var inDeck = InDeck.Where(x => x.HasCardId).ToList();
+				foreach(var entity in inDeck.Where(x => x.IsCreated).GroupBy(x => x.CardId))
+					cards.Add(new Card(entity.Key, entity.Count()) {Created = true});
+				foreach(var entity in inDeck.Where(x => x.Info.Stolen && !x.IsCreated).GroupBy(x => x.CardId))
+				{
+					var card = cards.FirstOrDefault(c => c.Id == entity.Key);
+					if(card != null)
+						card.Count++;
+					else
+						cards.Add(new Card(entity.Key, entity.Count()));
+				}
 			}
 			foreach(var card in PredictedCardIds.GroupBy(x => x))
 				cards.Add(new Card(card.Key, -card.Count()));
