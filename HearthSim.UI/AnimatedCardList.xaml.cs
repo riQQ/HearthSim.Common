@@ -107,6 +107,7 @@ namespace HearthSim.UI
 		{
 			try
 			{
+				var animate = !(reset || CardViewModels.Count == 0 && cards.Count > 1);
 				if(reset)
 					CardViewModels.Clear();
 				var newCards = new List<CardViewModel>();
@@ -121,7 +122,7 @@ namespace HearthSim.UI
 						existing.Card.Count = card.Count;
 						existing.InHand = card.InHand;
 						if(highlight)
-							existing.TriggerUpdate();
+							existing.TriggerUpdate(animate);
 						else
 							existing.RefreshBackground();
 					}
@@ -142,7 +143,7 @@ namespace HearthSim.UI
 					if(newCard != null)
 					{
 						CardViewModels.Add(newCard);
-						newCard.TriggerUpdate();
+						newCard.TriggerUpdate(animate);
 						newCards.Remove(newCard);
 					}
 				}
@@ -151,7 +152,7 @@ namespace HearthSim.UI
 				{
 					CardViewModels.Add(card);
 					card.RefreshBackground();
-					card.FadeIn = true;
+					card.FadeIn = animate;
 				}
 			}
 			catch(Exception e)

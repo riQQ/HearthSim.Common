@@ -40,11 +40,11 @@ namespace HearthSim.UI
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public event Action Update;
+		public event Action<bool> Update;
 		public void RefreshBackground() => OnPropertyChanged(nameof(Background));
 		public void RefreshHighlight() => OnPropertyChanged(nameof(Highlight));
 
-		public void TriggerUpdate() => Update?.Invoke();
+		public void TriggerUpdate(bool animate) => Update?.Invoke(animate);
 		public async Task TriggerFadeOut(bool b)
 		{
 			if(FadeOut != null)

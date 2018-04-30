@@ -68,9 +68,9 @@ namespace HearthSim.UI
 			}
 		}
 
-		public async void Update()
+		public async void Update(bool animate)
 		{
-			if(Animate)
+			if(Animate && animate)
 				await RunStoryBoard("StoryboardUpdate");
 			Card.RefreshBackground();
 		}
