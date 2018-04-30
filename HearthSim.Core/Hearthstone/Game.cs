@@ -46,20 +46,22 @@ namespace HearthSim.Core.Hearthstone
 			CurrentMode = args.CurrentMode;
 			PreviousMode = args.PreviousMode;
 			Log.Debug($"{PreviousMode} => {CurrentMode}");
-			base.OnModeChanged(args);
-		}
-
-		internal override void OnCreateGame(GameCreatedEventArgs args)
-		{
-			if(CurrentGame != null)
+			if(PreviousMode == Mode.GAMEPLAY)
 			{
 				CurrentGame.Modified -= OnGameStateChanged;
 				CurrentGame.LocalPlayer.DeckChanged -= OnActivePlayerDeckChanged;
 				CurrentGame.OpposingPlayer.DeckChanged -= OnActivePlayerDeckChanged;
 				CurrentGame.Ready -= OnGameStarted;
-				if(CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
-					InvokeGameEnd(CurrentGame);
+				CurrentGame = null;
 			}
+
+			base.OnModeChanged(args);
+		}
+
+		internal override void OnCreateGame(GameCreatedEventArgs args)
+		{
+			if(CurrentGame != null && CurrentGame.GameEntity.GetTag(GameTag.STATE) != (int)State.COMPLETE)
+				InvokeGameEnd(CurrentGame);
 			CurrentGame = new GameState(GameDataProvider, GameStateEvents);
 			CurrentGame.Modified += OnGameStateChanged;
 			CurrentGame.LocalPlayer.DeckChanged += OnActivePlayerDeckChanged;
