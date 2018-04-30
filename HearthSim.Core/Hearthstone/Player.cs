@@ -74,7 +74,7 @@ namespace HearthSim.Core.Hearthstone
 			if(Deck == null)
 			{
 				cards.AddRange(RevealedCards.Where(x => x.Info.OriginalZone == Zone.HAND || x.Info.OriginalZone == Zone.DECK)
-					.GroupBy(x => new { x.CardId, x.IsInDeck, x.IsCreated })
+					.GroupBy(x => new { CardId = x.Info.OriginalCardId, x.IsInDeck, x.IsCreated })
 					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count()) { Created = x.Key.IsCreated })
 					.ToList());
 			}
@@ -88,9 +88,9 @@ namespace HearthSim.Core.Hearthstone
 						card.Count--;
 				}
 				var inDeck = InDeck.Where(x => x.HasCardId).ToList();
-				foreach(var entity in inDeck.Where(x => x.IsCreated).GroupBy(x => x.CardId))
+				foreach(var entity in inDeck.Where(x => x.IsCreated).GroupBy(x => x.Info.OriginalCardId))
 					cards.Add(new Card(entity.Key, entity.Count()) {Created = true});
-				foreach(var entity in inDeck.Where(x => x.Info.Stolen && !x.IsCreated).GroupBy(x => x.CardId))
+				foreach(var entity in inDeck.Where(x => x.Info.Stolen && !x.IsCreated).GroupBy(x => x.Info.OriginalCardId))
 				{
 					var card = cards.FirstOrDefault(c => c.Id == entity.Key);
 					if(card != null)
