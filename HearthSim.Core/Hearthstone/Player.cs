@@ -74,7 +74,7 @@ namespace HearthSim.Core.Hearthstone
 			{
 				return RevealedCards.Where(x => x.Info.OriginalZone == Zone.HAND || x.Info.OriginalZone == Zone.DECK)
 					.GroupBy(x => new {x.CardId, x.IsInDeck, x.IsCreated})
-					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count())).ToList();
+					.Select(x => new Card(x.Key.CardId, x.Key.IsInDeck ? -x.Count() : x.Count()) {Created = x.Key.IsCreated}).ToList();
 			}
 			var cards = Deck.Cards.Select(x => x.Clone()).ToList();
 			foreach(var entity in RevealedCards.Where(x => !(x.IsInDeck && x.IsControlledBy(PlayerId)) && !x.IsCreated))
