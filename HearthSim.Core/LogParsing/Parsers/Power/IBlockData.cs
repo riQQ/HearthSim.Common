@@ -12,5 +12,6 @@ namespace HearthSim.Core.LogParsing.Parsers.Power
 		int Id { get; }
 		string EffectCardId { get; }
 		int EffectIndex { get; }
+		GameTag? TriggerKeyword { get; }
 	}
 }
