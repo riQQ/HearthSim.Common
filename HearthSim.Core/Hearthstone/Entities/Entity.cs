@@ -77,7 +77,7 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public int CostReduction { get; internal set; }
 		public Zone? OriginalZone { get; internal set; }
 		public string OriginalCardId { get; internal set; }
-		public bool WasTransformed => !string.IsNullOrEmpty(OriginalCardId);
+		public bool WasTransformed => OriginalCardId != _entity.CardId;
 		public bool CreatedInDeck => OriginalZone == Zone.DECK;
 		public bool CreatedInHand => OriginalZone == Zone.HAND;
 		public bool JoustReveal { get; internal set; }
