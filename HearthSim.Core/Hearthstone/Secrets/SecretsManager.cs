@@ -146,7 +146,6 @@ namespace HearthSim.Core.Hearthstone.Secrets
 			await _gameState.GameTime.Wait(500);
 
 			//this log statement fixes SecretTests.Secrets2 --- ???
-			Console.WriteLine("[" + string.Join(", ", secrets.Select(x => x.Entity.Card.Name)) + "]");
 			var triggered = secrets.Where(x => x.Entity.GetTag(GameTag.ZONE) != (int)Zone.SECRET && x.Entity.HasCardId).ToList();
 			if(triggered.Any())
 			{
