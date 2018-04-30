@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using HearthDb;
 using HearthDb.Enums;
 
@@ -58,6 +59,12 @@ namespace HearthSim.Core.Hearthstone.Entities
 		public EntityInfo(Entity entity)
 		{
 			_entity = entity;
+		}
+
+		public override string ToString()
+		{
+			var props = GetType().GetProperties().Select(p => $"{p.Name}={p.GetValue(this)}");
+			return $"{_entity} - {string.Join(" | ", props)}";
 		}
 
 		public bool Discarded => _entity.IsInGraveyard && PreviousZone == Zone.HAND || PreviousZone == Zone.DECK;
