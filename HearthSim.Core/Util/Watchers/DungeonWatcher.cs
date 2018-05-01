@@ -73,7 +73,7 @@ namespace HearthSim.Core.Util.Watchers
 							_prevCards[i] = null;
 					}
 
-					if(_prevLootChoice.All(x => x > 0) && _prevTreasureChoice.All(x => x > 0))
+					if(_prevLootChoice.All(x => x > 0))
 						return UpdateResult.Break;
 				}
 				else
