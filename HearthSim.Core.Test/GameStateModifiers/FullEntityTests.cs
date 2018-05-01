@@ -70,7 +70,7 @@ namespace HearthSim.Core.Test.GameStateModifiers
 			Assert.IsNotNull(entity);
 			Assert.AreEqual(data.Id, entity.Id);
 			Assert.AreEqual(data.CardId, entity.CardId);
-			Assert.IsFalse(entity.IsCreated);
+			Assert.IsTrue(entity.IsCreated);
 			Assert.AreEqual((int)data.Zone, entity.GetTag(GameTag.ZONE));
 			Assert.IsFalse(entity.Info.JoustReveal);
 			Assert.AreEqual(data.Zone, entity.Info.OriginalZone);
