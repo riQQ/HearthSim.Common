@@ -61,9 +61,16 @@ namespace HearthSim.Core.Test.Watchers
 		{
 			_data.InAdventureScreen = true;
 			var result = _watcher.Update();
-			_data.MockDungeonInfo = new MockDungeonInfo
+			_data.MockDungeonInfo = new[]
 			{
-				RunActive = false
+				new MockDungeonInfo
+				{
+					RunActive = false
+				},
+				new MockDungeonInfo
+				{
+					RunActive = false
+				}
 			};
 			Assert.AreEqual(Watcher.UpdateResult.Continue, result);
 		}
@@ -72,14 +79,21 @@ namespace HearthSim.Core.Test.Watchers
 		public void InAdventureScreen_RunActiveNotChosen_NewData()
 		{
 			_data.InAdventureScreen = true;
-			_data.MockDungeonInfo = new MockDungeonInfo
+			_data.MockDungeonInfo = new[]
 			{
-				RunActive = true,
-				DbfIds = new List<int> {1, 2, 3},
-				LootA = new List<int> { 1 },
-				LootB = new List<int> { 2 },
-				LootC = new List<int> { 3 },
-				Treasure = new List<int> { 1, 2, 3 },
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> {1, 2, 3},
+					LootA = new List<int> { 1 },
+					LootB = new List<int> { 2 },
+					LootC = new List<int> { 3 },
+					Treasure = new List<int> { 1, 2, 3 },
+				},
+				new MockDungeonInfo
+				{
+					RunActive = false,
+				}
 			};
 			var result = _watcher.Update();
 			Assert.IsNull(_info);
@@ -90,16 +104,23 @@ namespace HearthSim.Core.Test.Watchers
 		public void InAdventureScreen_RunActiveChosen_NewData()
 		{
 			_data.InAdventureScreen = true;
-			_data.MockDungeonInfo = new MockDungeonInfo
+			_data.MockDungeonInfo = new[]
 			{
-				RunActive = true,
-				DbfIds = new List<int> { Backstab },
-				LootA = new List<int> { Category, DeadlyPoison },
-				LootB = new List<int> { Category, PitSnake },
-				LootC = new List<int> { Category, SinisterStrike },
-				Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
-				PlayerChosenLoot = 1,
-				PlayerChosenTreasure = 1
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { Backstab },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
+					PlayerChosenLoot = 1,
+					PlayerChosenTreasure = 1
+				},
+				new MockDungeonInfo
+				{
+					RunActive = false,
+				}
 			};
 
 			var result = _watcher.Update();
@@ -108,6 +129,41 @@ namespace HearthSim.Core.Test.Watchers
 			var dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
 			var expectedDbfIds = new[] {Backstab, BattleTotem, DeadlyPoison}.OrderBy(x => x);
 			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
+			Assert.AreEqual(Watcher.UpdateResult.Continue, result);
+
+			_data.MockDungeonInfo = new[]
+			{
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { Backstab },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
+					PlayerChosenLoot = 1,
+					PlayerChosenTreasure = 1
+				},
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { PitSnake },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
+					PlayerChosenLoot = 1,
+					PlayerChosenTreasure = 1
+				}
+			};
+
+			_info = null;
+			result = _watcher.Update();
+			Assert.IsNotNull(_info);
+
+			dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
+			expectedDbfIds = new[] {PitSnake, BattleTotem, DeadlyPoison}.OrderBy(x => x);
+			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
 			Assert.AreEqual(Watcher.UpdateResult.Break, result);
 		}
 
@@ -115,14 +171,21 @@ namespace HearthSim.Core.Test.Watchers
 		public void InAdventureScreen_RunActiveChosenNoTreasure_NewData()
 		{
 			_data.InAdventureScreen = true;
-			_data.MockDungeonInfo = new MockDungeonInfo
+			_data.MockDungeonInfo = new[]
 			{
-				RunActive = true,
-				DbfIds = new List<int> { Backstab },
-				LootA = new List<int> { Category, DeadlyPoison },
-				LootB = new List<int> { Category, PitSnake },
-				LootC = new List<int> { Category, SinisterStrike },
-				PlayerChosenLoot = 1,
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { Backstab },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					PlayerChosenLoot = 1,
+				},
+				new MockDungeonInfo
+				{
+					RunActive = false,
+				}
 			};
 
 			var result = _watcher.Update();
@@ -131,6 +194,37 @@ namespace HearthSim.Core.Test.Watchers
 			var dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
 			var expectedDbfIds = new[] {Backstab, DeadlyPoison}.OrderBy(x => x);
 			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
+			Assert.AreEqual(Watcher.UpdateResult.Continue, result);
+
+			_data.MockDungeonInfo = new[]
+			{
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { Backstab },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					PlayerChosenLoot = 1,
+				},
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { PitSnake },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					PlayerChosenLoot = 1,
+				}
+			};
+
+			_info = null;
+			result = _watcher.Update();
+			Assert.IsNotNull(_info);
+
+			dbfIds = _info.Deck.Cards.Select(x => x.Data?.DbfId ?? 0).OrderBy(x => x).ToArray();
+			expectedDbfIds = new[] {PitSnake, DeadlyPoison}.OrderBy(x => x);
+			Assert.IsTrue(expectedDbfIds.SequenceEqual(dbfIds), $"Found: {(string.Join(", ", dbfIds))}");
 			Assert.AreEqual(Watcher.UpdateResult.Break, result);
 		}
 
@@ -138,16 +232,23 @@ namespace HearthSim.Core.Test.Watchers
 		public void InAdventureScreen_InfoNotUpdatedUntilReset()
 		{
 			_data.InAdventureScreen = true;
-			_data.MockDungeonInfo = new MockDungeonInfo
+			_data.MockDungeonInfo = new[]
 			{
-				RunActive = true,
-				DbfIds = new List<int> { Backstab },
-				LootA = new List<int> { Category, DeadlyPoison },
-				LootB = new List<int> { Category, PitSnake },
-				LootC = new List<int> { Category, SinisterStrike },
-				Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
-				PlayerChosenLoot = 1,
-				PlayerChosenTreasure = 1
+				new MockDungeonInfo
+				{
+					RunActive = true,
+					DbfIds = new List<int> { Backstab },
+					LootA = new List<int> { Category, DeadlyPoison },
+					LootB = new List<int> { Category, PitSnake },
+					LootC = new List<int> { Category, SinisterStrike },
+					Treasure = new List<int> { BattleTotem, PotionOfVitality, CrystalGem },
+					PlayerChosenLoot = 1,
+					PlayerChosenTreasure = 1
+				},
+				new MockDungeonInfo
+				{
+					RunActive = false,
+				}
 			};
 
 			_watcher.Update();
@@ -213,8 +314,8 @@ namespace HearthSim.Core.Test.Watchers
 		public bool InAdventureScreen { get; set; }
 		public string OpponentHeroId { get; set; }
 		public CardClass LocalPlayerClass { get; set; }
-		public MockDungeonInfo MockDungeonInfo { get; set; }
-		public DungeonInfo GetDungeonInfo()
+		public MockDungeonInfo[] MockDungeonInfo { get; set; }
+		public DungeonInfo[] GetDungeonInfo()
 		{
 			return MockDungeonInfo;
 		}

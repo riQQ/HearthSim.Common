@@ -20,13 +20,13 @@ namespace HearthSim.Core.Test.MockData
 		protected Card[] _draftChoices;
 		protected List<Card> _packCards;
 		protected int _packId;
-		protected DungeonInfo _dungeonInfo;
+		protected DungeonInfo[] _dungeonInfo;
 		private readonly bool _friendlyChallengeDialogVisible;
 
 		public MockGameData(MatchInfo matchinfo = null, GameServerInfo serverInfo = null, AccountId accountId = null,
 			ArenaInfo arenaInfo = null, BattleTag battleTag = null, BrawlInfo brawlInfo = null,
 			Collection collection = null, Card[] draftChoices = null, List<Card> packCards = null,
-			int packId = 0, DungeonInfo dungeonInfo = null, bool friendlyChallengeDialogVisible = false)
+			int packId = 0, DungeonInfo[] dungeonInfo = null, bool friendlyChallengeDialogVisible = false)
 		{
 			_matchinfo = matchinfo;
 			_serverInfo = serverInfo;
@@ -52,7 +52,7 @@ namespace HearthSim.Core.Test.MockData
 		public Card[] GetDraftChoices() => _draftChoices;
 		public List<Card> GetPackCards() => _packCards;
 		public int GetPackId() => _packId;
-		public DungeonInfo GetDungeonInfo() => _dungeonInfo;
+		public DungeonInfo[] GetDungeonInfo() => _dungeonInfo;
 		public void Reset()
 		{
 		}
