@@ -33,6 +33,9 @@ namespace HearthSim.Core.Util.Watchers
 		public DungeonRunWatcher(IDungeonRunDataProvider dataProvider, int updateDelay = 500) : base(updateDelay)
 		{
 			_dataProvider = dataProvider;
+			_prevCards = new List<int>[] { null, null };
+			_prevLootChoice = new[] { 0, 0 };
+			_prevTreasureChoice = new[] { 0, 0 };
 		}
 
 		public event Action<DungeonRunDeckUpdatedEventArgs> DungeonRunDeckUpdated;
