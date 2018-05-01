@@ -59,9 +59,9 @@ namespace HearthSim.Core.Util.Watchers
 					{
 						if(dungeonInfo[i]?.RunActive ?? false)
 						{
-							if(_prevCards[i] == null || !dungeonInfo[i].DbfIds.SequenceEqual(_prevCards[i])
-													 || _prevLootChoice[i] != dungeonInfo[i].PlayerChosenLoot
-													 || _prevTreasureChoice[i] != dungeonInfo[i].PlayerChosenTreasure)
+							if((_prevCards[i] == null || !dungeonInfo[i].DbfIds.SequenceEqual(_prevCards[i])) &&
+								(_prevLootChoice[i] != dungeonInfo[i].PlayerChosenLoot ||
+									_prevTreasureChoice[i] != dungeonInfo[i].PlayerChosenTreasure))
 							{
 								_prevCards[i] = dungeonInfo[i].DbfIds.ToList();
 								_prevLootChoice[i] = dungeonInfo[i].PlayerChosenLoot;
