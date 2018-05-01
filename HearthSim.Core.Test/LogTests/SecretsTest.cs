@@ -276,6 +276,8 @@ namespace HearthSim.Core.Test.LogTests
 						}
 						case 14:
 						{
+							// Minion played, Explosive Runes triggered because it was played first
+							// can still be polymorph
 							events["t14"] = true;
 							Assert.AreEqual(2, secrets.Count);
 							var iceBlock = secrets.ElementAt(0);
