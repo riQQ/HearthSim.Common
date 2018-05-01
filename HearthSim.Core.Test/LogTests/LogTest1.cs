@@ -8,6 +8,7 @@ using HearthSim.Core.Hearthstone.GameStateModifiers;
 using HearthSim.Core.Test.LogTests.TestHelpers;
 using HearthSim.Core.Test.MockData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Test.LogTests
 {
@@ -31,7 +32,7 @@ namespace HearthSim.Core.Test.LogTests
 			game.GameCreated += args =>
 			{
 				events["created"] = true;
-				args.Game.LocalPlayer.Deck = new Hearthstone.Deck(HearthDb.Deckstrings.DeckSerializer.Deserialize(data.LocalPlayer.Deck));
+				args.Game.LocalPlayer.Deck = new Hearthstone.Deck(DeckType.Constructed, HearthDb.Deckstrings.DeckSerializer.Deserialize(data.LocalPlayer.Deck));
 			};
 			game.GameStateEvents.GameStateChanged += args =>
 			{

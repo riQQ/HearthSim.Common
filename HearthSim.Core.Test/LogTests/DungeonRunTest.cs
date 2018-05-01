@@ -7,6 +7,7 @@ using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Test.LogTests.TestHelpers;
 using HearthSim.Core.Test.MockData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DeckType = HearthSim.Core.Hearthstone.Enums.DeckType;
 
 namespace HearthSim.Core.Test.LogTests
 {
@@ -27,7 +28,7 @@ namespace HearthSim.Core.Test.LogTests
 			var game = new Game(gameData);
 			var mgr = new GameEventManager(game, logInput, gameData);
 
-			var localPlayerDeck = new Hearthstone.Deck("Dungeon run", CardClass.PRIEST, data.LocalPlayer.DeckCards);
+			var localPlayerDeck = new Hearthstone.Deck(DeckType.DungeonRun, "Dungeon Run", CardClass.PRIEST, data.LocalPlayer.DeckCards);
 
 			game.GameCreated += args => args.Game.LocalPlayer.Deck = localPlayerDeck;
 
