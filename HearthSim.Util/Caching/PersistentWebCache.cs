@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using HearthSim.Util.Logging;
 
@@ -11,15 +13,20 @@ namespace HearthSim.Util.Caching
 	{
 		private readonly string _persistentDirectory;
 		private readonly Func<string, string> _keyToUrl;
+		protected readonly List<string> Fetching;
 
 		protected PersistentWebCache(int memCacheSize, string persistentDirectory, Func<string, string> keyToUrl) : base(memCacheSize)
 		{
 			_persistentDirectory = persistentDirectory;
 			_keyToUrl = keyToUrl;
+			Fetching = new List<string>();
 		}
 
 		protected override async Task<T> Fetch(string key)
 		{
+			if(Fetching.Contains(key))
+				return default(T);
+			Fetching.Add(key);
 			var url = _keyToUrl(key);
 			var fileName = url.Split('/').Last();
 			var filePath = Path.Combine(_persistentDirectory, fileName);
@@ -33,13 +40,15 @@ namespace HearthSim.Util.Caching
 				}
 				catch(Exception e)
 				{
+					Fetching.Remove(key);
 					Log.Error(e);
 					return default(T);
 				}
 			}
-			return await LoadFromDisk(filePath);
+			Fetching.Remove(key);
+			return await LoadFromDisk(key, filePath);
 		}
 
-		public abstract Task<T> LoadFromDisk(string filePath);
+		public abstract Task<T> LoadFromDisk(string key, string filePath);
 	}
 }

@@ -27,9 +27,15 @@
             <DoubleAnimation Storyboard.TargetName="RectHighlight" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5" BeginTime="0:0:0.5"/>
         </Storyboard>
     </UserControl.Resources>
-    <Grid Name="Grid">
-        <ui:UICard DataContext="{Binding ElementName=AnimatedCardControl, Path=Card}" />
-        <Rectangle Name="RectHighlight" Fill="{Binding ElementName=AnimatedCardControl, Path=Card.Highlight}" Height="34" Width="217" RenderOptions.BitmapScalingMode="Fant"
+    <Grid Name="Grid" DataContext="{Binding ElementName=AnimatedCardControl}">
+        <Grid.ToolTip>
+            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget}"
+                     Background="Transparent" BorderThickness="0" ToolTipService.ShowDuration="60000">
+                <Rectangle Fill="{Binding Path=DataContext.Card.FullCardImage}" Width="256" Height="382" Margin="0,-40"/>
+            </ToolTip>
+        </Grid.ToolTip>
+        <ui:UICard DataContext="{Binding Card}" />
+        <Rectangle Name="RectHighlight" Fill="{Binding Card.TileHighlight}" Height="34" Width="217" RenderOptions.BitmapScalingMode="Fant"
                    Opacity="0" VerticalAlignment="Center" IsHitTestVisible="False" />
     </Grid>
 </UserControl>

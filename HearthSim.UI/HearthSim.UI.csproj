@@ -79,6 +79,9 @@
     <Compile Include="UICard.xaml.cs">
       <DependentUpon>UICard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FullCard.xaml.cs">
+      <DependentUpon>FullCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\GaussianBlur.cs" />
     <Compile Include="Util\ImageCache.cs" />
@@ -93,6 +96,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UICard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FullCard.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

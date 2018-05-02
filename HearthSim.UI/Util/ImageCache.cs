@@ -81,8 +81,10 @@ namespace HearthSim.UI.Util
 		//}
 
 		private static readonly CardTileImageCache CardTileCache = new CardTileImageCache("C:\\Users\\zeier\\AppData\\Roaming\\HearthstoneDeckTracker\\ImageCache\\Tiles");
+		private static readonly FullCardImageCache FullCardCache = new FullCardImageCache("C:\\Users\\zeier\\AppData\\Roaming\\HearthstoneDeckTracker\\ImageCache");
 
 		public static event Action<string> CardTileUpdated;
+		public static event Action<string> FullCardUpdated;
 
 		public static async Task<BitmapImage> GetTile(string cardId)
 		{
@@ -97,6 +99,23 @@ namespace HearthSim.UI.Util
 			{
 				image = await CardTileCache.Get(cardId);
 				CardTileUpdated?.Invoke(cardId);
+			}).Forget();
+			return null;
+		}
+
+		public static async Task<BitmapImage> GetFullImage(string cardId)
+		{
+			return string.IsNullOrEmpty(cardId) ? null : await FullCardCache.Get(cardId);
+		}
+
+		public static BitmapImage TryGetFullImage(string cardId)
+		{
+			if(FullCardCache.TryGet(cardId, out var image))
+				return image;
+			Task.Run(async () =>
+			{
+				image = await FullCardCache.Get(cardId);
+				FullCardUpdated?.Invoke(cardId);
 			}).Forget();
 			return null;
 		}

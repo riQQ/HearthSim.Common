@@ -3,11 +3,13 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using HearthDb.Enums;
 using HearthSim.Core.Hearthstone;
 using HearthSim.Core.Util;
 using HearthSim.UI.Annotations;
 using HearthSim.UI.Themes;
+using HearthSim.UI.Util;
 
 namespace HearthSim.UI
 {
@@ -18,12 +20,19 @@ namespace HearthSim.UI
 			Card = card;
 			Created = created ?? card.Created;
 			CardImageCache.CardImageUpdated += OnImageCacheUpdated;
+			ImageCache.FullCardUpdated += OnFullCardUpdated;
+		}
+
+		private void OnFullCardUpdated(string cardId)
+		{
+			if(cardId == Id)
+				OnPropertyChanged(nameof(FullCardImage));
 		}
 
 		private void OnImageCacheUpdated(string cardId)
 		{
-			if(cardId == Card?.Id)
-				OnPropertyChanged(nameof(Background));
+			if(cardId == Id)
+				OnPropertyChanged(nameof(TileImage));
 		}
 
 		public Card Card { get; set; }
@@ -31,8 +40,9 @@ namespace HearthSim.UI
 		public bool InHand { get; set; }
 		public Rarity Rarity => Card.Data?.Rarity ?? Rarity.FREE;
 		public string Id => Card?.Id;
-		public DrawingBrush Background => CardImageCache.Get(this);
-		public ImageBrush Highlight => ThemeManager.CurrentTheme?.HighlightImage ?? new ImageBrush();
+		public DrawingBrush TileImage => CardImageCache.Get(this);
+		public ImageBrush TileHighlight => ThemeManager.CurrentTheme?.HighlightImage ?? new ImageBrush();
+		public ImageBrush FullCardImage => new ImageBrush(ImageCache.TryGetFullImage(Id));
 		public bool Created { get; set; }
 		public bool Guessed { get; set; }
 		public int Cost => Card?.Data?.Cost ?? 0;
@@ -48,8 +58,8 @@ namespace HearthSim.UI
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public event Action<bool> Update;
-		public void RefreshBackground() => OnPropertyChanged(nameof(Background));
-		public void RefreshHighlight() => OnPropertyChanged(nameof(Highlight));
+		public void RefreshBackground() => OnPropertyChanged(nameof(TileImage));
+		public void RefreshHighlight() => OnPropertyChanged(nameof(TileHighlight));
 
 		public void TriggerUpdate(bool animate) => Update?.Invoke(animate);
 		public async Task TriggerFadeOut(bool b)

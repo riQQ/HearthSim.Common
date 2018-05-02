@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using HearthSim.Util.Logging;
 
@@ -15,24 +16,30 @@ namespace HearthSim.Util.Caching
 				throw new ArgumentException("Invalid directory");
 		}
 
-		public override async Task<BitmapImage> LoadFromDisk(string filePath)
+		public override async Task<BitmapImage> LoadFromDisk(string key, string filePath)
 		{
-			return await Task.Run(() => LoadImage(filePath));
+			return await Task.Run(() => LoadImage(key, filePath));
 		}
 
-		private BitmapImage LoadImage(string filePath)
+		private BitmapImage LoadImage(string key, string filePath)
 		{
-			var bitmapImage = new BitmapImage();
+			BitmapImage bitmapImage = null;
+			if(Fetching.Contains(key))
+				return new BitmapImage();
 			try
 			{
-				using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				Application.Current.Dispatcher.Invoke(() =>
 				{
-					bitmapImage.BeginInit();
-					bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-					bitmapImage.StreamSource = stream;
-					bitmapImage.EndInit();
-					bitmapImage.Freeze();
-				}
+					bitmapImage = new BitmapImage();
+					using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+						bitmapImage.StreamSource = stream;
+						bitmapImage.EndInit();
+						bitmapImage.Freeze();
+					}
+				});
 			}
 			catch(FileFormatException e)
 			{
