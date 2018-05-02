@@ -5,9 +5,6 @@ using System.Windows.Media.Animation;
 
 namespace HearthSim.UI
 {
-	/// <summary>
-	/// Interaction logic for AnimatedCard.xaml
-	/// </summary>
 	public partial class AnimatedCard
 	{
 		public static readonly DependencyProperty AnimateProperty =

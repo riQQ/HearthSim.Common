@@ -170,6 +170,7 @@ namespace HearthSim.UI
 				await card.TriggerFadeOut(card.Count > 0);
 			CardViewModels.Remove(card);
 			_removing.Remove(card);
+			card.Dispose();
 		}
 
 		private bool AreEqualForList(CardViewModel c1, CardViewModel c2)

@@ -11,12 +11,19 @@ using HearthSim.UI.Themes;
 
 namespace HearthSim.UI
 {
-	public class CardViewModel : INotifyPropertyChanged, ISortableCard
+	public class CardViewModel : INotifyPropertyChanged, ISortableCard, IDisposable
 	{
 		public CardViewModel(Card card, bool? created = null)
 		{
 			Card = card;
 			Created = created ?? card.Created;
+			CardImageCache.CardImageUpdated += OnImageCacheUpdated;
+		}
+
+		private void OnImageCacheUpdated(string cardId)
+		{
+			if(cardId == Card?.Id)
+				OnPropertyChanged(nameof(Background));
 		}
 
 		public Card Card { get; set; }
@@ -56,6 +63,11 @@ namespace HearthSim.UI
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void Dispose()
+		{
+			CardImageCache.CardImageUpdated -= OnImageCacheUpdated;
 		}
 	}
 }

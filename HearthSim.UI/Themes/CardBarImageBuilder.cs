@@ -117,9 +117,10 @@ namespace HearthSim.UI.Themes
 		}
 
 		protected virtual void AddCardImage() => AddCardImage(ImageRect, false);
+
 		protected void AddCardImage(Rect rect, bool offsetByCountBox)
 		{
-			var bmp = ImageCache.GetCardImage(Card.Card);
+			var bmp = ImageCache.TryGetTile(Card.Card.Id);
 			if(bmp != null)
 			{
 				if(offsetByCountBox && (Math.Abs(Card.Count) > 1 || Card.Rarity == Rarity.LEGENDARY))
@@ -262,8 +263,12 @@ namespace HearthSim.UI.Themes
 		protected void AddChild(string uri, Rect rect)
 			=> DrawingGroup.Children.Add(new ImageDrawing(new BitmapImage(new Uri(uri, UriKind.Relative)), rect));
 
-		protected void AddChild(BitmapImage bmp, Rect rect)
-			=> DrawingGroup.Children.Add(new ImageDrawing(bmp, rect));
+		protected ImageDrawing AddChild(BitmapImage bmp, Rect rect)
+		{
+			var drawing = new ImageDrawing(bmp, rect);
+			DrawingGroup.Children.Add(drawing);
+			return drawing;
+		}
 
 		protected void AddChild(ThemeElementInfo element)
 		{

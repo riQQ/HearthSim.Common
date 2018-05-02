@@ -16,11 +16,11 @@ namespace HearthSim.UI.Themes
 
 		protected override void AddCardImage()
 		{
-			var bmp = ImageCache.GetCardBitmap(Card.Card);
-			if(bmp == null)
-				return;
-			var img = new GaussianBlur(bmp).Process(2);
-			DrawingGroup.Children.Add(new ImageDrawing(img.ToImageSource(), FrameRect));
+			//var bmp = ImageCache.GetCardBitmap(Card.Card);
+			//if(bmp == null)
+			//	return;
+			//var img = new GaussianBlur(bmp).Process(2);
+			//DrawingGroup.Children.Add(new ImageDrawing(img.ToImageSource(), FrameRect));
 		}
 
 		protected override void AddCountBox()

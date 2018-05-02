@@ -3,13 +3,26 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using HearthSim.Util.Logging;
 using HearthSim.UI.Themes;
+using HearthSim.UI.Util;
+using HearthSim.Util.Caching;
 
 namespace HearthSim.UI
 {
 	public static class CardImageCache
 	{
-		private static readonly Dictionary<string, Dictionary<int, CardImageObject>> Cache =
-			new Dictionary<string, Dictionary<int, CardImageObject>>();
+		public static event Action<string> CardImageUpdated;
+		static CardImageCache()
+		{
+			ImageCache.CardTileUpdated += cardId =>
+			{
+				Refresh.Add(cardId);
+				CardImageUpdated?.Invoke(cardId);
+			};
+		}
+
+		private static readonly MemCache<CardImageObject> Cache = new MemCache<CardImageObject>(500);
+
+		private static readonly List<string> Refresh = new List<string>();
 
 		public static DrawingBrush Get(CardViewModel card)
 		{
@@ -18,21 +31,15 @@ namespace HearthSim.UI
 				if(card?.Id == null || card.Name == null || Cache == null)
 					return new DrawingBrush();
 				var cardImageObj = new CardImageObject(card);
-				if(Cache.TryGetValue(card.Id, out Dictionary<int, CardImageObject> cache))
-				{
-					if(cache.TryGetValue(cardImageObj.GetHashCode(), out CardImageObject cached))
-						return cached.Image;
-				}
+				var key = $"{card.Id}_{cardImageObj.GetHashCode()}";
+				if(!Refresh.Contains(card.Id) && Cache.TryGet(key, out var cached))
+					return cached.Image;
+				Refresh.Remove(card.Id);
 				var image = ThemeManager.GetBarImageBuilder(card).Build();
 				if(image.CanFreeze)
 					image.Freeze();
 				cardImageObj = new CardImageObject(image, card);
-				if(cache == null)
-				{
-					cache = new Dictionary<int, CardImageObject>();
-					Cache.Add(card.Id, cache);
-				}
-				cache.Add(cardImageObj.GetHashCode(), cardImageObj);
+				Cache.Cache(key, cardImageObj);
 				return cardImageObj.Image;
 			}
 			catch(Exception ex)
