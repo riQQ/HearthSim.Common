@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReplay", "HSReplay-API-Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.UI", "HearthSim.UI\HearthSim.UI.csproj", "{9EE45B90-3F4A-4484-BB29-CAACD5C08145}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceGenerator", "ResourceGenerator\ResourceGenerator.csproj", "{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthSim.Util", "HearthSim.Util\HearthSim.Util.csproj", "{3C626F97-7F98-4A4B-97F1-E376E89273E0}"
 EndProject
 Global
@@ -49,10 +47,6 @@ Global
 		{9EE45B90-3F4A-4484-BB29-CAACD5C08145}.Debug|x86.Build.0 = Debug|x86
 		{9EE45B90-3F4A-4484-BB29-CAACD5C08145}.Release|x86.ActiveCfg = Release|x86
 		{9EE45B90-3F4A-4484-BB29-CAACD5C08145}.Release|x86.Build.0 = Release|x86
-		{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}.Debug|x86.ActiveCfg = Debug|x86
-		{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}.Debug|x86.Build.0 = Debug|x86
-		{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}.Release|x86.ActiveCfg = Release|x86
-		{944AFE2A-49B4-4E63-BA1D-FC49E5029F36}.Release|x86.Build.0 = Release|x86
 		{3C626F97-7F98-4A4B-97F1-E376E89273E0}.Debug|x86.ActiveCfg = Debug|x86
 		{3C626F97-7F98-4A4B-97F1-E376E89273E0}.Debug|x86.Build.0 = Debug|x86
 		{3C626F97-7F98-4A4B-97F1-E376E89273E0}.Release|x86.ActiveCfg = Release|x86
