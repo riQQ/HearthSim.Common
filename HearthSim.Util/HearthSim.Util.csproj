@@ -79,5 +79,17 @@
       <Name>HearthDb</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\loading_hero.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\loading_minion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\loading_spell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\loading_weapon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

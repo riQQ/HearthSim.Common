@@ -33,10 +33,18 @@ namespace HearthSim.Util.Caching
 		public bool TryGet(string key, out T obj)
 		{
 			if(!_cache.TryGetValue(key, out obj))
+			{
+				obj = GetPlaceholder(key);
 				return false;
+			}
 			_keys.Remove(key);
 			_keys.AddLast(key);
 			return true;
+		}
+
+		protected virtual T GetPlaceholder(string key)
+		{
+			return default(T);
 		}
 
 		protected void Add(string key, T obj)

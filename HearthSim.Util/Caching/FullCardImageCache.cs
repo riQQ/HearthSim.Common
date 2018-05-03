@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows.Media.Imaging;
+using HearthDb;
 using HearthDb.Enums;
 
 namespace HearthSim.Util.Caching
@@ -37,6 +39,29 @@ namespace HearthSim.Util.Caching
 		{
 			locale = GetValidLocale(locale);
 			return Path.Combine(baseDirectory, locale.ToString());
+		}
+
+		protected override BitmapImage GetPlaceholder(string cardId)
+		{
+			if(!Cards.All.TryGetValue(cardId, out var card))
+				return new BitmapImage();
+			return new BitmapImage(
+				new Uri($"pack://application:,,,/HearthSim.Util;Component/Resources/{GetPlaceholderFile(card.Type)}"));
+		}
+
+		private string GetPlaceholderFile(CardType cardType)
+		{
+			switch(cardType)
+			{
+				case CardType.HERO:
+					return "loading_hero.png";
+				case CardType.MINION:
+					return "loading_minion.png";
+				case CardType.WEAPON:
+					return "loading_weapon.png";
+				default:
+					return "loading_spell.png";
+			}
 		}
 
 		public FullCardImageCache(string persistentDirectory, Locale locale = DefaultLocale, int resolution = DefaultResolution)

@@ -100,7 +100,7 @@ namespace HearthSim.UI.Util
 				image = await CardTileCache.Get(cardId);
 				CardTileUpdated?.Invoke(cardId);
 			}).Forget();
-			return null;
+			return image;
 		}
 
 		public static async Task<BitmapImage> GetFullImage(string cardId)
@@ -117,7 +117,7 @@ namespace HearthSim.UI.Util
 				image = await FullCardCache.Get(cardId);
 				FullCardUpdated?.Invoke(cardId);
 			}).Forget();
-			return null;
+			return image;
 		}
 	}
 }
