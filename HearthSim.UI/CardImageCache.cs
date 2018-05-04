@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 using HearthSim.Util.Logging;
 using HearthSim.UI.Themes;
@@ -35,7 +36,8 @@ namespace HearthSim.UI
 				if(!Refresh.Contains(card.Id) && Cache.TryGet(key, out var cached))
 					return cached.Image;
 				Refresh.Remove(card.Id);
-				var image = ThemeManager.GetBarImageBuilder(card).Build();
+				DrawingBrush image = null;
+				Application.Current.Dispatcher.Invoke(() => image = ThemeManager.GetBarImageBuilder(card).Build());
 				if(image.CanFreeze)
 					image.Freeze();
 				cardImageObj = new CardImageObject(image, card);
