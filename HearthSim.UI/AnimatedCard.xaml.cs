@@ -78,11 +78,13 @@ namespace HearthSim.UI
 			{
 				if(e.OldValue is CardViewModel oldCard)
 					oldCard.Update -= ac.Update;
-				var newCard = (CardViewModel)e.NewValue;
-				newCard.Update += ac.Update;
-				newCard.FadeOut = ac.FadeOut;
-				if(newCard.FadeIn)
-					ac.FadeIn();
+				if(e.NewValue is CardViewModel newCard)
+				{
+					newCard.Update += ac.Update;
+					newCard.FadeOut = ac.FadeOut;
+					if(newCard.FadeIn)
+						ac.FadeIn();
+				}
 			}
 		}
 
