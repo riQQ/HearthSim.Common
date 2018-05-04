@@ -103,6 +103,11 @@ namespace HearthSim.UI.Util
 			return image;
 		}
 
+		public static bool HasCardTile(string cardId)
+		{
+			return CardTileCache.TryGet(cardId, out var img);
+		}
+
 		public static async Task<BitmapImage> GetFullImage(string cardId)
 		{
 			return string.IsNullOrEmpty(cardId) ? null : await FullCardCache.Get(cardId);
