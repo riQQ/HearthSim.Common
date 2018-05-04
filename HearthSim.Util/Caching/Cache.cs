@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -17,14 +18,15 @@ namespace HearthSim.Util.Caching
 			_keys = new LinkedList<string>();
 		}
 
-		protected abstract Task<T> Fetch(string key);
+		protected abstract Task<(bool, T)> Fetch(string key);
 
 		public async Task<T> Get(string key)
 		{
 			if(TryGet(key, out var obj))
 				return obj;
-			obj = await Fetch(key);
-			if(obj == null)
+			bool success;
+			(success, obj) = await Fetch(key);
+			if(!success)
 				return default(T);
 			Add(key, obj);
 			return obj;

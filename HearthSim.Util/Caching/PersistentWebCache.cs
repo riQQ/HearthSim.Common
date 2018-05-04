@@ -22,10 +22,10 @@ namespace HearthSim.Util.Caching
 			Fetching = new List<string>();
 		}
 
-		protected override async Task<T> Fetch(string key)
+		protected override async Task<(bool, T)> Fetch(string key)
 		{
 			if(Fetching.Contains(key))
-				return default(T);
+				return (false, default(T));
 			Fetching.Add(key);
 			var url = _keyToUrl(key);
 			var fileName = url.Split('/').Last();
@@ -42,11 +42,11 @@ namespace HearthSim.Util.Caching
 				{
 					Fetching.Remove(key);
 					Log.Error(e);
-					return default(T);
+					return (false, default(T));
 				}
 			}
 			Fetching.Remove(key);
-			return await LoadFromDisk(key, filePath);
+			return (true, await LoadFromDisk(key, filePath));
 		}
 
 		public abstract Task<T> LoadFromDisk(string key, string filePath);

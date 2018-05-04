@@ -8,7 +8,7 @@ namespace HearthSim.Util.Caching
 		{
 			
 		}
-		protected override Task<T> Fetch(string key)
+		protected override Task<(bool, T)> Fetch(string key)
 		{
 			return null;
 		}
