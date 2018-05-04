@@ -91,5 +91,8 @@
   <ItemGroup>
     <Resource Include="Resources\loading_weapon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\loading_tile.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
