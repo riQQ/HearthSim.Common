@@ -31,7 +31,7 @@
         <Grid.ToolTip>
             <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget}"
                      Background="Transparent" BorderThickness="0" ToolTipService.ShowDuration="60000">
-                <Rectangle Fill="{Binding Path=DataContext.Card.FullCardImage}" Width="256" Height="382" Margin="0,-40"/>
+                <Rectangle Fill="{Binding Path=DataContext.Card.FullCardImage}" Width="256" Height="382" Margin="0,-20, 0, -40"/>
             </ToolTip>
         </Grid.ToolTip>
         <ui:UICard DataContext="{Binding Card}" />
