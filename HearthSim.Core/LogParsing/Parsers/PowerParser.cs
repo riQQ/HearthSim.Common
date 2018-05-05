@@ -12,7 +12,7 @@ namespace HearthSim.Core.LogParsing.Parsers
 	public class PowerParser : ILogParser
 	{
 		private readonly BlockHelper _blockHelper;
-		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START.*BlockType=(?<type>(\w+)) Entity=(?<entity>(.+)) EffectCardId=(?<effectCardId>(.*)) EffectIndex=(?<effectIndex>(.+)) Target=(?<target>(.+)) SubOption=(?<subOption>(.+)) (TriggerKeyword=(?<triggerKeyword>(.+)))?");
+		private readonly Regex _blockStartRegex = new Regex(@".*BLOCK_START BlockType=(?<type>\w+) Entity=(?<entity>.+) EffectCardId=(?<effectCardId>.*) EffectIndex=(?<effectIndex>.+) Target=(?<target>.+) SubOption=(?<subOption>[\d-]+)( TriggerKeyword=(?<triggerKeyword>.+))?");
 		private readonly Regex _creationTagRegex = new Regex(@"tag=(?<tag>(\w+))\ value=(?<value>(\w+))");
 		private readonly Regex _hideEntityRegex = new Regex(@"HIDE_ENTITY - .* (id=(?<id>\d+))");
 		private readonly Regex _fullEntityRegex = new Regex(@"FULL_ENTITY - Updating.*id=(?<id>(\d+)).*zone=(?<zone>(\w+)).*CardID=(?<cardId>(\w*))");
